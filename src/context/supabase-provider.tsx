@@ -14,6 +14,15 @@ interface SupabaseContextType {
   signOut: () => Promise<void>
 }
 
+if (typeof window !== 'undefined') {
+  const hash = window.location.hash
+  const search = window.location.search
+  if ((hash.includes('type=invite') || hash.includes('type=recovery') || search.includes('type=invite')) && !window.location.pathname.includes('/update-password')) {
+    // Preserve the hash so Supabase can process the auth token on the update-password page
+    window.location.href = '/update-password' + hash
+  }
+}
+
 const SupabaseContext = createContext<SupabaseContextType | undefined>(
   undefined
 )
