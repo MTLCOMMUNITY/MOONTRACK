@@ -73,16 +73,17 @@ Deno.serve(async (req: Request) => {
     return new Response('Referral link not found', { status: 200 })
   }
 
-  // Get influencer commission rate
+  // Get influencer commission rate and active status
   const { data: influencer } = await supabase
     .from('influencers')
-    .select('commission_rate')
+    .select('commission_rate, is_active')
     .eq('id', link.influencer_id)
     .single()
 
   const commissionRate = influencer?.commission_rate ?? 10
+  const isActive = influencer?.is_active ?? true
   const amount = txData.amount
-  const commission = Math.round((commissionRate / 100) * amount)
+  const commission = isActive ? Math.round((commissionRate / 100) * amount) : 0
 
   // Create conversion record
   const { data: conversion } = await supabase

@@ -64,10 +64,7 @@ Deno.serve(async (req: Request) => {
       logo: `${APP_URL}/moon-logo.png`,
     },
     meta: { 
-      ref_code,
-      student_email: email,
-      student_name: name,
-      student_phone: phone
+      ref_code
     },
   }
 
