@@ -19,7 +19,10 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { IconPlus } from '@tabler/icons-react'
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { IconPlus, IconDotsVertical, IconBan, IconCheck } from '@tabler/icons-react'
 
 type Influencer = {
   id: string
@@ -27,6 +30,7 @@ type Influencer = {
   email: string
   ref_code: string
   commission_rate: number
+  is_active: boolean
   created_at: string
 }
 
@@ -45,7 +49,7 @@ export function AdminInfluencers() {
   async function load() {
     const { data } = await supabase
       .from('influencers')
-      .select('id, full_name, email, ref_code, commission_rate, created_at')
+      .select('id, full_name, email, ref_code, commission_rate, is_active, created_at')
       .order('created_at', { ascending: false })
     setInfluencers((data as Influencer[]) ?? [])
     setLoading(false)
@@ -87,6 +91,31 @@ export function AdminInfluencers() {
       toast.error(err.message ?? 'Failed to invite')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  async function toggleStatus(id: string, currentStatus: boolean) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/toggle-influencer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+          influencer_id: id,
+          is_active: !currentStatus
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to update status')
+
+      toast.success(`Influencer ${!currentStatus ? 'reactivated' : 'suspended'} successfully`)
+      load()
+    } catch (err: any) {
+      toast.error(err.message ?? 'Failed to update status')
     }
   }
 
@@ -148,8 +177,10 @@ export function AdminInfluencers() {
                       <TableHead>Name</TableHead>
                       <TableHead>Ref Code</TableHead>
                       <TableHead>Rate</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Joined</TableHead>
+                      <TableHead className='w-[50px]'></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -161,9 +192,28 @@ export function AdminInfluencers() {
                         </TableCell>
                         <TableCell><Badge variant='outline' className='font-mono'>{inf.ref_code}</Badge></TableCell>
                         <TableCell>{inf.commission_rate}%</TableCell>
+                        <TableCell>
+                          <Badge variant={inf.is_active ? 'default' : 'destructive'} className={inf.is_active ? 'bg-green-600 hover:bg-green-700' : ''}>
+                            {inf.is_active ? 'Active' : 'Suspended'}
+                          </Badge>
+                        </TableCell>
                         <TableCell className='text-sm text-muted-foreground'>Influencer</TableCell>
                         <TableCell className='text-xs text-muted-foreground'>
                           {new Date(inf.created_at).toLocaleDateString('en-GB')}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant='ghost' size='icon' className='h-8 w-8'>
+                                <IconDotsVertical className='h-4 w-4' />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end'>
+                              <DropdownMenuItem onClick={() => toggleStatus(inf.id, inf.is_active)} className={inf.is_active ? 'text-red-600' : 'text-green-600'}>
+                                {inf.is_active ? <><IconBan className='mr-2 h-4 w-4' /> Suspend Influencer</> : <><IconCheck className='mr-2 h-4 w-4' /> Reactivate Influencer</>}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
                     ))}
