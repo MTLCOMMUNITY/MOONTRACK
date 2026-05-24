@@ -64,7 +64,7 @@ export function AdminReferrals() {
   // Form state
   const [selectedInfluencer, setSelectedInfluencer] = useState('')
   const [refCode, setRefCode] = useState('')
-  const [targetUrl, setTargetUrl] = useState('https://moontechlife.com/register')
+  const [targetUrl] = useState('https://moontechlife.com/register')
 
   async function load() {
     setLoading(true)

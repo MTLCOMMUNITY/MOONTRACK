@@ -7,7 +7,6 @@ import {
   IconUserCog,
   IconPalette,
   IconBell,
-  IconTool,
   IconUsers,
   IconChartBar,
   IconCreditCard,
