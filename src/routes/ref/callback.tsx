@@ -4,9 +4,9 @@ import { IconMoon, IconCircleCheck, IconCircleX, IconLoader2 } from '@tabler/ico
 import { z } from 'zod'
 
 const searchSchema = z.object({
-  transaction_id: z.string().optional(),
-  tx_ref: z.string().optional(),
-  status: z.string().optional(),
+  transaction_id: z.coerce.string().optional(),
+  tx_ref: z.coerce.string().optional(),
+  status: z.coerce.string().optional(),
 })
 
 export const Route = createFileRoute('/ref/callback')({
@@ -33,7 +33,10 @@ function CallbackPage() {
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment`,
           {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          },
             body: JSON.stringify({ transaction_id, tx_ref }),
           }
         )
