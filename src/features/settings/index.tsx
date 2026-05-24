@@ -14,11 +14,7 @@ const sidebarNavItems = [
     href: '/settings',
     icon: <UserCog size={18} />,
   },
-  {
-    title: 'Account',
-    href: '/settings/account',
-    icon: <Wrench size={18} />,
-  },
+
   {
     title: 'Appearance',
     href: '/settings/appearance',

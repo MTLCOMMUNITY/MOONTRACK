@@ -14,6 +14,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Analytics } from './components/analytics'
+import { Reports } from './components/reports'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
 import { useDashboard } from '@/hooks/use-dashboard'
@@ -71,11 +72,8 @@ export function Dashboard() {
             <TabsList>
               <TabsTrigger value='overview'>Overview</TabsTrigger>
               <TabsTrigger value='analytics'>Analytics</TabsTrigger>
-              <TabsTrigger value='reports' disabled>
+              <TabsTrigger value='reports'>
                 Reports
-              </TabsTrigger>
-              <TabsTrigger value='notifications' disabled>
-                Notifications
               </TabsTrigger>
             </TabsList>
           </div>
@@ -204,6 +202,9 @@ export function Dashboard() {
           <TabsContent value='analytics' className='space-y-4'>
             <Analytics />
           </TabsContent>
+          <TabsContent value='reports' className='space-y-4'>
+            <Reports />
+          </TabsContent>
         </Tabs>
       </Main>
     </>
@@ -212,21 +213,9 @@ export function Dashboard() {
 
 const topNav = [
   {
-    title: 'Overview',
-    href: 'dashboard/overview',
+    title: 'Dashboard',
+    href: '/dashboard',
     isActive: true,
     disabled: false,
-  },
-  {
-    title: 'Analytics',
-    href: 'dashboard/analytics',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Reports',
-    href: 'dashboard/reports',
-    isActive: false,
-    disabled: true,
   },
 ]

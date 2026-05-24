@@ -30,18 +30,18 @@ export function AnalyticsChart({ data }: AnalyticsChartProps) {
           type='monotone'
           dataKey='clicks'
           name='Clicks'
-          stroke='currentColor'
+          stroke='#2563eb'
           className='text-primary'
-          fill='currentColor'
+          fill='#2563eb'
           fillOpacity={0.15}
         />
         <Area
           type='monotone'
           dataKey='conversions'
           name='Conversions'
-          stroke='currentColor'
+          stroke='#10b981'
           className='text-muted-foreground'
-          fill='currentColor'
+          fill='#10b981'
           fillOpacity={0.1}
         />
       </AreaChart>
