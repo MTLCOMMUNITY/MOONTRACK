@@ -22,6 +22,7 @@ import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authUpdatePasswordRouteImport } from './routes/(auth)/update-password'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedOptcontrolRouteRouteImport } from './routes/_authenticated/optcontrol/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedOptcontrolPaymentsRouteImport } from './routes/_a
 import { Route as AuthenticatedOptcontrolInfluencersRouteImport } from './routes/_authenticated/optcontrol/influencers'
 import { Route as AuthenticatedOptcontrolConversionsRouteImport } from './routes/_authenticated/optcontrol/conversions'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedOptcontrolReferralsRouteRouteImport } from './routes/_authenticated/optcontrol/referrals/route'
 
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
@@ -102,6 +104,11 @@ const authUpdatePasswordRoute = authUpdatePasswordRouteImport.update({
 const authSignInRoute = authSignInRouteImport.update({
   id: '/(auth)/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
+  id: '/(auth)/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsRouteRoute =
@@ -206,6 +213,12 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedOptcontrolReferralsRouteRoute =
+  AuthenticatedOptcontrolReferralsRouteRouteImport.update({
+    id: '/referrals',
+    path: '/referrals',
+    getParentRoute: () => AuthenticatedOptcontrolRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -213,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/optcontrol': typeof AuthenticatedOptcontrolRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+  '/forgot-password': typeof authForgotPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/update-password': typeof authUpdatePasswordRoute
   '/401': typeof errors401Route
@@ -222,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/ref/$refCode': typeof RefRefCodeRoute
   '/ref/callback': typeof RefCallbackRoute
+  '/optcontrol/referrals': typeof AuthenticatedOptcontrolReferralsRouteRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/optcontrol/conversions': typeof AuthenticatedOptcontrolConversionsRoute
   '/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
@@ -241,6 +256,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/ai-website-bootcamp': typeof AiWebsiteBootcampRoute
   '/checkout': typeof CheckoutRoute
+  '/forgot-password': typeof authForgotPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/update-password': typeof authUpdatePasswordRoute
   '/401': typeof errors401Route
@@ -251,6 +267,7 @@ export interface FileRoutesByTo {
   '/ref/$refCode': typeof RefRefCodeRoute
   '/ref/callback': typeof RefCallbackRoute
   '/': typeof AuthenticatedIndexRoute
+  '/optcontrol/referrals': typeof AuthenticatedOptcontrolReferralsRouteRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/optcontrol/conversions': typeof AuthenticatedOptcontrolConversionsRoute
   '/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
@@ -274,6 +291,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/_authenticated/optcontrol': typeof AuthenticatedOptcontrolRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+  '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/update-password': typeof authUpdatePasswordRoute
   '/(errors)/401': typeof errors401Route
@@ -284,6 +302,7 @@ export interface FileRoutesById {
   '/ref/$refCode': typeof RefRefCodeRoute
   '/ref/callback': typeof RefCallbackRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/optcontrol/referrals': typeof AuthenticatedOptcontrolReferralsRouteRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/optcontrol/conversions': typeof AuthenticatedOptcontrolConversionsRoute
   '/_authenticated/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
@@ -308,6 +327,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/optcontrol'
     | '/settings'
+    | '/forgot-password'
     | '/sign-in'
     | '/update-password'
     | '/401'
@@ -317,6 +337,7 @@ export interface FileRouteTypes {
     | '/503'
     | '/ref/$refCode'
     | '/ref/callback'
+    | '/optcontrol/referrals'
     | '/errors/$error'
     | '/optcontrol/conversions'
     | '/optcontrol/influencers'
@@ -336,6 +357,7 @@ export interface FileRouteTypes {
   to:
     | '/ai-website-bootcamp'
     | '/checkout'
+    | '/forgot-password'
     | '/sign-in'
     | '/update-password'
     | '/401'
@@ -346,6 +368,7 @@ export interface FileRouteTypes {
     | '/ref/$refCode'
     | '/ref/callback'
     | '/'
+    | '/optcontrol/referrals'
     | '/errors/$error'
     | '/optcontrol/conversions'
     | '/optcontrol/influencers'
@@ -368,6 +391,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/_authenticated/optcontrol'
     | '/_authenticated/settings'
+    | '/(auth)/forgot-password'
     | '/(auth)/sign-in'
     | '/(auth)/update-password'
     | '/(errors)/401'
@@ -378,6 +402,7 @@ export interface FileRouteTypes {
     | '/ref/$refCode'
     | '/ref/callback'
     | '/_authenticated/'
+    | '/_authenticated/optcontrol/referrals'
     | '/_authenticated/errors/$error'
     | '/_authenticated/optcontrol/conversions'
     | '/_authenticated/optcontrol/influencers'
@@ -399,6 +424,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AiWebsiteBootcampRoute: typeof AiWebsiteBootcampRoute
   CheckoutRoute: typeof CheckoutRoute
+  authForgotPasswordRoute: typeof authForgotPasswordRoute
   authSignInRoute: typeof authSignInRoute
   authUpdatePasswordRoute: typeof authUpdatePasswordRoute
   errors401Route: typeof errors401Route
@@ -501,6 +527,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/forgot-password': {
+      id: '/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings': {
@@ -622,10 +655,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/optcontrol/referrals': {
+      id: '/_authenticated/optcontrol/referrals'
+      path: '/referrals'
+      fullPath: '/optcontrol/referrals'
+      preLoaderRoute: typeof AuthenticatedOptcontrolReferralsRouteRouteImport
+      parentRoute: typeof AuthenticatedOptcontrolRouteRoute
+    }
   }
 }
 
 interface AuthenticatedOptcontrolRouteRouteChildren {
+  AuthenticatedOptcontrolReferralsRouteRoute: typeof AuthenticatedOptcontrolReferralsRouteRoute
   AuthenticatedOptcontrolConversionsRoute: typeof AuthenticatedOptcontrolConversionsRoute
   AuthenticatedOptcontrolInfluencersRoute: typeof AuthenticatedOptcontrolInfluencersRoute
   AuthenticatedOptcontrolPaymentsRoute: typeof AuthenticatedOptcontrolPaymentsRoute
@@ -636,6 +677,8 @@ interface AuthenticatedOptcontrolRouteRouteChildren {
 
 const AuthenticatedOptcontrolRouteRouteChildren: AuthenticatedOptcontrolRouteRouteChildren =
   {
+    AuthenticatedOptcontrolReferralsRouteRoute:
+      AuthenticatedOptcontrolReferralsRouteRoute,
     AuthenticatedOptcontrolConversionsRoute:
       AuthenticatedOptcontrolConversionsRoute,
     AuthenticatedOptcontrolInfluencersRoute:
@@ -702,6 +745,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AiWebsiteBootcampRoute: AiWebsiteBootcampRoute,
   CheckoutRoute: CheckoutRoute,
+  authForgotPasswordRoute: authForgotPasswordRoute,
   authSignInRoute: authSignInRoute,
   authUpdatePasswordRoute: authUpdatePasswordRoute,
   errors401Route: errors401Route,

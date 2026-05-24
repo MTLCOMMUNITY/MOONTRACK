@@ -35,11 +35,24 @@ export function useDashboard() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
+        const { data: influencer } = await supabase
+          .from('influencers')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (!influencer) {
+          setLoading(false)
+          return
+        }
+
+        const influencerId = influencer.id
+
         // Total clicks — sum of all referral_links.click_count
         const { data: linkData } = await supabase
           .from('referral_links')
           .select('click_count')
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencerId)
 
         const totalClicks =
           linkData?.reduce((sum, l) => sum + (l.click_count ?? 0), 0) ?? 0
@@ -48,13 +61,13 @@ export function useDashboard() {
         const { count: convCount } = await supabase
           .from('conversions')
           .select('id', { count: 'exact', head: true })
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencerId)
 
         // Commission earned (all confirmed payments)
         const { data: payData } = await supabase
           .from('payments')
           .select('commission_earned, status')
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencerId)
 
         const commissionEarned =
           payData
@@ -73,6 +86,7 @@ export function useDashboard() {
             `id, student_name, registered_at, payment_status,
              payments ( commission_earned )`
           )
+          .eq('influencer_id', influencerId)
           .order('registered_at', { ascending: false })
           .limit(5)
 

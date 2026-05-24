@@ -39,11 +39,22 @@ export function useAnalytics() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
+        const { data: influencer } = await supabase
+          .from('influencers')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (!influencer) {
+          setLoading(false)
+          return
+        }
+
         // ── Referral links ─────────────────────────────────
         const { data: links } = await supabase
           .from('referral_links')
           .select('ref_code, click_count, is_active')
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencer.id)
 
         const totalClicks =
           links?.reduce((s, l) => s + (l.click_count ?? 0), 0) ?? 0
@@ -54,7 +65,7 @@ export function useAnalytics() {
         const { data: conversions } = await supabase
           .from('conversions')
           .select('id, ref_code, registered_at')
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencer.id)
 
         const totalConversions = conversions?.length ?? 0
         const conversionRate =
@@ -120,6 +131,7 @@ export function useAnalytics() {
         const { data: payments } = await supabase
           .from('payments')
           .select('commission_earned, status')
+          .eq('influencer_id', influencer.id)
 
         const confirmed = payments?.filter((p) => p.status === 'confirmed') ?? []
         const avgCommission =

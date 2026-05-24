@@ -102,6 +102,11 @@ export const adminNavGroups = [
         icon: IconCreditCard,
       },
       {
+        title: 'Referral Links',
+        url: '/optcontrol/referrals',
+        icon: IconLink,
+      },
+      {
         title: 'Payments',
         url: '/optcontrol/payments',
         icon: IconCash,

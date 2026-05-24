@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
@@ -25,11 +25,7 @@ const formSchema = z.object({
   }),
   password: z
     .string()
-    .min(1, 'Please enter your passphrase.')
-    .min(8, 'Passphrase must be at least 8 characters long.')
-    .regex(/[A-Z]/, 'Passphrase must contain at least one uppercase letter.')
-    .regex(/[a-z]/, 'Passphrase must contain at least one lowercase letter.')
-    .regex(/[!@#$%^&*(),.?":{}|<>\\[\]\\/`~_+\-=]/, 'Passphrase must contain at least one symbol.'),
+    .min(1, 'Please enter your password.')
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -105,7 +101,16 @@ export function UserAuthForm({
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Passphrase</FormLabel>
+              <FormLabel className='flex justify-between'>
+                <span>Password</span>
+                <Link
+                  to='/forgot-password'
+                  className='text-xs font-medium text-primary hover:underline'
+                  tabIndex={-1}
+                >
+                  Forgot password?
+                </Link>
+              </FormLabel>
               <FormControl>
                 <PasswordInput
                   placeholder='••••••••'

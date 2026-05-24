@@ -21,13 +21,24 @@ export function useReports() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
+        const { data: influencer } = await supabase
+          .from('influencers')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (!influencer) {
+          setLoading(false)
+          return
+        }
+
         const { data: convData, error: convError } = await supabase
           .from('conversions')
           .select(
             `id, student_name, registered_at, ref_code, payment_status,
              payments ( commission_earned )`
           )
-          .eq('influencer_id', user.id)
+          .eq('influencer_id', influencer.id)
           .order('registered_at', { ascending: false })
 
         if (convError) throw convError

@@ -25,12 +25,23 @@ export function usePayouts() {
         return
       }
 
+      const { data: influencer } = await supabase
+        .from('influencers')
+        .select('id')
+        .eq('user_id', user.id)
+        .single()
+
+      if (!influencer) {
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('payouts')
         .select(
           'id, amount, payout_date, method, reference, status, note'
         )
-        .eq('influencer_id', user.id)
+        .eq('influencer_id', influencer.id)
         .order('payout_date', { ascending: false })
 
       if (error) {

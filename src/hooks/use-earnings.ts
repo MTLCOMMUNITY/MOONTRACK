@@ -34,6 +34,17 @@ export function useEarnings() {
       return
     }
 
+    const { data: influencer } = await supabase
+      .from('influencers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!influencer) {
+      setLoading(false)
+      return
+    }
+
     const { data, error } = await supabase
       .from('payments')
       .select(
@@ -50,7 +61,7 @@ export function useEarnings() {
         )
       `
       )
-      .eq('influencer_id', user.id)
+      .eq('influencer_id', influencer.id)
       .order('payment_date', { ascending: false })
 
     if (error) {
@@ -71,11 +82,19 @@ export function useEarnings() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
+      const { data: influencer } = await supabase
+        .from('influencers')
+        .select('id')
+        .eq('user_id', user.id)
+        .single()
+      
+      if (!influencer) return
+
       channel = supabase
         .channel('payments-realtime')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'payments', filter: `influencer_id=eq.${user.id}` },
+          { event: '*', schema: 'public', table: 'payments', filter: `influencer_id=eq.${influencer.id}` },
           () => {
             fetchPayments()
           }
