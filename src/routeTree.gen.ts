@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as AiWebsiteBootcampRouteImport } from './routes/ai-website-bootcamp'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as RefCallbackRouteImport } from './routes/ref/callback'
@@ -42,6 +43,11 @@ import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenti
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiWebsiteBootcampRoute = AiWebsiteBootcampRouteImport.update({
+  id: '/ai-website-bootcamp',
+  path: '/ai-website-bootcamp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -203,6 +209,7 @@ const AuthenticatedErrorsErrorRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/ai-website-bootcamp': typeof AiWebsiteBootcampRoute
   '/checkout': typeof CheckoutRoute
   '/optcontrol': typeof AuthenticatedOptcontrolRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -232,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/ai-website-bootcamp': typeof AiWebsiteBootcampRoute
   '/checkout': typeof CheckoutRoute
   '/sign-in': typeof authSignInRoute
   '/update-password': typeof authUpdatePasswordRoute
@@ -262,6 +270,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/ai-website-bootcamp': typeof AiWebsiteBootcampRoute
   '/checkout': typeof CheckoutRoute
   '/_authenticated/optcontrol': typeof AuthenticatedOptcontrolRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -295,6 +304,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-website-bootcamp'
     | '/checkout'
     | '/optcontrol'
     | '/settings'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/ai-website-bootcamp'
     | '/checkout'
     | '/sign-in'
     | '/update-password'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/ai-website-bootcamp'
     | '/checkout'
     | '/_authenticated/optcontrol'
     | '/_authenticated/settings'
@@ -385,6 +397,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AiWebsiteBootcampRoute: typeof AiWebsiteBootcampRoute
   CheckoutRoute: typeof CheckoutRoute
   authSignInRoute: typeof authSignInRoute
   authUpdatePasswordRoute: typeof authUpdatePasswordRoute
@@ -404,6 +417,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-website-bootcamp': {
+      id: '/ai-website-bootcamp'
+      path: '/ai-website-bootcamp'
+      fullPath: '/ai-website-bootcamp'
+      preLoaderRoute: typeof AiWebsiteBootcampRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -680,6 +700,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AiWebsiteBootcampRoute: AiWebsiteBootcampRoute,
   CheckoutRoute: CheckoutRoute,
   authSignInRoute: authSignInRoute,
   authUpdatePasswordRoute: authUpdatePasswordRoute,

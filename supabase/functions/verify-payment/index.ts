@@ -49,17 +49,27 @@ Deno.serve(async (req: Request) => {
   const FLW_SECRET_KEY = Deno.env.get('FLW_SECRET_KEY')
 
   // Verify with Flutterwave
-  const verifyRes = await fetch(
-    `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`,
-    { headers: { Authorization: `Bearer ${FLW_SECRET_KEY}` } }
-  )
-  const verifyData = await verifyRes.json()
+  let verifyData: any
+  try {
+    const verifyRes = await fetch(
+      `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`,
+      { headers: { Authorization: `Bearer ${FLW_SECRET_KEY}` } }
+    )
+    verifyData = await verifyRes.json()
+  } catch (fetchErr: any) {
+    console.error('Flutterwave verify fetch failed:', fetchErr)
+    return new Response(JSON.stringify({ ok: false, error: 'Could not reach Flutterwave. Please try again.' }), {
+      status: 502, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
 
   if (
     verifyData.status !== 'success' ||
     verifyData.data?.status !== 'successful'
   ) {
-    return new Response(JSON.stringify({ ok: false, error: 'Payment not verified' }), {
+    // Log the actual status so it's visible in Supabase function logs
+    console.warn('Flutterwave verify status:', verifyData.status, '| tx status:', verifyData.data?.status)
+    return new Response(JSON.stringify({ ok: false, error: 'Payment not verified', flw_status: verifyData.data?.status }), {
       status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
   }
