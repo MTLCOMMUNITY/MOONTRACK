@@ -1,0 +1,17 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    # Runs at 12:00 PM every day
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Vercel Frontend (which pings Supabase)
+        run: curl -s https://moontrack.vercel.app > /dev/null
+
+      - name: Ping Supabase Edge Function
+        run: curl -s -X OPTIONS https://esfvpxdmasqcqmsnnifi.supabase.co/functions/v1/verify-payment > /dev/null
