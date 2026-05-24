@@ -108,12 +108,19 @@ function CheckoutPage() {
           )}
         </div>
 
-        {/* Missing Ref Code Warning */}
-        {refCode === null && (
+        {/* Referral Status */}
+        {refCode === null ? (
           <div className='flex items-start gap-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-4 text-sm text-yellow-600 dark:text-yellow-500'>
             <IconAlertCircle className='mt-0.5 size-5 shrink-0' />
             <p>
               <strong>Invite required:</strong> You must have a valid referral invite link to join the program. Please click your invite link to proceed.
+            </p>
+          </div>
+        ) : (
+          <div className='flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-500'>
+            <div className='size-2 rounded-full bg-green-500 animate-pulse' />
+            <p>
+              Referral Code Applied: <strong className="font-mono">{refCode}</strong>
             </p>
           </div>
         )}
