@@ -36,7 +36,10 @@ function ReferralTracker() {
 
       if (link) {
         saveRefCode(refCode)
-        navigate({ to: '/checkout' })
+        // Redirect to the external sales page instead of directly to checkout.
+        // The refCode is already saved in localStorage for this domain, so when they 
+        // click 'Secure Your Spot' and come back to /checkout, it will still be applied.
+        window.location.href = 'https://www.moontechlife.com/ai-website-bootcamp'
       } else {
         setError(true)
       }
