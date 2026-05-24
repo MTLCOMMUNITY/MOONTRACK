@@ -1,13 +1,42 @@
+// @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-}
+declare const Deno: any;
+
+const rateLimit = new Map<string, { count: number; timestamp: number }>()
 
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get('origin') ?? ''
+  const appUrl = Deno.env.get('APP_URL') ?? 'https://moontrack.vercel.app'
+  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', appUrl]
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : appUrl
+
+  const CORS = {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS })
+
+  // Rate Limiting (10 requests per minute per IP)
+  const clientIp = req.headers.get('x-forwarded-for') || 'unknown'
+  const now = Date.now()
+  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
+
+  if (now - userRecord.timestamp > 60000) {
+    userRecord.count = 1
+    userRecord.timestamp = now
+  } else {
+    userRecord.count++
+  }
+  rateLimit.set(clientIp, userRecord)
+
+  if (userRecord.count > 10) {
+    return new Response(JSON.stringify({ ok: false, error: 'Too many requests. Please try again later.' }), {
+      status: 429,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
 
   const { transaction_id, tx_ref } = await req.json()
 
@@ -49,6 +78,27 @@ Deno.serve(async (req: Request) => {
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
+
+  // Check if payment already exists to prevent double-crediting
+  const { data: existingPayment } = await supabase
+    .from('payments')
+    .select('id')
+    .eq('tx_ref', tx_ref)
+    .maybeSingle()
+
+  if (existingPayment) {
+    // Already processed (likely by webhook)
+    const { data: settings } = await supabase
+      .from('app_settings')
+      .select('value')
+      .eq('key', 'course_name')
+      .single()
+
+    return new Response(
+      JSON.stringify({ ok: true, course_name: settings?.value }),
+      { status: 200, headers: { ...CORS, 'Content-Type': 'application/json' } }
+    )
+  }
 
   // Get influencer by ref_code
   const { data: link } = await supabase
