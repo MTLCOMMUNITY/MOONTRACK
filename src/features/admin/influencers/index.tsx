@@ -12,6 +12,11 @@ import {
   DialogHeader, DialogTitle, DialogTrigger,
 } from '@/components/ui/dialog'
 import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow,
 } from '@/components/ui/table'
@@ -39,6 +44,7 @@ export function AdminInfluencers() {
   const [influencers, setInfluencers] = useState<Influencer[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null)
 
   // New influencer form state
   const [inviteEmail, setInviteEmail] = useState('')
@@ -134,10 +140,6 @@ export function AdminInfluencers() {
   }
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Are you absolutely sure you want to hard-delete influencer ${name}? This cannot be undone and will delete their referral links.`)) {
-      return
-    }
-    
     try {
       const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-influencer`, {
@@ -155,6 +157,7 @@ export function AdminInfluencers() {
       if (!res.ok) throw new Error(data.error || 'Failed to delete influencer')
 
       toast.success(`Influencer ${name} completely deleted.`)
+      setDeleteTarget(null)
       load()
     } catch (err: any) {
       toast.error(err.message ?? 'Failed to delete influencer')
@@ -263,7 +266,7 @@ export function AdminInfluencers() {
                                 {inf.is_active ? <><IconBan className='mr-2 h-4 w-4' /> Suspend Influencer</> : <><IconCheck className='mr-2 h-4 w-4' /> Reactivate Influencer</>}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleDelete(inf.id, inf.full_name)} className='text-red-600'>
+                              <DropdownMenuItem onClick={() => setDeleteTarget({ id: inf.id, name: inf.full_name })} className='text-red-600'>
                                 <IconTrash className='mr-2 h-4 w-4' /> Delete Influencer
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -278,6 +281,25 @@ export function AdminInfluencers() {
           </CardContent>
         </Card>
       </Main>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(isOpen) => !isOpen && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete <strong>{deleteTarget?.name}</strong> and remove all their referral links from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (deleteTarget) handleDelete(deleteTarget.id, deleteTarget.name)
+            }} className="bg-red-600 hover:bg-red-700 text-white">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
