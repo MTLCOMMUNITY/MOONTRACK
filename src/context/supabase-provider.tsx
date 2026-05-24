@@ -32,8 +32,14 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     // Listen for auth state changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
+      
+      // When a user clicks an invite link or forgot password link,
+      // Supabase fires the PASSWORD_RECOVERY event.
+      if (event === 'PASSWORD_RECOVERY') {
+        window.location.href = '/update-password'
+      }
     })
 
     return () => subscription.unsubscribe()
