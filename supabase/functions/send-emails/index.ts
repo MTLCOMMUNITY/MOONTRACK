@@ -62,7 +62,7 @@ Deno.serve(async (req: Request) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'MoonTech Life <onboarding@resend.dev>', // Change to your verified domain later
+        from: 'MoonTech Life <noreply@moontechlife.com>',
         to: conversion.student_email,
         subject: 'Welcome to MoonTech Life! 🚀',
         html: `
@@ -95,7 +95,7 @@ Deno.serve(async (req: Request) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'MoonTrack <onboarding@resend.dev>', // Change to your verified domain later
+        from: 'MoonTrack <noreply@moontechlife.com>',
         to: influencer.email,
         subject: 'Cha-ching! New Commission Earned 💰',
         html: `
