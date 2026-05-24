@@ -162,7 +162,7 @@ export function ProfileForm() {
               <Skeleton className='h-6 w-full' />
             ) : (
               <p className='break-all font-mono text-xs text-muted-foreground'>
-                https://moontechlife.com/register?ref={profile?.ref_code ?? '—'}
+                https://moontrack.moontechlife.com/ref/{profile?.ref_code ?? '—'}
               </p>
             )}
           </div>

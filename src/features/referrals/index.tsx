@@ -23,7 +23,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { CopyInput } from '@/components/copy-input'
 import { useReferrals, type ReferralLink } from '@/hooks/use-referrals'
 
-const BASE_URL = 'https://moontechlife.com/register'
+const BASE_URL = 'https://moontrack.moontechlife.com/ref/'
 
 function StatusBadge({ isActive }: { isActive: boolean }) {
   return isActive ? (
@@ -59,7 +59,7 @@ function LinkCardSkeleton() {
 }
 
 function LinkCard({ link }: { link: ReferralLink }) {
-  const fullUrl = `${BASE_URL}?ref=${link.ref_code}`
+  const fullUrl = `${BASE_URL}${link.ref_code}`
 
   return (
     <Card className='flex flex-col gap-0'>
@@ -184,7 +184,7 @@ export function Referrals() {
                   </TableHeader>
                   <TableBody>
                     {links.map((link) => {
-                      const fullUrl = `${BASE_URL}?ref=${link.ref_code}`
+                      const fullUrl = `${BASE_URL}${link.ref_code}`
                       return (
                         <TableRow key={link.id}>
                           <TableCell className='font-mono font-semibold'>
