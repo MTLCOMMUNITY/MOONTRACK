@@ -5,15 +5,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 declare const Deno: any;
 
 Deno.serve(async (req: Request) => {
-  const origin = req.headers.get('origin') ?? ''
-  const appUrl = Deno.env.get('APP_URL') ?? 'https://moontrack.vercel.app'
-  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', appUrl]
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : appUrl
-
   const CORS = {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   }
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS })
 
