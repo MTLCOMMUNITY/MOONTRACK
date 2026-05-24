@@ -20,9 +20,9 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
-import { IconPlus, IconDotsVertical, IconBan, IconCheck } from '@tabler/icons-react'
+import { IconPlus, IconDotsVertical, IconBan, IconCheck, IconTrash } from '@tabler/icons-react'
 
 type Influencer = {
   id: string
@@ -132,6 +132,34 @@ export function AdminInfluencers() {
     }
   }
 
+  async function handleDelete(id: string, name: string) {
+    if (!window.confirm(`Are you absolutely sure you want to hard-delete influencer ${name}? This cannot be undone and will delete their referral links.`)) {
+      return
+    }
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-influencer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+          influencer_id: id
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to delete influencer')
+
+      toast.success(`Influencer ${name} completely deleted.`)
+      load()
+    } catch (err: any) {
+      toast.error(err.message ?? 'Failed to delete influencer')
+    }
+  }
+
   return (
     <>
       <Header>
@@ -230,8 +258,12 @@ export function AdminInfluencers() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end'>
-                              <DropdownMenuItem onClick={() => toggleStatus(inf.id, inf.is_active)} className={inf.is_active ? 'text-red-600' : 'text-green-600'}>
+                              <DropdownMenuItem onClick={() => toggleStatus(inf.id, inf.is_active)} className={inf.is_active ? 'text-orange-600' : 'text-green-600'}>
                                 {inf.is_active ? <><IconBan className='mr-2 h-4 w-4' /> Suspend Influencer</> : <><IconCheck className='mr-2 h-4 w-4' /> Reactivate Influencer</>}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => handleDelete(inf.id, inf.full_name)} className='text-red-600'>
+                                <IconTrash className='mr-2 h-4 w-4' /> Delete Influencer
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
