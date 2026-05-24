@@ -22,7 +22,7 @@ function CallbackPage() {
 
   useEffect(() => {
     async function verify() {
-      if (!transaction_id || status !== 'successful') {
+      if (!transaction_id || (status !== 'successful' && status !== 'completed')) {
         setResult('failed')
         setVerifying(false)
         return
