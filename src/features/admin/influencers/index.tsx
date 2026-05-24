@@ -31,6 +31,7 @@ type Influencer = {
   ref_code: string
   commission_rate: number
   is_active: boolean
+  invite_accepted: boolean
   created_at: string
 }
 
@@ -47,12 +48,24 @@ export function AdminInfluencers() {
   const [submitting, setSubmitting] = useState(false)
 
   async function load() {
-    const { data } = await supabase
-      .from('influencers')
-      .select('id, full_name, email, ref_code, commission_rate, is_active, created_at')
-      .order('created_at', { ascending: false })
-    setInfluencers((data as Influencer[]) ?? [])
-    setLoading(false)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-get-influencers`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        }
+      })
+      
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to load influencers')
+      
+      setInfluencers((data as Influencer[]) ?? [])
+    } catch (err: any) {
+      toast.error(err.message ?? 'Failed to load influencers')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -193,9 +206,17 @@ export function AdminInfluencers() {
                         <TableCell><Badge variant='outline' className='font-mono'>{inf.ref_code}</Badge></TableCell>
                         <TableCell>{inf.commission_rate}%</TableCell>
                         <TableCell>
-                          <Badge variant={inf.is_active ? 'default' : 'destructive'} className={inf.is_active ? 'bg-green-600 hover:bg-green-700' : ''}>
-                            {inf.is_active ? 'Active' : 'Suspended'}
-                          </Badge>
+                          {!inf.is_active ? (
+                            <Badge variant='destructive'>Suspended</Badge>
+                          ) : !inf.invite_accepted ? (
+                            <Badge variant='outline' className='bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 border-yellow-500/20'>
+                              Pending (Invite Sent)
+                            </Badge>
+                          ) : (
+                            <Badge className='bg-green-600 hover:bg-green-700'>
+                              Active
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell className='text-sm text-muted-foreground'>Influencer</TableCell>
                         <TableCell className='text-xs text-muted-foreground'>
