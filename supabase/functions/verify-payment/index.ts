@@ -133,9 +133,9 @@ Deno.serve(async (req: Request) => {
     .insert({
       influencer_id: link.influencer_id,
       ref_code,
-      student_name: customer.name,
-      student_email: customer.email,
-      phone: customer.phone_number ?? null,
+      student_name: txData.meta?.student_name ?? customer.name,
+      student_email: txData.meta?.student_email ?? customer.email,
+      phone: txData.meta?.student_phone ?? customer.phone_number ?? null,
       payment_status: 'paid',
     })
     .select('id')

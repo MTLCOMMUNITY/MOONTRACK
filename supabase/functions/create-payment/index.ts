@@ -63,7 +63,12 @@ Deno.serve(async (req: Request) => {
       description: course_name ?? 'MoonTech Life Program',
       logo: `${APP_URL}/moon-logo.png`,
     },
-    meta: { ref_code },
+    meta: { 
+      ref_code,
+      student_email: email,
+      student_name: name,
+      student_phone: phone
+    },
   }
 
   const flwRes = await fetch('https://api.flutterwave.com/v3/payments', {
