@@ -11,10 +11,10 @@ function BootcampLandingPage() {
         <nav className='sticky top-0 z-50 bg-white shadow-sm'>
           <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
             <div className='flex h-16 items-center justify-between'>
-              <a href='/'>
+              <a href='https://www.moontechlife.com/'>
                 <div className='flex items-center space-x-3'>
                   <img
-                    src='/moonLogoVariation1.png'
+                    src='https://www.moontechlife.com/moonLogoVariation1.png'
                     alt='MoonTech Life'
                     className='h-10 w-10'
                   />
@@ -32,7 +32,7 @@ function BootcampLandingPage() {
                 </a>
                 <a
                   className='transform rounded-full bg-gradient-to-r from-blue-600 to-yellow-500 px-6 py-2 font-medium text-white transition-all hover:scale-105 hover:shadow-lg'
-                  href='/100-days-tech-challenge'
+                  href='https://www.moontechlife.com/100-days-tech-challenge'
                 >
                   100 Days Tech Challenge
                 </a>
@@ -895,8 +895,8 @@ function BootcampLandingPage() {
                       color: 'transparent',
                     }}
                     sizes='100vw'
-                    srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=3840&amp;q=75 3840w'
-                    src='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=3840&amp;q=75'
+                    srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=640&amp;q=75 640w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=750&amp;q=75 750w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=828&amp;q=75 828w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1080&amp;q=75 1080w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1200&amp;q=75 1200w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=1920&amp;q=75 1920w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=2048&amp;q=75 2048w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=3840&amp;q=75 3840w'
+                    src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage.png&amp;w=3840&amp;q=75'
                   />
                 </div>
                 <div className='flex-1'>
@@ -933,8 +933,8 @@ function BootcampLandingPage() {
                       color: 'transparent',
                     }}
                     sizes='100vw'
-                    srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=3840&amp;q=75 3840w'
-                    src='/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=3840&amp;q=75'
+                    srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=640&amp;q=75 640w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=750&amp;q=75 750w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=828&amp;q=75 828w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1080&amp;q=75 1080w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1200&amp;q=75 1200w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=1920&amp;q=75 1920w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=2048&amp;q=75 2048w, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=3840&amp;q=75 3840w'
+                    src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2F5bngru6q.png&amp;w=3840&amp;q=75'
                   />
                 </div>
                 <div className='flex-1'>
@@ -997,8 +997,8 @@ function BootcampLandingPage() {
                         data-nimg='1'
                         className='h-full w-full rounded-full object-cover'
                         style={{ color: 'transparent' }}
-                        srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=128&amp;q=75 1x, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=256&amp;q=75 2x'
-                        src='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=256&amp;q=75'
+                        srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=128&amp;q=75 1x, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=256&amp;q=75 2x'
+                        src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%202.png&amp;w=256&amp;q=75'
                       />
                     </div>
                   </div>
@@ -1171,8 +1171,8 @@ function BootcampLandingPage() {
                         data-nimg='1'
                         className='h-full w-full rounded-full object-cover'
                         style={{ color: 'transparent' }}
-                        srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=128&amp;q=75 1x, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=256&amp;q=75 2x'
-                        src='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=256&amp;q=75'
+                        srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=128&amp;q=75 1x, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=256&amp;q=75 2x'
+                        src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%203.png&amp;w=256&amp;q=75'
                       />
                     </div>
                   </div>
@@ -1345,8 +1345,8 @@ function BootcampLandingPage() {
                         data-nimg='1'
                         className='h-full w-full rounded-full object-cover'
                         style={{ color: 'transparent' }}
-                        srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=128&amp;q=75 1x, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=256&amp;q=75 2x'
-                        src='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=256&amp;q=75'
+                        srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=128&amp;q=75 1x, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=256&amp;q=75 2x'
+                        src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%204.png&amp;w=256&amp;q=75'
                       />
                     </div>
                   </div>
@@ -1519,8 +1519,8 @@ function BootcampLandingPage() {
                         data-nimg='1'
                         className='h-full w-full rounded-full object-cover'
                         style={{ color: 'transparent' }}
-                        srcSet='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=128&amp;q=75 1x, /_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=256&amp;q=75 2x'
-                        src='/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=256&amp;q=75'
+                        srcSet='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=128&amp;q=75 1x, https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=256&amp;q=75 2x'
+                        src='https://www.moontechlife.com/_next/image?url=%2Fimages%2Fbootcamp%2Fimage%20copy%205.png&amp;w=256&amp;q=75'
                       />
                     </div>
                   </div>
@@ -1672,7 +1672,7 @@ function BootcampLandingPage() {
                     preload='metadata'
                   >
                     <source
-                      src='/videos/WhatsApp Video 2026-04-01 at 18.19.52.mp4'
+                      src='https://www.moontechlife.com/videos/WhatsApp%20Video%202026-04-01%20at%2018.19.52.mp4'
                       type='video/mp4'
                     />
                     Your browser does not support the video tag.
@@ -1721,7 +1721,7 @@ function BootcampLandingPage() {
                     preload='metadata'
                   >
                     <source
-                      src='/videos/WhatsApp Video 2026-04-02 at 22.47.26.mp4'
+                      src='https://www.moontechlife.com/videos/WhatsApp%20Video%202026-04-02%20at%2022.47.26.mp4'
                       type='video/mp4'
                     />
                     Your browser does not support the video tag.
@@ -1781,7 +1781,7 @@ function BootcampLandingPage() {
                     preload='metadata'
                   >
                     <source
-                      src='/videos/WhatsApp Video 2026-04-08 at 11.40.14.mp4'
+                      src='https://www.moontechlife.com/videos/WhatsApp%20Video%202026-04-08%20at%2011.40.14.mp4'
                       type='video/mp4'
                     />
                     Your browser does not support the video tag.
@@ -2542,14 +2542,14 @@ function BootcampLandingPage() {
           <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
             <div className='grid gap-8 md:grid-cols-4'>
               <div className='md:col-span-2'>
-                <div className='mb-4 flex items-center space-x-3'>
+                <a href='https://www.moontechlife.com/' className='mb-4 flex items-center space-x-3 hover:opacity-80 transition-opacity'>
                   <img
-                    src='/moonLogoVariation1.png'
+                    src='https://www.moontechlife.com/moonLogoVariation1.png'
                     alt='MoonTech Life'
                     className='h-8 w-8'
                   />
                   <span className='text-xl font-bold'>MoonTech Life</span>
-                </div>
+                </a>
                 <p className='mb-4 max-w-md text-gray-400'>
                   Empowering the next generation of tech professionals through
                   free, comprehensive training and community support.
@@ -2599,7 +2599,7 @@ function BootcampLandingPage() {
                   <li>
                     <a
                       className='text-gray-400 transition-colors hover:text-white'
-                      href='/100-days-tech-challenge'
+                      href='https://www.moontechlife.com/100-days-tech-challenge'
                     >
                       100 Days Tech Challenge
                     </a>
