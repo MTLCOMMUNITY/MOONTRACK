@@ -19,7 +19,10 @@ function ReferralTracker() {
       // Track click
       fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-click`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
         body: JSON.stringify({ ref_code: refCode }),
       }).catch(() => {})
 
