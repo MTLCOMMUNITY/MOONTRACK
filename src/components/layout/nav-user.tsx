@@ -1,6 +1,4 @@
-import { Link } from '@tanstack/react-router'
 import {
-  Bell,
   ChevronsUpDown,
   LogOut,
 } from 'lucide-react'
@@ -77,12 +75,7 @@ export function NavUser({ user }: NavUserProps) {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
 
-                <DropdownMenuItem asChild>
-                  <Link to='/settings/notifications'>
-                    <Bell />
-                    Notifications
-                  </Link>
-                </DropdownMenuItem>
+
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem

@@ -18,11 +18,19 @@ export function usePayouts() {
 
   useEffect(() => {
     async function fetchPayouts() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setError('Not authenticated')
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('payouts')
         .select(
           'id, amount, payout_date, method, reference, status, note'
         )
+        .eq('influencer_id', user.id)
         .order('payout_date', { ascending: false })
 
       if (error) {

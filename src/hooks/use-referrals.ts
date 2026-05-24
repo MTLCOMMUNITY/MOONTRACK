@@ -17,10 +17,18 @@ export function useReferrals() {
 
   useEffect(() => {
     async function fetchLinks() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setError('Not authenticated')
+        setLoading(false)
+        return
+      }
+
       // Fetch referral links
       const { data: linkData, error: linkError } = await supabase
         .from('referral_links')
         .select('id, ref_code, target_url, click_count, is_active')
+        .eq('influencer_id', user.id)
         .order('click_count', { ascending: false })
 
       if (linkError) {
@@ -35,6 +43,7 @@ export function useReferrals() {
           const { count } = await supabase
             .from('conversions')
             .select('id', { count: 'exact', head: true })
+            .eq('influencer_id', user.id)
             .eq('ref_code', link.ref_code)
 
           return { ...link, conversion_count: count ?? 0 }

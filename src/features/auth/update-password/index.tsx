@@ -17,13 +17,25 @@ export function UpdatePassword() {
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault()
     
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters long')
+    if (password.length < 8) {
+      toast.error('Passphrase must be at least 8 characters long')
+      return
+    }
+    if (!/[A-Z]/.test(password)) {
+      toast.error('Passphrase must contain at least one uppercase letter')
+      return
+    }
+    if (!/[a-z]/.test(password)) {
+      toast.error('Passphrase must contain at least one lowercase letter')
+      return
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>\\[\]\\/`~_+\-=]/.test(password)) {
+      toast.error('Passphrase must contain at least one symbol')
       return
     }
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
+      toast.error('Passphrases do not match')
       return
     }
 
@@ -35,10 +47,10 @@ export function UpdatePassword() {
 
       if (error) throw error
 
-      toast.success('Password updated successfully! Welcome to MoonTrack.')
+      toast.success('Passphrase updated successfully! Welcome to MoonTrack.')
       navigate({ to: '/' })
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update password')
+      toast.error(err.message || 'Failed to update passphrase')
     } finally {
       setLoading(false)
     }
@@ -49,16 +61,16 @@ export function UpdatePassword() {
       <Card className='mx-auto w-full max-w-md'>
         <CardHeader className='space-y-1 text-center'>
           <CardTitle className='text-2xl font-bold tracking-tight'>
-            Set Your Password
+            Set Your Passphrase
           </CardTitle>
           <CardDescription>
-            Please set a secure password for your new MoonTrack account.
+            Please set a secure passphrase. It must be at least 8 characters, with uppercase, lowercase, and a symbol.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleUpdate} className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='password'>New Password</Label>
+              <Label htmlFor='password'>New Passphrase</Label>
               <Input
                 id='password'
                 type='password'
@@ -69,7 +81,7 @@ export function UpdatePassword() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='confirm-password'>Confirm Password</Label>
+              <Label htmlFor='confirm-password'>Confirm Passphrase</Label>
               <Input
                 id='confirm-password'
                 type='password'
@@ -80,7 +92,7 @@ export function UpdatePassword() {
               />
             </div>
             <Button type='submit' className='w-full' disabled={loading}>
-              {loading ? 'Saving...' : 'Set Password'}
+              {loading ? 'Saving...' : 'Set Passphrase'}
             </Button>
           </form>
         </CardContent>

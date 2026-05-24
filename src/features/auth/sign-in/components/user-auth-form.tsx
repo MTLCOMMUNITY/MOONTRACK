@@ -25,8 +25,11 @@ const formSchema = z.object({
   }),
   password: z
     .string()
-    .min(1, 'Please enter your password.')
-    .min(7, 'Password must be at least 7 characters long.'),
+    .min(1, 'Please enter your passphrase.')
+    .min(8, 'Passphrase must be at least 8 characters long.')
+    .regex(/[A-Z]/, 'Passphrase must contain at least one uppercase letter.')
+    .regex(/[a-z]/, 'Passphrase must contain at least one lowercase letter.')
+    .regex(/[!@#$%^&*(),.?":{}|<>\\[\]\\/`~_+\-=]/, 'Passphrase must contain at least one symbol.'),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -102,7 +105,7 @@ export function UserAuthForm({
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Passphrase</FormLabel>
               <FormControl>
                 <PasswordInput
                   placeholder='••••••••'

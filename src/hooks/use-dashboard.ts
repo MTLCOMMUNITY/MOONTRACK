@@ -32,10 +32,14 @@ export function useDashboard() {
   useEffect(() => {
     async function fetchDashboard() {
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('Not authenticated')
+
         // Total clicks — sum of all referral_links.click_count
         const { data: linkData } = await supabase
           .from('referral_links')
           .select('click_count')
+          .eq('influencer_id', user.id)
 
         const totalClicks =
           linkData?.reduce((sum, l) => sum + (l.click_count ?? 0), 0) ?? 0
@@ -44,11 +48,13 @@ export function useDashboard() {
         const { count: convCount } = await supabase
           .from('conversions')
           .select('id', { count: 'exact', head: true })
+          .eq('influencer_id', user.id)
 
         // Commission earned (all confirmed payments)
         const { data: payData } = await supabase
           .from('payments')
           .select('commission_earned, status')
+          .eq('influencer_id', user.id)
 
         const commissionEarned =
           payData

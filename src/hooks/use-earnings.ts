@@ -27,6 +27,13 @@ export function useEarnings() {
   const [isLive, setIsLive] = useState(false)
 
   async function fetchPayments() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setError('Not authenticated')
+      setLoading(false)
+      return
+    }
+
     const { data, error } = await supabase
       .from('payments')
       .select(
@@ -43,6 +50,7 @@ export function useEarnings() {
         )
       `
       )
+      .eq('influencer_id', user.id)
       .order('payment_date', { ascending: false })
 
     if (error) {
@@ -56,22 +64,29 @@ export function useEarnings() {
   useEffect(() => {
     fetchPayments()
 
-    // Realtime subscription
-    const channel = supabase
-      .channel('payments-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'payments' },
-        () => {
-          fetchPayments()
-        }
-      )
-      .subscribe((status) => {
-        setIsLive(status === 'SUBSCRIBED')
-      })
+    // Wrap the channel setup in an async IIFE to wait for auth
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      channel = supabase
+        .channel('payments-realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'payments', filter: `influencer_id=eq.${user.id}` },
+          () => {
+            fetchPayments()
+          }
+        )
+        .subscribe((status) => {
+          setIsLive(status === 'SUBSCRIBED')
+        })
+    })()
 
     return () => {
-      supabase.removeChannel(channel)
+      if (channel) supabase.removeChannel(channel)
     }
   }, [])
 

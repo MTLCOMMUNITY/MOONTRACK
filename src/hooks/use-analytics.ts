@@ -36,10 +36,14 @@ export function useAnalytics() {
   useEffect(() => {
     async function fetch() {
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('Not authenticated')
+
         // ── Referral links ─────────────────────────────────
         const { data: links } = await supabase
           .from('referral_links')
           .select('ref_code, click_count, is_active')
+          .eq('influencer_id', user.id)
 
         const totalClicks =
           links?.reduce((s, l) => s + (l.click_count ?? 0), 0) ?? 0
@@ -50,6 +54,7 @@ export function useAnalytics() {
         const { data: conversions } = await supabase
           .from('conversions')
           .select('id, ref_code, registered_at')
+          .eq('influencer_id', user.id)
 
         const totalConversions = conversions?.length ?? 0
         const conversionRate =

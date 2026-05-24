@@ -18,12 +18,16 @@ export function useReports() {
   useEffect(() => {
     async function fetchReports() {
       try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('Not authenticated')
+
         const { data: convData, error: convError } = await supabase
           .from('conversions')
           .select(
             `id, student_name, registered_at, ref_code, payment_status,
              payments ( commission_earned )`
           )
+          .eq('influencer_id', user.id)
           .order('registered_at', { ascending: false })
 
         if (convError) throw convError

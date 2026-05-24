@@ -73,11 +73,7 @@ export const sidebarData: SidebarData = {
               url: '/settings/appearance',
               icon: IconPalette,
             },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: IconBell,
-            },
+
           ],
         },
       ],
