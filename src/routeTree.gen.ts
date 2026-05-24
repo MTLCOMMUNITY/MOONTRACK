@@ -30,7 +30,6 @@ import { Route as AuthenticatedOptcontrolIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedEarningsIndexRouteImport } from './routes/_authenticated/earnings/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
-import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedOptcontrolSettingsRouteImport } from './routes/_authenticated/optcontrol/settings'
@@ -153,12 +152,6 @@ const AuthenticatedSettingsNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedSettingsDisplayRoute =
-  AuthenticatedSettingsDisplayRouteImport.update({
-    id: '/display',
-    path: '/display',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedSettingsAppearanceRoute =
   AuthenticatedSettingsAppearanceRouteImport.update({
     id: '/appearance',
@@ -230,7 +223,6 @@ export interface FileRoutesByFullPath {
   '/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
-  '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/earnings/': typeof AuthenticatedEarningsIndexRoute
@@ -259,7 +251,6 @@ export interface FileRoutesByTo {
   '/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
-  '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/earnings': typeof AuthenticatedEarningsIndexRoute
@@ -292,7 +283,6 @@ export interface FileRoutesById {
   '/_authenticated/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
-  '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/earnings/': typeof AuthenticatedEarningsIndexRoute
@@ -325,7 +315,6 @@ export interface FileRouteTypes {
     | '/optcontrol/settings'
     | '/settings/account'
     | '/settings/appearance'
-    | '/settings/display'
     | '/settings/notifications'
     | '/dashboard/'
     | '/earnings/'
@@ -354,7 +343,6 @@ export interface FileRouteTypes {
     | '/optcontrol/settings'
     | '/settings/account'
     | '/settings/appearance'
-    | '/settings/display'
     | '/settings/notifications'
     | '/dashboard'
     | '/earnings'
@@ -386,7 +374,6 @@ export interface FileRouteTypes {
     | '/_authenticated/optcontrol/settings'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
-    | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/dashboard/'
     | '/_authenticated/earnings/'
@@ -559,13 +546,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/settings/display': {
-      id: '/_authenticated/settings/display'
-      path: '/display'
-      fullPath: '/settings/display'
-      preLoaderRoute: typeof AuthenticatedSettingsDisplayRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
-    }
     '/_authenticated/settings/appearance': {
       id: '/_authenticated/settings/appearance'
       path: '/appearance'
@@ -654,7 +634,6 @@ const AuthenticatedOptcontrolRouteRouteWithChildren =
 interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
-  AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
@@ -663,7 +642,6 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
   {
     AuthenticatedSettingsAccountRoute: AuthenticatedSettingsAccountRoute,
     AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
-    AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
     AuthenticatedSettingsNotificationsRoute:
       AuthenticatedSettingsNotificationsRoute,
     AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
