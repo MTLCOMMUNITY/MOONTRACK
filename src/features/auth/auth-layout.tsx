@@ -11,8 +11,8 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Brand header */}
         <div className='flex flex-col items-center gap-2 text-center'>
-          <div className='flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md'>
-            <IconMoon className='size-6' />
+          <div className='flex size-16 items-center justify-center rounded-xl bg-primary/10 overflow-hidden'>
+            <img src='/moon-logo.png' alt='MoonTech Logo' className='size-16 object-contain' />
           </div>
           <div>
             <h1 className='text-2xl font-bold tracking-tight'>
