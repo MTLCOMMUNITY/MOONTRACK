@@ -30,8 +30,8 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
               <a href={currentUser.isAdmin ? '/optcontrol' : '/dashboard'}>
-                <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                  <IconMoon className='size-4' />
+                <div className='flex aspect-square size-10 items-center justify-center rounded-lg bg-sidebar-primary/10 overflow-hidden'>
+                  <img src='/moon-logo.png' alt='Logo' className='size-10 object-contain' />
                 </div>
                 <div className='grid flex-1 text-start text-sm leading-tight'>
                   <span className='truncate font-semibold'>MoonTrack</span>

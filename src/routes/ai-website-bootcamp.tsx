@@ -14,7 +14,7 @@ function BootcampLandingPage() {
               <a href='https://www.moontechlife.com/'>
                 <div className='flex items-center space-x-3'>
                   <img
-                    src='https://www.moontechlife.com/moonLogoVariation1.png'
+                    src='/moon-logo.png'
                     alt='MoonTech Life'
                     className='h-10 w-10'
                   />
@@ -2544,7 +2544,7 @@ function BootcampLandingPage() {
               <div className='md:col-span-2'>
                 <a href='https://www.moontechlife.com/' className='mb-4 flex items-center space-x-3 hover:opacity-80 transition-opacity'>
                   <img
-                    src='https://www.moontechlife.com/moonLogoVariation1.png'
+                    src='/moon-logo.png'
                     alt='MoonTech Life'
                     className='h-8 w-8'
                   />
