@@ -5,7 +5,7 @@ export const Route = createFileRoute('/ai-website-bootcamp')({
   component: BootcampLandingPage,
 })
 
-function CountdownTimer() {
+function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
   const [timeLeft, setTimeLeft] = useState({
     days: 10,
     hours: 4,
@@ -45,7 +45,11 @@ function CountdownTimer() {
         { label: 'Secs', value: timeLeft.seconds },
       ].map((item, i) => (
         <div key={i} className='text-center'>
-          <div className='min-w-[68px] rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm'>
+          <div className={`min-w-[68px] rounded-xl border p-3 backdrop-blur-sm ${
+            isDarkBg 
+              ? 'border-white/10 bg-white/5' 
+              : 'border-[#0A0F1E]/20 bg-[#0A0F1E]'
+          }`}>
             <span className='block text-2xl font-black text-white'>
               {item.value.toString().padStart(2, '0')}
             </span>
@@ -135,7 +139,7 @@ function BootcampLandingPage() {
               <p className='mb-4 text-center text-xs font-bold tracking-widest text-yellow-400 uppercase'>
                 Early bird discount expires in:
               </p>
-              <CountdownTimer />
+              <CountdownTimer isDarkBg={true} />
             </div>
 
             <Link
