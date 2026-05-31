@@ -108,11 +108,7 @@ function BootcampLandingPage() {
       {/* Hero Section */}
       <section className='relative flex min-h-[90vh] items-center overflow-hidden bg-[#E2E4E6] py-20'>
         <div className='relative z-10 mx-auto w-full max-w-5xl px-4 text-center sm:px-6 lg:px-8'>
-          
-          <div className='mb-6 inline-flex items-center gap-2 rounded-full border border-blue-600/30 bg-blue-600/10 px-6 py-2 text-sm font-bold text-blue-800 backdrop-blur-sm'>
-            <div className='h-2 w-2 animate-pulse rounded-full bg-blue-600'></div>
-            Start Date: 27th June
-          </div>
+
 
           <h1 className='mb-6 text-4xl leading-[1.1] font-black tracking-tight text-gray-900 md:text-5xl lg:text-6xl'>
             How To Build Websites With AI, Secure Them, And Charge Clients Between <span className='text-blue-700'>₦100,000</span> and <span className='text-blue-700'>₦500,000</span> Per Project.
