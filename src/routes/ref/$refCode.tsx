@@ -1,8 +1,8 @@
-import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
+import { IconMoon, IconLoader2 } from '@tabler/icons-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
-import { IconMoon, IconLoader2 } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/ref/$refCode')({
   component: ReferralTracker,
@@ -19,9 +19,9 @@ function ReferralTracker() {
       // Track click
       fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-click`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ ref_code: refCode }),
       }).catch(() => {})
@@ -59,9 +59,11 @@ function ReferralTracker() {
   }
 
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center bg-background gap-4'>
+    <div className='flex min-h-screen flex-col items-center justify-center gap-4 bg-background'>
       <IconLoader2 className='size-10 animate-spin text-primary' />
-      <p className='text-sm text-muted-foreground'>Applying your invite code...</p>
+      <p className='text-sm text-muted-foreground'>
+        Applying your invite code...
+      </p>
     </div>
   )
 }

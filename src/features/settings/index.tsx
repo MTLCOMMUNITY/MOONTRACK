@@ -20,7 +20,6 @@ const sidebarNavItems = [
     href: '/settings/appearance',
     icon: <Palette size={18} />,
   },
-
 ]
 
 export function Settings() {

@@ -6,8 +6,8 @@ import {
   type ReactNode,
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 
 interface SupabaseContextType {
   session: Session | null
@@ -19,7 +19,12 @@ interface SupabaseContextType {
 if (typeof window !== 'undefined') {
   const hash = window.location.hash
   const search = window.location.search
-  if ((hash.includes('type=invite') || hash.includes('type=recovery') || search.includes('type=invite')) && !window.location.pathname.includes('/update-password')) {
+  if (
+    (hash.includes('type=invite') ||
+      hash.includes('type=recovery') ||
+      search.includes('type=invite')) &&
+    !window.location.pathname.includes('/update-password')
+  ) {
     // Preserve the hash so Supabase can process the auth token on the update-password page
     window.location.href = '/update-password' + hash
   }
@@ -54,7 +59,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
-      
+
       // When a user clicks an invite link or forgot password link,
       // Supabase fires the PASSWORD_RECOVERY event.
       if (event === 'PASSWORD_RECOVERY') {
@@ -92,11 +97,15 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       requestAnimationFrame(resetTimer)
     }
 
-    events.forEach(event => window.addEventListener(event, handleActivity, { passive: true }))
+    events.forEach((event) =>
+      window.addEventListener(event, handleActivity, { passive: true })
+    )
     resetTimer()
 
     return () => {
-      events.forEach(event => window.removeEventListener(event, handleActivity))
+      events.forEach((event) =>
+        window.removeEventListener(event, handleActivity)
+      )
       clearTimeout(timeoutId)
       clearTimeout(warningId)
     }
@@ -115,4 +124,3 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     </SupabaseContext.Provider>
   )
 }
-

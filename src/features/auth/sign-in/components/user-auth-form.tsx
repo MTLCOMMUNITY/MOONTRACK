@@ -23,9 +23,7 @@ const formSchema = z.object({
   email: z.email({
     error: (iss) => (iss.input === '' ? 'Please enter your email.' : undefined),
   }),
-  password: z
-    .string()
-    .min(1, 'Please enter your password.')
+  password: z.string().min(1, 'Please enter your password.'),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -65,7 +63,9 @@ export function UserAuthForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (lockoutTime !== null) {
-      toast.error(`Too many failed login attempts. Please wait ${lockoutTime} seconds.`)
+      toast.error(
+        `Too many failed login attempts. Please wait ${lockoutTime} seconds.`
+      )
       return
     }
 
@@ -81,7 +81,9 @@ export function UserAuthForm({
         setFailedAttempts(nextFailed)
         if (nextFailed >= 5) {
           setLockoutTime(30)
-          toast.error('Too many failed attempts. You have been locked out for 30 seconds.')
+          toast.error(
+            'Too many failed attempts. You have been locked out for 30 seconds.'
+          )
         } else {
           toast.error('Invalid email or password. Please try again.')
         }

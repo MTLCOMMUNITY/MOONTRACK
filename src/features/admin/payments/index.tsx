@@ -1,29 +1,39 @@
 import { useEffect, useState } from 'react'
+import { IconPlus } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  Dialog, DialogContent, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Select, SelectContent, SelectItem,
-  SelectTrigger, SelectValue,
-} from '@/components/ui/select'
-import {
-  Table, TableBody, TableCell, TableHead,
-  TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { IconPlus } from '@tabler/icons-react'
 
 type Payment = {
   id: string
@@ -38,10 +48,12 @@ type Payment = {
 type Influencer = { id: string; full_name: string }
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(n)
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  }).format(n)
 }
-
-
 
 export function AdminPayments() {
   const [payments, setPayments] = useState<Payment[]>([])
@@ -57,33 +69,47 @@ export function AdminPayments() {
 
   async function load() {
     const [{ data: p }, { data: inf }] = await Promise.all([
-      supabase.from('payments').select('id, amount, commission_earned, payment_date, status, transaction_ref, influencers(full_name)').order('payment_date', { ascending: false }),
+      supabase
+        .from('payments')
+        .select(
+          'id, amount, commission_earned, payment_date, status, transaction_ref, influencers(full_name)'
+        )
+        .order('payment_date', { ascending: false }),
       supabase.from('influencers').select('id, full_name'),
     ])
-    const rawPayments = p as unknown as (Omit<Payment, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
-    setPayments((rawPayments ?? []).map((x) => {
-      const inf = x.influencers
-      const name = Array.isArray(inf)
-        ? inf[0]?.full_name
-        : inf?.full_name
-      return {
-        id: x.id,
-        amount: x.amount,
-        commission_earned: x.commission_earned,
-        payment_date: x.payment_date,
-        status: x.status,
-        transaction_ref: x.transaction_ref,
-        influencer_name: name ?? '—'
-      }
-    }))
+    const rawPayments = p as unknown as
+      | (Omit<Payment, 'influencer_name'> & {
+          influencers: { full_name: string } | { full_name: string }[] | null
+        })[]
+      | null
+    setPayments(
+      (rawPayments ?? []).map((x) => {
+        const inf = x.influencers
+        const name = Array.isArray(inf) ? inf[0]?.full_name : inf?.full_name
+        return {
+          id: x.id,
+          amount: x.amount,
+          commission_earned: x.commission_earned,
+          payment_date: x.payment_date,
+          status: x.status,
+          transaction_ref: x.transaction_ref,
+          influencer_name: name ?? '—',
+        }
+      })
+    )
     setInfluencers((inf as Influencer[]) ?? [])
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+  }, [])
 
   async function handleCreate() {
-    if (!infId || !amount || !commission) { toast.error('Fill all required fields'); return }
+    if (!infId || !amount || !commission) {
+      toast.error('Fill all required fields')
+      return
+    }
     setSubmitting(true)
     const { error } = await supabase.from('payments').insert({
       influencer_id: infId,
@@ -92,9 +118,15 @@ export function AdminPayments() {
       status: 'confirmed',
       transaction_ref: txRef || null,
     })
-    if (error) { toast.error(error.message) } else {
+    if (error) {
+      toast.error(error.message)
+    } else {
       toast.success('Payment recorded')
-      setOpen(false); setInfId(''); setAmount(''); setCommission(''); setTxRef('')
+      setOpen(false)
+      setInfId('')
+      setAmount('')
+      setCommission('')
+      setTxRef('')
       load()
     }
     setSubmitting(false)
@@ -102,7 +134,7 @@ export function AdminPayments() {
 
   async function updateStatus(id: string, status: string) {
     await supabase.from('payments').update({ status }).eq('id', id)
-    setPayments((prev) => prev.map((p) => p.id === id ? { ...p, status } : p))
+    setPayments((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
     toast.success('Status updated')
   }
 
@@ -113,45 +145,83 @@ export function AdminPayments() {
         <div className='ms-auto flex items-center gap-2'>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size='sm'><IconPlus className='me-1 size-4' />Record Payment</Button>
+              <Button size='sm'>
+                <IconPlus className='me-1 size-4' />
+                Record Payment
+              </Button>
             </DialogTrigger>
             <DialogContent className='sm:max-w-md'>
-              <DialogHeader><DialogTitle>Record New Payment</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Record New Payment</DialogTitle>
+              </DialogHeader>
               <div className='space-y-4 py-2'>
                 <div className='space-y-1.5'>
                   <Label>Influencer *</Label>
                   <Select value={infId} onValueChange={setInfId}>
-                    <SelectTrigger><SelectValue placeholder='Select influencer' /></SelectTrigger>
-                    <SelectContent>{influencers.map((i) => <SelectItem key={i.id} value={i.id}>{i.full_name}</SelectItem>)}</SelectContent>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select influencer' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {influencers.map((i) => (
+                        <SelectItem key={i.id} value={i.id}>
+                          {i.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Student Payment Amount (₦) *</Label>
-                  <Input type='number' value={amount} onChange={(e) => setAmount(e.target.value)} placeholder='50000' />
+                  <Input
+                    type='number'
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder='50000'
+                  />
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Commission Earned (₦) *</Label>
-                  <Input type='number' value={commission} onChange={(e) => setCommission(e.target.value)} placeholder='5000' />
+                  <Input
+                    type='number'
+                    value={commission}
+                    onChange={(e) => setCommission(e.target.value)}
+                    placeholder='5000'
+                  />
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Transaction Reference</Label>
-                  <Input value={txRef} onChange={(e) => setTxRef(e.target.value)} placeholder='TXN_ABC123' />
+                  <Input
+                    value={txRef}
+                    onChange={(e) => setTxRef(e.target.value)}
+                    placeholder='TXN_ABC123'
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleCreate} disabled={submitting}>{submitting ? 'Saving…' : 'Record Payment'}</Button>
+                <Button onClick={handleCreate} disabled={submitting}>
+                  {submitting ? 'Saving…' : 'Record Payment'}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <ThemeSwitch /><ProfileDropdown />
+          <ThemeSwitch />
+          <ProfileDropdown />
         </div>
       </Header>
       <Main>
         <Card>
-          <CardHeader><CardTitle className='text-base font-semibold'>All Payments</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>
+              All Payments
+            </CardTitle>
+          </CardHeader>
           <CardContent className='p-0'>
             {loading ? (
-              <div className='space-y-3 p-6'>{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-10 w-full' />)}</div>
+              <div className='space-y-3 p-6'>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className='h-10 w-full' />
+                ))}
+              </div>
             ) : (
               <div className='overflow-x-auto'>
                 <Table>
@@ -168,17 +238,38 @@ export function AdminPayments() {
                   <TableBody>
                     {payments.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell className='font-medium'>{p.influencer_name}</TableCell>
-                        <TableCell className='text-right'>{fmt(p.amount)}</TableCell>
-                        <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>{fmt(p.commission_earned)}</TableCell>
-                        <TableCell className='font-mono text-xs text-muted-foreground'>{p.transaction_ref ?? '—'}</TableCell>
-                        <TableCell className='whitespace-nowrap text-xs text-muted-foreground'>{new Date(p.payment_date).toLocaleDateString('en-GB')}</TableCell>
+                        <TableCell className='font-medium'>
+                          {p.influencer_name}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          {fmt(p.amount)}
+                        </TableCell>
+                        <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>
+                          {fmt(p.commission_earned)}
+                        </TableCell>
+                        <TableCell className='font-mono text-xs text-muted-foreground'>
+                          {p.transaction_ref ?? '—'}
+                        </TableCell>
+                        <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
+                          {new Date(p.payment_date).toLocaleDateString('en-GB')}
+                        </TableCell>
                         <TableCell>
-                          <Select value={p.status} onValueChange={(v) => updateStatus(p.id, v)}>
-                            <SelectTrigger className='h-7 w-28 text-xs'><SelectValue /></SelectTrigger>
+                          <Select
+                            value={p.status}
+                            onValueChange={(v) => updateStatus(p.id, v)}
+                          >
+                            <SelectTrigger className='h-7 w-28 text-xs'>
+                              <SelectValue />
+                            </SelectTrigger>
                             <SelectContent>
                               {['confirmed', 'pending', 'reversed'].map((s) => (
-                                <SelectItem key={s} value={s} className='text-xs capitalize'>{s}</SelectItem>
+                                <SelectItem
+                                  key={s}
+                                  value={s}
+                                  className='text-xs capitalize'
+                                >
+                                  {s}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>

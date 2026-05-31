@@ -1,7 +1,13 @@
-import { createFileRoute, useSearch, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { IconMoon, IconCircleCheck, IconCircleX, IconLoader2, IconClock } from '@tabler/icons-react'
 import { z } from 'zod'
+import { createFileRoute, useSearch, Link } from '@tanstack/react-router'
+import {
+  IconMoon,
+  IconCircleCheck,
+  IconCircleX,
+  IconLoader2,
+  IconClock,
+} from '@tabler/icons-react'
 
 const searchSchema = z.object({
   transaction_id: z.coerce.string().optional(),
@@ -15,9 +21,13 @@ export const Route = createFileRoute('/ref/callback')({
 })
 
 function CallbackPage() {
-  const { transaction_id, tx_ref, status } = useSearch({ from: '/ref/callback' })
+  const { transaction_id, tx_ref, status } = useSearch({
+    from: '/ref/callback',
+  })
   const [verifying, setVerifying] = useState(true)
-  const [result, setResult] = useState<'success' | 'pending' | 'failed' | null>(null)
+  const [result, setResult] = useState<'success' | 'pending' | 'failed' | null>(
+    null
+  )
   const [courseName, setCourseName] = useState('MoonTech Life Program')
 
   useEffect(() => {
@@ -47,7 +57,7 @@ function CallbackPage() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify({ transaction_id, tx_ref }),
           }
@@ -78,7 +88,7 @@ function CallbackPage() {
 
   if (verifying) {
     return (
-      <div className='flex min-h-screen flex-col items-center justify-center bg-background gap-4'>
+      <div className='flex min-h-screen flex-col items-center justify-center gap-4 bg-background'>
         <IconLoader2 className='size-10 animate-spin text-primary' />
         <p className='text-sm text-muted-foreground'>Verifying your payment…</p>
       </div>
@@ -100,16 +110,20 @@ function CallbackPage() {
             <div className='space-y-1'>
               <h1 className='text-2xl font-bold'>Payment Successful!</h1>
               <p className='text-muted-foreground'>
-                Welcome to <span className='font-semibold text-foreground'>{courseName}</span>.
-                You'll receive a confirmation email shortly.
+                Welcome to{' '}
+                <span className='font-semibold text-foreground'>
+                  {courseName}
+                </span>
+                . You'll receive a confirmation email shortly.
               </p>
             </div>
             <div className='rounded-lg border bg-muted/40 px-6 py-4 text-sm text-muted-foreground'>
-              Keep an eye on your inbox. Our team will reach out with your onboarding details.
+              Keep an eye on your inbox. Our team will reach out with your
+              onboarding details.
             </div>
-            <Link 
-              to="/ai-website-bootcamp" 
-              className="mt-4 block text-center font-semibold text-blue-500 hover:underline"
+            <Link
+              to='/ai-website-bootcamp'
+              className='mt-4 block text-center font-semibold text-blue-500 hover:underline'
             >
               Click here to go back to the Bootcamp Information
             </Link>
@@ -120,14 +134,15 @@ function CallbackPage() {
             <div className='space-y-1'>
               <h1 className='text-2xl font-bold'>Payment Processing</h1>
               <p className='text-muted-foreground'>
-                Your bank transfer is being confirmed. This usually takes a few minutes.
+                Your bank transfer is being confirmed. This usually takes a few
+                minutes.
               </p>
             </div>
-            <div className='rounded-lg border bg-yellow-500/10 border-yellow-500/30 px-6 py-4 text-sm text-yellow-700 dark:text-yellow-400'>
+            <div className='rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-6 py-4 text-sm text-yellow-700 dark:text-yellow-400'>
               <p className='font-medium'>What happens next?</p>
               <p className='mt-1'>
-                Once your transfer is confirmed, you'll receive a confirmation email. You don't need
-                to stay on this page.
+                Once your transfer is confirmed, you'll receive a confirmation
+                email. You don't need to stay on this page.
               </p>
             </div>
           </>
@@ -137,7 +152,8 @@ function CallbackPage() {
             <div className='space-y-1'>
               <h1 className='text-2xl font-bold'>Payment Failed</h1>
               <p className='text-muted-foreground'>
-                Something went wrong with your payment. Please try again or contact support.
+                Something went wrong with your payment. Please try again or
+                contact support.
               </p>
             </div>
           </>

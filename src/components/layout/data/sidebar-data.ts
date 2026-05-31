@@ -72,7 +72,6 @@ export const sidebarData: SidebarData = {
               url: '/settings/appearance',
               icon: IconPalette,
             },
-
           ],
         },
       ],

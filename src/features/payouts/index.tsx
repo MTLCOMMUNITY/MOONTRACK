@@ -1,4 +1,5 @@
 import { IconWallet, IconCash, IconClock } from '@tabler/icons-react'
+import { usePayouts, type Payout } from '@/hooks/use-payouts'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -14,7 +15,6 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { usePayouts, type Payout } from '@/hooks/use-payouts'
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -172,7 +172,7 @@ export function Payouts() {
                   <TableBody>
                     {payouts.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell className='whitespace-nowrap text-sm'>
+                        <TableCell className='text-sm whitespace-nowrap'>
                           {fmtDate(p.payout_date)}
                         </TableCell>
                         <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>

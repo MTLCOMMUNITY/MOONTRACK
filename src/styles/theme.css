@@ -100,10 +100,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --color-brand-gold: #E2C044;
-  --color-brand-gold-glow: #E2C05C;
-  --color-brand-gold-dark: #CB9A35;
-  --color-brand-mustard: #A17C3A;
-  --color-brand-charcoal: #2B303A;
+  --color-brand-gold: #e2c044;
+  --color-brand-gold-glow: #e2c05c;
+  --color-brand-gold-dark: #cb9a35;
+  --color-brand-mustard: #a17c3a;
+  --color-brand-charcoal: #2b303a;
   --color-brand-graphite: #232831;
 }

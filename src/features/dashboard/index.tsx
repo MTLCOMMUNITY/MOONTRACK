@@ -1,4 +1,8 @@
-import { Skeleton } from '@/components/ui/skeleton'
+import { useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { IconLink, IconUsers, IconCash, IconClock } from '@tabler/icons-react'
+import { useCurrentUser } from '@/hooks/use-current-user'
+import { useDashboard } from '@/hooks/use-dashboard'
 import {
   Card,
   CardContent,
@@ -6,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,19 +19,9 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Analytics } from './components/analytics'
-import { Reports } from './components/reports'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
-import { useDashboard } from '@/hooks/use-dashboard'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import { useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
-import {
-  IconLink,
-  IconUsers,
-  IconCash,
-  IconClock,
-} from '@tabler/icons-react'
+import { Reports } from './components/reports'
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -60,7 +55,10 @@ export function Dashboard() {
         {/* Skeleton Stat Cards */}
         <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className='rounded-xl border border-muted/40 p-6 space-y-4'>
+            <div
+              key={i}
+              className='space-y-4 rounded-xl border border-muted/40 p-6'
+            >
               <div className='flex items-center justify-between'>
                 <Skeleton className='h-4 w-24' />
                 <Skeleton className='h-4 w-4 rounded-full' />
@@ -72,12 +70,12 @@ export function Dashboard() {
         </div>
 
         {/* Skeleton Main Grid */}
-        <div className='grid grid-cols-1 gap-4 lg:grid-cols-7 mt-4'>
-          <div className='col-span-1 lg:col-span-4 rounded-xl border border-muted/40 p-6 space-y-4'>
+        <div className='mt-4 grid grid-cols-1 gap-4 lg:grid-cols-7'>
+          <div className='col-span-1 space-y-4 rounded-xl border border-muted/40 p-6 lg:col-span-4'>
             <Skeleton className='h-6 w-32' />
             <Skeleton className='h-[200px] w-full' />
           </div>
-          <div className='col-span-1 lg:col-span-3 rounded-xl border border-muted/40 p-6 space-y-4'>
+          <div className='col-span-1 space-y-4 rounded-xl border border-muted/40 p-6 lg:col-span-3'>
             <Skeleton className='h-6 w-32' />
             <div className='space-y-3'>
               {[1, 2, 3, 4, 5].map((j) => (
@@ -123,9 +121,7 @@ export function Dashboard() {
             <TabsList>
               <TabsTrigger value='overview'>Overview</TabsTrigger>
               <TabsTrigger value='analytics'>Analytics</TabsTrigger>
-              <TabsTrigger value='reports'>
-                Reports
-              </TabsTrigger>
+              <TabsTrigger value='reports'>Reports</TabsTrigger>
             </TabsList>
           </div>
 

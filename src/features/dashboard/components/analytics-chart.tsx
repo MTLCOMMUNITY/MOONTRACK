@@ -1,4 +1,11 @@
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import type { WeeklyPoint } from '@/hooks/use-analytics'
 
 interface AnalyticsChartProps {

@@ -1,23 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import {
   Dialog,
   DialogContent,
@@ -35,7 +21,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
 
 type ReferralLink = {
   id: string
@@ -60,7 +60,7 @@ export function AdminReferrals() {
 
   const [open, setOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  
+
   // Form state
   const [selectedInfluencer, setSelectedInfluencer] = useState('')
   const [refCode, setRefCode] = useState('')
@@ -72,7 +72,9 @@ export function AdminReferrals() {
       // Fetch all links
       const { data: linkData, error } = await supabase
         .from('referral_links')
-        .select('id, ref_code, target_url, click_count, is_active, influencer_id, influencers(full_name)')
+        .select(
+          'id, ref_code, target_url, click_count, is_active, influencer_id, influencers(full_name)'
+        )
         .order('click_count', { ascending: false })
 
       if (error) throw error
@@ -99,7 +101,6 @@ export function AdminReferrals() {
       if (infData) {
         setInfluencers(infData as InfluencerOption[])
       }
-
     } catch (err) {
       const error = err as Error
       toast.error(error.message ?? 'Failed to load referral links')
@@ -129,7 +130,9 @@ export function AdminReferrals() {
         .maybeSingle()
 
       if (existingLink) {
-        toast.error('This referral code is already in use by another influencer.')
+        toast.error(
+          'This referral code is already in use by another influencer.'
+        )
         return
       }
 
@@ -163,7 +166,9 @@ export function AdminReferrals() {
 
       if (error) throw error
 
-      toast.success(`Link has been ${!currentStatus ? 'activated' : 'deactivated'}`)
+      toast.success(
+        `Link has been ${!currentStatus ? 'activated' : 'deactivated'}`
+      )
       load()
     } catch (err) {
       const error = err as Error
@@ -183,7 +188,9 @@ export function AdminReferrals() {
       <Main>
         <div className='mb-6 flex items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-bold tracking-tight'>Referral Links</h1>
+            <h1 className='text-2xl font-bold tracking-tight'>
+              Referral Links
+            </h1>
             <p className='text-muted-foreground'>
               Manage influencer referral links and track click performance.
             </p>
@@ -200,7 +207,8 @@ export function AdminReferrals() {
               <DialogHeader>
                 <DialogTitle>Create Referral Link</DialogTitle>
                 <DialogDescription>
-                  Generate a new referral link for an influencer. This will not affect their previous stats.
+                  Generate a new referral link for an influencer. This will not
+                  affect their previous stats.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreate} className='space-y-4 pt-4'>
@@ -278,8 +286,8 @@ export function AdminReferrals() {
                 links.map((link) => (
                   <TableRow key={link.id}>
                     <TableCell className='font-medium'>
-                      {(Array.isArray(link.influencers) 
-                        ? link.influencers[0]?.full_name 
+                      {(Array.isArray(link.influencers)
+                        ? link.influencers[0]?.full_name
                         : link.influencers?.full_name) || 'Unknown'}
                     </TableCell>
                     <TableCell>
@@ -302,7 +310,9 @@ export function AdminReferrals() {
                     <TableCell className='text-right'>
                       <Switch
                         checked={link.is_active}
-                        onCheckedChange={() => toggleStatus(link.id, link.is_active)}
+                        onCheckedChange={() =>
+                          toggleStatus(link.id, link.is_active)
+                        }
                       />
                     </TableCell>
                   </TableRow>

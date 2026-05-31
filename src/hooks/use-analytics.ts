@@ -19,15 +19,17 @@ export type AnalyticsData = {
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-
-
 export function useAnalytics() {
   const [data, setData] = useState<AnalyticsData>({
     totalClicks: 0,
     conversionRate: 0,
     avgCommission: 0,
     activeLinks: 0,
-    weeklyChart: DAY_LABELS.map((name) => ({ name, clicks: 0, conversions: 0 })),
+    weeklyChart: DAY_LABELS.map((name) => ({
+      name,
+      clicks: 0,
+      conversions: 0,
+    })),
     topLinks: [],
     statusBreakdown: [],
   })
@@ -36,7 +38,9 @@ export function useAnalytics() {
   useEffect(() => {
     async function fetch() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
         const { data: influencer } = await supabase
@@ -58,8 +62,7 @@ export function useAnalytics() {
 
         const totalClicks =
           links?.reduce((s, l) => s + (l.click_count ?? 0), 0) ?? 0
-        const activeLinks =
-          links?.filter((l) => l.is_active).length ?? 0
+        const activeLinks = links?.filter((l) => l.is_active).length ?? 0
 
         // ── Conversions ────────────────────────────────────
         const { data: conversions } = await supabase
@@ -76,7 +79,7 @@ export function useAnalytics() {
         // ── Weekly chart — last 7 days (including today) ─────────────────────
         const dayEntries: (WeeklyPoint & { _dateStr: string })[] = []
         const today = new Date()
-        
+
         for (let i = 6; i >= 0; i--) {
           const d = new Date(today)
           d.setDate(today.getDate() - i)
@@ -91,7 +94,7 @@ export function useAnalytics() {
         // Count conversions per day slot
         conversions?.forEach((c) => {
           const cDateStr = new Date(c.registered_at).toDateString()
-          const entry = dayEntries.find(e => e._dateStr === cDateStr)
+          const entry = dayEntries.find((e) => e._dateStr === cDateStr)
           if (entry) {
             entry.conversions += 1
           }
@@ -101,7 +104,7 @@ export function useAnalytics() {
         // We use a bell-curve weight distribution to make the graph look organic
         const weights = [0.05, 0.1, 0.15, 0.3, 0.2, 0.15, 0.05]
         let remainingClicks = totalClicks
-        
+
         dayEntries.forEach((d, i) => {
           if (i === dayEntries.length - 1) {
             d.clicks = Math.max(0, remainingClicks) // Give remainder to last day
@@ -111,7 +114,7 @@ export function useAnalytics() {
             d.clicks = dayClicks
             remainingClicks -= dayClicks
           }
-          
+
           // A day can't have fewer clicks than conversions
           if (d.clicks < d.conversions) {
             d.clicks = d.conversions
@@ -134,14 +137,13 @@ export function useAnalytics() {
           .select('commission_earned, status')
           .eq('influencer_id', influencer.id)
 
-        const confirmed = payments?.filter((p) => p.status === 'confirmed') ?? []
+        const confirmed =
+          payments?.filter((p) => p.status === 'confirmed') ?? []
         const avgCommission =
           confirmed.length > 0
             ? Math.round(
-                confirmed.reduce(
-                  (s, p) => s + (p.commission_earned ?? 0),
-                  0
-                ) / confirmed.length
+                confirmed.reduce((s, p) => s + (p.commission_earned ?? 0), 0) /
+                  confirmed.length
               )
             : 0
 

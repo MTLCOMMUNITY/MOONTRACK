@@ -8,12 +8,12 @@ import {
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
 import { handleServerError } from '@/lib/handle-server-error'
+import { supabase } from '@/lib/supabase'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
-import { ThemeProvider } from './context/theme-provider'
 import { SupabaseProvider } from './context/supabase-provider'
+import { ThemeProvider } from './context/theme-provider'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles

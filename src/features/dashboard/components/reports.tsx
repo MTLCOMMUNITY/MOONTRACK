@@ -1,4 +1,7 @@
+import { IconDownload } from '@tabler/icons-react'
 import { useReports } from '@/hooks/use-reports'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -6,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -14,10 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { IconDownload } from '@tabler/icons-react'
 
 function fmt(amount: number | null) {
   if (amount === null) return '—'
@@ -52,7 +52,7 @@ export function Reports() {
       'Payment Status',
       'Commission Earned (NGN)',
     ]
-    
+
     // CSV Rows
     const rows = data.map((row) => [
       formatDate(row.registered_at),
@@ -64,14 +64,17 @@ export function Reports() {
 
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.setAttribute('href', url)
-    link.setAttribute('download', `influencer-report-${new Date().toISOString().split('T')[0]}.csv`)
+    link.setAttribute(
+      'download',
+      `influencer-report-${new Date().toISOString().split('T')[0]}.csv`
+    )
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
@@ -121,11 +124,21 @@ export function Reports() {
                   {loading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell><Skeleton className='h-4 w-24' /></TableCell>
-                        <TableCell><Skeleton className='h-4 w-32' /></TableCell>
-                        <TableCell><Skeleton className='h-4 w-20' /></TableCell>
-                        <TableCell><Skeleton className='h-4 w-16' /></TableCell>
-                        <TableCell className='text-right'><Skeleton className='ms-auto h-4 w-16' /></TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-24' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-32' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-20' />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className='h-4 w-16' />
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          <Skeleton className='ms-auto h-4 w-16' />
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : data.length === 0 ? (

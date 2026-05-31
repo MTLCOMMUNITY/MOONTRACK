@@ -1,4 +1,5 @@
 import { IconCash, IconCreditCard, IconClock } from '@tabler/icons-react'
+import { useEarnings, type Payment } from '@/hooks/use-earnings'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,10 +13,9 @@ import {
 } from '@/components/ui/table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LiveBadge } from '@/components/live-badge'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { LiveBadge } from '@/components/live-badge'
-import { useEarnings, type Payment } from '@/hooks/use-earnings'
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -34,7 +34,10 @@ function fmtDate(dateStr: string) {
 }
 
 function StatusBadge({ status }: { status: Payment['status'] }) {
-  const variants: Record<Payment['status'], { label: string; className: string }> = {
+  const variants: Record<
+    Payment['status'],
+    { label: string; className: string }
+  > = {
     confirmed: {
       label: 'Confirmed',
       className:
@@ -176,7 +179,7 @@ export function Earnings() {
                   <TableBody>
                     {payments.map((p) => (
                       <TableRow key={p.id}>
-                        <TableCell className='whitespace-nowrap text-sm'>
+                        <TableCell className='text-sm whitespace-nowrap'>
                           {fmtDate(p.payment_date)}
                         </TableCell>
                         <TableCell>

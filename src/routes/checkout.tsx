@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { IconLoader2, IconAlertCircle } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/checkout')({
   component: CheckoutPage,
@@ -16,7 +16,7 @@ type Settings = { course_fee: string; course_name: string }
 
 function CheckoutPage() {
   const { refCode } = useReferral()
-  
+
   const [settings, setSettings] = useState<Settings | null>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -33,8 +33,11 @@ function CheckoutPage() {
 
       if (settingsData) {
         setSettings({
-          course_fee: settingsData.find((s) => s.key === 'course_fee')?.value ?? '50000',
-          course_name: settingsData.find((s) => s.key === 'course_name')?.value ?? 'MoonTech Life Program',
+          course_fee:
+            settingsData.find((s) => s.key === 'course_fee')?.value ?? '50000',
+          course_name:
+            settingsData.find((s) => s.key === 'course_name')?.value ??
+            'MoonTech Life Program',
         })
       }
     }
@@ -63,9 +66,9 @@ function CheckoutPage() {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment`,
         {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
           },
           body: JSON.stringify({
             ref_code: refCode, // This is pulled from LocalStorage securely!
@@ -96,11 +99,17 @@ function CheckoutPage() {
         {/* Header */}
         <div className='space-y-1 text-center'>
           <div className='mb-4 flex justify-center'>
-            <img src='/moon-logo.png' alt='MoonTech Life Logo' className='size-12 object-contain' />
+            <img
+              src='/moon-logo.png'
+              alt='MoonTech Life Logo'
+              className='size-12 object-contain'
+            />
           </div>
           <h1 className='text-2xl font-bold tracking-tight'>MoonTech Life</h1>
           {settings ? (
-            <p className='text-sm text-muted-foreground'>{settings.course_name}</p>
+            <p className='text-sm text-muted-foreground'>
+              {settings.course_name}
+            </p>
           ) : (
             <Skeleton className='mx-auto h-4 w-48' />
           )}
@@ -111,14 +120,17 @@ function CheckoutPage() {
           <div className='flex items-start gap-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-4 text-sm text-yellow-600 dark:text-yellow-500'>
             <IconAlertCircle className='mt-0.5 size-5 shrink-0' />
             <p>
-              <strong>Invite required:</strong> You must have a valid referral invite link to join the program. Please click your invite link to proceed.
+              <strong>Invite required:</strong> You must have a valid referral
+              invite link to join the program. Please click your invite link to
+              proceed.
             </p>
           </div>
         ) : (
           <div className='flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-500'>
-            <div className='size-2 rounded-full bg-green-500 animate-pulse' />
+            <div className='size-2 animate-pulse rounded-full bg-green-500' />
             <p>
-              Referral Code Applied: <strong className="font-mono">{refCode}</strong>
+              Referral Code Applied:{' '}
+              <strong className='font-mono'>{refCode}</strong>
             </p>
           </div>
         )}
@@ -187,7 +199,10 @@ function CheckoutPage() {
             disabled={submitting || !settings || !refCode}
           >
             {submitting ? (
-              <><IconLoader2 className='me-2 size-4 animate-spin' />Redirecting to payment…</>
+              <>
+                <IconLoader2 className='me-2 size-4 animate-spin' />
+                Redirecting to payment…
+              </>
             ) : (
               'Proceed to Payment'
             )}
@@ -199,8 +214,11 @@ function CheckoutPage() {
             <p className='text-xs text-muted-foreground'>
               Secured by Flutterwave
             </p>
-            <p className='text-[10px] text-muted-foreground/80 leading-relaxed max-w-xs mx-auto'>
-              💡 <strong>Note on Bank Transfers:</strong> If your bank delays processing the transfer, you can safely close this page. The system will automatically confirm your registration in the background as soon as your bank settles the payment.
+            <p className='mx-auto max-w-xs text-[10px] leading-relaxed text-muted-foreground/80'>
+              💡 <strong>Note on Bank Transfers:</strong> If your bank delays
+              processing the transfer, you can safely close this page. The
+              system will automatically confirm your registration in the
+              background as soon as your bank settles the payment.
             </p>
           </div>
         )}

@@ -32,7 +32,9 @@ export function useDashboard() {
   useEffect(() => {
     async function fetchDashboard() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
         const { data: influencer } = await supabase
@@ -92,7 +94,14 @@ export function useDashboard() {
 
         if (convError) setError(convError.message)
 
-        const rawConvData = convData as unknown as (Omit<RecentConversion, 'commission_earned'> & { payments: { commission_earned: number }[] | { commission_earned: number } | null })[] | null
+        const rawConvData = convData as unknown as
+          | (Omit<RecentConversion, 'commission_earned'> & {
+              payments:
+                | { commission_earned: number }[]
+                | { commission_earned: number }
+                | null
+            })[]
+          | null
         const recent: RecentConversion[] = (rawConvData ?? []).map((c) => {
           const paymentsArray = Array.isArray(c.payments)
             ? c.payments
@@ -108,7 +117,12 @@ export function useDashboard() {
           }
         })
 
-        setStats({ totalClicks, totalConversions: convCount ?? 0, commissionEarned, pendingBalance })
+        setStats({
+          totalClicks,
+          totalConversions: convCount ?? 0,
+          commissionEarned,
+          pendingBalance,
+        })
         setRecentConversions(recent)
       } catch (err) {
         const error = err as Error

@@ -3,9 +3,15 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
 
 export function UpdatePassword() {
@@ -16,7 +22,7 @@ export function UpdatePassword() {
 
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault()
-    
+
     if (password.length < 8) {
       toast.error('Password must be at least 8 characters long')
       return
@@ -43,7 +49,7 @@ export function UpdatePassword() {
     setLoading(true)
     try {
       const { error } = await supabase.auth.updateUser({
-        password: password
+        password: password,
       })
 
       if (error) throw error
@@ -66,7 +72,8 @@ export function UpdatePassword() {
             Update Password
           </CardTitle>
           <CardDescription>
-            Please set a secure password. It must be at least 8 characters, with uppercase, lowercase, and a symbol.
+            Please set a secure password. It must be at least 8 characters, with
+            uppercase, lowercase, and a symbol.
           </CardDescription>
         </CardHeader>
         <CardContent>

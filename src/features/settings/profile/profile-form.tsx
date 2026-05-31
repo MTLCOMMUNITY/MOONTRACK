@@ -2,10 +2,6 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Card,
   CardContent,
@@ -13,6 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Profile = {
   full_name: string
@@ -161,8 +161,9 @@ export function ProfileForm() {
             {loading ? (
               <Skeleton className='h-6 w-full' />
             ) : (
-              <p className='break-all font-mono text-xs text-muted-foreground'>
-                https://moontrack.moontechlife.com/ref/{profile?.ref_code ?? '—'}
+              <p className='font-mono text-xs break-all text-muted-foreground'>
+                https://moontrack.moontechlife.com/ref/
+                {profile?.ref_code ?? '—'}
               </p>
             )}
           </div>

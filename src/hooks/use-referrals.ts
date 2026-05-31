@@ -17,7 +17,9 @@ export function useReferrals() {
 
   useEffect(() => {
     async function fetchLinks() {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) {
         setError('Not authenticated')
         setLoading(false)

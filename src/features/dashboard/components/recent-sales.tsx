@@ -1,6 +1,6 @@
-import { Skeleton } from '@/components/ui/skeleton'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import type { RecentConversion } from '@/hooks/use-dashboard'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Skeleton } from '@/components/ui/skeleton'
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {

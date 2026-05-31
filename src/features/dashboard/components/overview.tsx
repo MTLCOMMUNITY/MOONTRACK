@@ -1,20 +1,37 @@
 import { useEffect, useState } from 'react'
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { supabase } from '@/lib/supabase'
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
 
 export function Overview() {
-  const [data, setData] = useState(
-    MONTHS.map((name) => ({ name, total: 0 }))
-  )
+  const [data, setData] = useState(MONTHS.map((name) => ({ name, total: 0 })))
 
   useEffect(() => {
     async function load() {
       const year = new Date().getFullYear()
       const start = `${year}-01-01`
-      const end   = `${year}-12-31`
+      const end = `${year}-12-31`
 
       const { data: payments } = await supabase
         .from('payments')

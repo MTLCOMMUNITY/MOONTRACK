@@ -1,4 +1,5 @@
 import { IconLink, IconPointer, IconUsers } from '@tabler/icons-react'
+import { useReferrals, type ReferralLink } from '@/hooks/use-referrals'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -16,12 +17,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { CopyInput } from '@/components/copy-input'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { CopyInput } from '@/components/copy-input'
-import { useReferrals, type ReferralLink } from '@/hooks/use-referrals'
 
 const BASE_URL = 'https://moontrack.moontechlife.com/ref/'
 
@@ -85,7 +85,7 @@ function LinkCard({ link }: { link: ReferralLink }) {
             <IconPointer className='size-4 text-muted-foreground' />
             <div>
               <p className='text-xs text-muted-foreground'>Clicks</p>
-              <p className='text-lg font-bold leading-tight'>
+              <p className='text-lg leading-tight font-bold'>
                 {link.click_count.toLocaleString()}
               </p>
             </div>
@@ -94,7 +94,7 @@ function LinkCard({ link }: { link: ReferralLink }) {
             <IconUsers className='size-4 text-muted-foreground' />
             <div>
               <p className='text-xs text-muted-foreground'>Conversions</p>
-              <p className='text-lg font-bold leading-tight'>
+              <p className='text-lg leading-tight font-bold'>
                 {(link.conversion_count ?? 0).toLocaleString()}
               </p>
             </div>
@@ -147,7 +147,9 @@ export function Referrals() {
         {!loading && links.length === 0 && (
           <div className='flex flex-col items-center justify-center gap-2 rounded-lg border py-20 text-center text-muted-foreground'>
             <IconLink className='size-10 opacity-30' />
-            <p className='text-sm font-medium'>No referral links assigned yet</p>
+            <p className='text-sm font-medium'>
+              No referral links assigned yet
+            </p>
             <p className='text-xs'>
               Contact your manager to get your referral link set up.
             </p>

@@ -1,5 +1,5 @@
-
 import { useLayout } from '@/context/layout-provider'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,6 @@ import {
 import { sidebarData, adminNavGroups } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
-import { useCurrentUser } from '@/hooks/use-current-user'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
@@ -32,8 +31,12 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
               <a href={currentUser.isAdmin ? '/optcontrol' : '/dashboard'}>
-                <div className='flex aspect-square size-10 items-center justify-center rounded-lg bg-sidebar-primary/10 overflow-hidden'>
-                  <img src='/moon-logo.png' alt='Logo' className='size-10 object-contain' />
+                <div className='flex aspect-square size-10 items-center justify-center overflow-hidden rounded-lg bg-sidebar-primary/10'>
+                  <img
+                    src='/moon-logo.png'
+                    alt='Logo'
+                    className='size-10 object-contain'
+                  />
                 </div>
                 <div className='grid flex-1 text-start text-sm leading-tight'>
                   <span className='truncate font-semibold'>MoonTrack</span>

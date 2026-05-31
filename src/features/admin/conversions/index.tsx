@@ -2,16 +2,22 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  Select, SelectContent, SelectItem,
-  SelectTrigger, SelectValue,
-} from '@/components/ui/select'
-import {
-  Table, TableBody, TableCell, TableHead,
-  TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -32,7 +38,8 @@ const STATUS_OPTIONS = ['pending', 'paid', 'failed', 'reversed']
 
 const statusClass: Record<string, string> = {
   paid: 'border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400',
-  pending: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
+  pending:
+    'border-yellow-500/30 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
   failed: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
   reversed: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
 }
@@ -45,15 +52,19 @@ export function AdminConversions() {
   async function load() {
     const { data } = await supabase
       .from('conversions')
-      .select('id, student_name, student_email, ref_code, registered_at, payment_status, influencers(full_name)')
+      .select(
+        'id, student_name, student_email, ref_code, registered_at, payment_status, influencers(full_name)'
+      )
       .order('registered_at', { ascending: false })
 
-    const rawConversions = data as unknown as (Omit<Conversion, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
+    const rawConversions = data as unknown as
+      | (Omit<Conversion, 'influencer_name'> & {
+          influencers: { full_name: string } | { full_name: string }[] | null
+        })[]
+      | null
     const rows = (rawConversions ?? []).map((c) => {
       const inf = c.influencers
-      const name = Array.isArray(inf)
-        ? inf[0]?.full_name
-        : inf?.full_name
+      const name = Array.isArray(inf) ? inf[0]?.full_name : inf?.full_name
       return {
         id: c.id,
         student_name: c.student_name,
@@ -68,7 +79,9 @@ export function AdminConversions() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+  }, [])
 
   async function updateStatus(id: string, status: string) {
     setUpdating(id)
@@ -81,7 +94,9 @@ export function AdminConversions() {
       toast.error('Failed to update status')
     } else {
       toast.success('Status updated')
-      setConversions((prev) => prev.map((c) => c.id === id ? { ...c, payment_status: status } : c))
+      setConversions((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, payment_status: status } : c))
+      )
     }
     setUpdating(null)
   }
@@ -91,17 +106,28 @@ export function AdminConversions() {
       <Header>
         <h1 className='text-xl font-semibold tracking-tight'>Conversions</h1>
         <div className='ms-auto flex items-center gap-2'>
-          <ThemeSwitch /><ProfileDropdown />
+          <ThemeSwitch />
+          <ProfileDropdown />
         </div>
       </Header>
       <Main>
         <Card>
-          <CardHeader><CardTitle className='text-base font-semibold'>All Conversions ({conversions.length})</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>
+              All Conversions ({conversions.length})
+            </CardTitle>
+          </CardHeader>
           <CardContent className='p-0'>
             {loading ? (
-              <div className='space-y-3 p-6'>{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-10 w-full' />)}</div>
+              <div className='space-y-3 p-6'>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className='h-10 w-full' />
+                ))}
+              </div>
             ) : conversions.length === 0 ? (
-              <div className='py-16 text-center text-sm text-muted-foreground'>No conversions yet.</div>
+              <div className='py-16 text-center text-sm text-muted-foreground'>
+                No conversions yet.
+              </div>
             ) : (
               <div className='overflow-x-auto'>
                 <Table>
@@ -120,15 +146,31 @@ export function AdminConversions() {
                       <TableRow key={c.id}>
                         <TableCell>
                           <div className='font-medium'>{c.student_name}</div>
-                          <div className='text-xs text-muted-foreground'>{c.student_email}</div>
-                        </TableCell>
-                        <TableCell><Badge variant='outline' className='font-mono'>{c.ref_code}</Badge></TableCell>
-                        <TableCell className='text-sm'>{c.influencer_name}</TableCell>
-                        <TableCell className='whitespace-nowrap text-xs text-muted-foreground'>
-                          {new Date(c.registered_at).toLocaleDateString('en-GB')}
+                          <div className='text-xs text-muted-foreground'>
+                            {c.student_email}
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant='outline' className={statusClass[c.payment_status] ?? statusClass.pending}>
+                          <Badge variant='outline' className='font-mono'>
+                            {c.ref_code}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className='text-sm'>
+                          {c.influencer_name}
+                        </TableCell>
+                        <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
+                          {new Date(c.registered_at).toLocaleDateString(
+                            'en-GB'
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant='outline'
+                            className={
+                              statusClass[c.payment_status] ??
+                              statusClass.pending
+                            }
+                          >
                             {c.payment_status}
                           </Badge>
                         </TableCell>
@@ -143,7 +185,13 @@ export function AdminConversions() {
                             </SelectTrigger>
                             <SelectContent>
                               {STATUS_OPTIONS.map((s) => (
-                                <SelectItem key={s} value={s} className='text-xs capitalize'>{s}</SelectItem>
+                                <SelectItem
+                                  key={s}
+                                  value={s}
+                                  className='text-xs capitalize'
+                                >
+                                  {s}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>

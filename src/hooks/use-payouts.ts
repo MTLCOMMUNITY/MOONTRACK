@@ -18,7 +18,9 @@ export function usePayouts() {
 
   useEffect(() => {
     async function fetchPayouts() {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) {
         setError('Not authenticated')
         setLoading(false)
@@ -38,9 +40,7 @@ export function usePayouts() {
 
       const { data, error } = await supabase
         .from('payouts')
-        .select(
-          'id, amount, payout_date, method, reference, status, note'
-        )
+        .select('id, amount, payout_date, method, reference, status, note')
         .eq('influencer_id', influencer.id)
         .order('payout_date', { ascending: false })
 

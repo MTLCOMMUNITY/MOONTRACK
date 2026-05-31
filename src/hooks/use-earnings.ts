@@ -27,7 +27,9 @@ export function useEarnings() {
   const [isLive, setIsLive] = useState(false)
 
   async function fetchPayments() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) {
       setError('Not authenticated')
       setLoading(false)
@@ -76,10 +78,12 @@ export function useEarnings() {
     fetchPayments()
 
     // Wrap the channel setup in an async IIFE to wait for auth
-    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let channel: ReturnType<typeof supabase.channel> | null = null
 
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+    ;(async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (!user) return
 
       const { data: influencer } = await supabase
@@ -87,14 +91,19 @@ export function useEarnings() {
         .select('id')
         .eq('user_id', user.id)
         .single()
-      
+
       if (!influencer) return
 
       channel = supabase
         .channel('payments-realtime')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'payments', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: '*',
+            schema: 'public',
+            table: 'payments',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => {
             fetchPayments()
           }

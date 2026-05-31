@@ -8,6 +8,13 @@ import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
   Form,
   FormControl,
   FormField,
@@ -16,7 +23,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
 
 const formSchema = z.object({
@@ -37,7 +43,6 @@ export function ForgotPassword() {
       email: '',
     },
   })
-
 
   useEffect(() => {
     if (lockoutTime === null) return
@@ -60,7 +65,10 @@ export function ForgotPassword() {
 
     setIsLoading(true)
     try {
-      const redirectOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://moontrack.moontechlife.com'
+      const redirectOrigin =
+        typeof window !== 'undefined'
+          ? window.location.origin
+          : 'https://moontrack.moontechlife.com'
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${redirectOrigin}/update-password`,
       })
@@ -80,7 +88,9 @@ export function ForgotPassword() {
       }
 
       setIsSuccess(true)
-      toast.success('If the email is registered, a password reset link has been sent!')
+      toast.success(
+        'If the email is registered, a password reset link has been sent!'
+      )
     } catch {
       toast.error('An unexpected error occurred. Please try again.')
     } finally {
@@ -96,14 +106,16 @@ export function ForgotPassword() {
             Forgot Password
           </CardTitle>
           <CardDescription>
-            Enter your email address and we will send you a link to reset your password.
+            Enter your email address and we will send you a link to reset your
+            password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isSuccess ? (
             <div className='flex flex-col space-y-4'>
               <div className='rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-500/10 dark:text-green-400'>
-                Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.
+                Check your email for a link to reset your password. If it
+                doesn't appear within a few minutes, check your spam folder.
               </div>
               <Button asChild variant='outline' className='w-full'>
                 <Link to='/sign-in'>Return to sign in</Link>
@@ -111,7 +123,10 @@ export function ForgotPassword() {
             </div>
           ) : (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-4'>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='grid gap-4'
+              >
                 <FormField
                   control={form.control}
                   name='email'
@@ -131,14 +146,26 @@ export function ForgotPassword() {
                   )}
                 />
 
-                <Button className='mt-2 w-full' disabled={isLoading || lockoutTime !== null}>
-                  {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : <Mail className='mr-2 h-4 w-4' />}
-                  {lockoutTime !== null ? `Locked (${lockoutTime}s)` : 'Send reset link'}
+                <Button
+                  className='mt-2 w-full'
+                  disabled={isLoading || lockoutTime !== null}
+                >
+                  {isLoading ? (
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  ) : (
+                    <Mail className='mr-2 h-4 w-4' />
+                  )}
+                  {lockoutTime !== null
+                    ? `Locked (${lockoutTime}s)`
+                    : 'Send reset link'}
                 </Button>
 
                 <div className='mt-4 text-center text-sm'>
                   Remember your password?{' '}
-                  <Link to='/sign-in' className='font-medium text-primary hover:underline'>
+                  <Link
+                    to='/sign-in'
+                    className='font-medium text-primary hover:underline'
+                  >
                     Sign in
                   </Link>
                 </div>

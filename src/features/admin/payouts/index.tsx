@@ -1,30 +1,40 @@
 import { useEffect, useState } from 'react'
+import { IconPlus } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  Dialog, DialogContent, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Select, SelectContent, SelectItem,
-  SelectTrigger, SelectValue,
-} from '@/components/ui/select'
-import {
-  Table, TableBody, TableCell, TableHead,
-  TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
+import { Textarea } from '@/components/ui/textarea'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { IconPlus } from '@tabler/icons-react'
 
 type Payout = {
   id: string
@@ -40,10 +50,12 @@ type Payout = {
 type Influencer = { id: string; full_name: string }
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(n)
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  }).format(n)
 }
-
-
 
 export function AdminPayouts() {
   const [payouts, setPayouts] = useState<Payout[]>([])
@@ -60,34 +72,48 @@ export function AdminPayouts() {
 
   async function load() {
     const [{ data: p }, { data: inf }] = await Promise.all([
-      supabase.from('payouts').select('id, amount, payout_date, method, reference, status, note, influencers(full_name)').order('payout_date', { ascending: false }),
+      supabase
+        .from('payouts')
+        .select(
+          'id, amount, payout_date, method, reference, status, note, influencers(full_name)'
+        )
+        .order('payout_date', { ascending: false }),
       supabase.from('influencers').select('id, full_name'),
     ])
-    const rawPayouts = p as unknown as (Omit<Payout, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
-    setPayouts((rawPayouts ?? []).map((x) => {
-      const inf = x.influencers
-      const name = Array.isArray(inf) 
-        ? inf[0]?.full_name 
-        : inf?.full_name
-      return {
-        id: x.id,
-        amount: x.amount,
-        payout_date: x.payout_date,
-        method: x.method,
-        reference: x.reference,
-        status: x.status,
-        note: x.note,
-        influencer_name: name ?? '—'
-      }
-    }))
+    const rawPayouts = p as unknown as
+      | (Omit<Payout, 'influencer_name'> & {
+          influencers: { full_name: string } | { full_name: string }[] | null
+        })[]
+      | null
+    setPayouts(
+      (rawPayouts ?? []).map((x) => {
+        const inf = x.influencers
+        const name = Array.isArray(inf) ? inf[0]?.full_name : inf?.full_name
+        return {
+          id: x.id,
+          amount: x.amount,
+          payout_date: x.payout_date,
+          method: x.method,
+          reference: x.reference,
+          status: x.status,
+          note: x.note,
+          influencer_name: name ?? '—',
+        }
+      })
+    )
     setInfluencers((inf as Influencer[]) ?? [])
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+  }, [])
 
   async function handleCreate() {
-    if (!infId || !amount) { toast.error('Select influencer and enter amount'); return }
+    if (!infId || !amount) {
+      toast.error('Select influencer and enter amount')
+      return
+    }
     setSubmitting(true)
     const { error } = await supabase.from('payouts').insert({
       influencer_id: infId,
@@ -97,9 +123,16 @@ export function AdminPayouts() {
       status: 'paid',
       note: note || null,
     })
-    if (error) { toast.error(error.message) } else {
+    if (error) {
+      toast.error(error.message)
+    } else {
       toast.success('Payout recorded')
-      setOpen(false); setInfId(''); setAmount(''); setMethod('bank_transfer'); setReference(''); setNote('')
+      setOpen(false)
+      setInfId('')
+      setAmount('')
+      setMethod('bank_transfer')
+      setReference('')
+      setNote('')
       load()
     }
     setSubmitting(false)
@@ -107,7 +140,7 @@ export function AdminPayouts() {
 
   async function updateStatus(id: string, status: string) {
     await supabase.from('payouts').update({ status }).eq('id', id)
-    setPayouts((prev) => prev.map((p) => p.id === id ? { ...p, status } : p))
+    setPayouts((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
     toast.success('Status updated')
   }
 
@@ -118,28 +151,50 @@ export function AdminPayouts() {
         <div className='ms-auto flex items-center gap-2'>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size='sm'><IconPlus className='me-1 size-4' />Record Payout</Button>
+              <Button size='sm'>
+                <IconPlus className='me-1 size-4' />
+                Record Payout
+              </Button>
             </DialogTrigger>
             <DialogContent className='sm:max-w-md'>
-              <DialogHeader><DialogTitle>Record New Payout</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Record New Payout</DialogTitle>
+              </DialogHeader>
               <div className='space-y-4 py-2'>
                 <div className='space-y-1.5'>
                   <Label>Influencer *</Label>
                   <Select value={infId} onValueChange={setInfId}>
-                    <SelectTrigger><SelectValue placeholder='Select influencer' /></SelectTrigger>
-                    <SelectContent>{influencers.map((i) => <SelectItem key={i.id} value={i.id}>{i.full_name}</SelectItem>)}</SelectContent>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select influencer' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {influencers.map((i) => (
+                        <SelectItem key={i.id} value={i.id}>
+                          {i.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Amount (₦) *</Label>
-                  <Input type='number' value={amount} onChange={(e) => setAmount(e.target.value)} placeholder='15000' />
+                  <Input
+                    type='number'
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder='15000'
+                  />
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Payment Method</Label>
                   <Select value={method} onValueChange={setMethod}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='bank_transfer'>Bank Transfer</SelectItem>
+                      <SelectItem value='bank_transfer'>
+                        Bank Transfer
+                      </SelectItem>
                       <SelectItem value='cash'>Cash</SelectItem>
                       <SelectItem value='mobile_money'>Mobile Money</SelectItem>
                       <SelectItem value='other'>Other</SelectItem>
@@ -148,27 +203,48 @@ export function AdminPayouts() {
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Reference / Receipt No.</Label>
-                  <Input value={reference} onChange={(e) => setReference(e.target.value)} placeholder='TXN_XYZ789' />
+                  <Input
+                    value={reference}
+                    onChange={(e) => setReference(e.target.value)}
+                    placeholder='TXN_XYZ789'
+                  />
                 </div>
                 <div className='space-y-1.5'>
                   <Label>Note</Label>
-                  <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder='Optional note…' className='resize-none' rows={2} />
+                  <Textarea
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder='Optional note…'
+                    className='resize-none'
+                    rows={2}
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleCreate} disabled={submitting}>{submitting ? 'Saving…' : 'Record Payout'}</Button>
+                <Button onClick={handleCreate} disabled={submitting}>
+                  {submitting ? 'Saving…' : 'Record Payout'}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <ThemeSwitch /><ProfileDropdown />
+          <ThemeSwitch />
+          <ProfileDropdown />
         </div>
       </Header>
       <Main>
         <Card>
-          <CardHeader><CardTitle className='text-base font-semibold'>All Payouts</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>
+              All Payouts
+            </CardTitle>
+          </CardHeader>
           <CardContent className='p-0'>
             {loading ? (
-              <div className='space-y-3 p-6'>{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-10 w-full' />)}</div>
+              <div className='space-y-3 p-6'>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className='h-10 w-full' />
+                ))}
+              </div>
             ) : (
               <div className='overflow-x-auto'>
                 <Table>
@@ -185,27 +261,61 @@ export function AdminPayouts() {
                   </TableHeader>
                   <TableBody>
                     {payouts.length === 0 ? (
-                      <TableRow><TableCell colSpan={7} className='py-12 text-center text-sm text-muted-foreground'>No payouts yet.</TableCell></TableRow>
-                    ) : payouts.map((p) => (
-                      <TableRow key={p.id}>
-                        <TableCell className='font-medium'>{p.influencer_name}</TableCell>
-                        <TableCell className='text-right font-semibold'>{fmt(p.amount)}</TableCell>
-                        <TableCell className='capitalize text-sm'>{p.method.replace('_', ' ')}</TableCell>
-                        <TableCell className='font-mono text-xs text-muted-foreground'>{p.reference ?? '—'}</TableCell>
-                        <TableCell className='whitespace-nowrap text-xs text-muted-foreground'>{new Date(p.payout_date).toLocaleDateString('en-GB')}</TableCell>
-                        <TableCell>
-                          <Select value={p.status} onValueChange={(v) => updateStatus(p.id, v)}>
-                            <SelectTrigger className='h-7 w-24 text-xs'><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              {['paid', 'pending', 'failed'].map((s) => (
-                                <SelectItem key={s} value={s} className='text-xs capitalize'>{s}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                      <TableRow>
+                        <TableCell
+                          colSpan={7}
+                          className='py-12 text-center text-sm text-muted-foreground'
+                        >
+                          No payouts yet.
                         </TableCell>
-                        <TableCell className='max-w-[160px] truncate text-xs text-muted-foreground'>{p.note ?? '—'}</TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      payouts.map((p) => (
+                        <TableRow key={p.id}>
+                          <TableCell className='font-medium'>
+                            {p.influencer_name}
+                          </TableCell>
+                          <TableCell className='text-right font-semibold'>
+                            {fmt(p.amount)}
+                          </TableCell>
+                          <TableCell className='text-sm capitalize'>
+                            {p.method.replace('_', ' ')}
+                          </TableCell>
+                          <TableCell className='font-mono text-xs text-muted-foreground'>
+                            {p.reference ?? '—'}
+                          </TableCell>
+                          <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
+                            {new Date(p.payout_date).toLocaleDateString(
+                              'en-GB'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={p.status}
+                              onValueChange={(v) => updateStatus(p.id, v)}
+                            >
+                              <SelectTrigger className='h-7 w-24 text-xs'>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['paid', 'pending', 'failed'].map((s) => (
+                                  <SelectItem
+                                    key={s}
+                                    value={s}
+                                    className='text-xs capitalize'
+                                  >
+                                    {s}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell className='max-w-[160px] truncate text-xs text-muted-foreground'>
+                            {p.note ?? '—'}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>

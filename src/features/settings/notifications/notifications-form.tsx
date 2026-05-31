@@ -1,10 +1,8 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
-
 import {
   Form,
   FormControl,
@@ -13,7 +11,6 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form'
-
 import { Switch } from '@/components/ui/switch'
 
 const notificationsFormSchema = z.object({
@@ -43,7 +40,6 @@ export function NotificationsForm() {
         onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
         className='space-y-8'
       >
-
         <div className='relative'>
           <h3 className='mb-4 text-lg font-medium'>Email Notifications</h3>
           <div className='space-y-4'>
@@ -57,7 +53,8 @@ export function NotificationsForm() {
                       Communication emails
                     </FormLabel>
                     <FormDescription>
-                      Receive emails when you earn new commissions or get referrals.
+                      Receive emails when you earn new commissions or get
+                      referrals.
                     </FormDescription>
                   </div>
                   <FormControl>

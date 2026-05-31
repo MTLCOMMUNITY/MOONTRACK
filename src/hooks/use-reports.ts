@@ -18,7 +18,9 @@ export function useReports() {
   useEffect(() => {
     async function fetchReports() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
         if (!user) throw new Error('Not authenticated')
 
         const { data: influencer } = await supabase
@@ -43,7 +45,14 @@ export function useReports() {
 
         if (convError) throw convError
 
-        const rawConvData = convData as unknown as (Omit<ReportRow, 'commission_earned'> & { payments: { commission_earned: number }[] | { commission_earned: number } | null })[] | null
+        const rawConvData = convData as unknown as
+          | (Omit<ReportRow, 'commission_earned'> & {
+              payments:
+                | { commission_earned: number }[]
+                | { commission_earned: number }
+                | null
+            })[]
+          | null
         const reports: ReportRow[] = (rawConvData ?? []).map((c) => {
           const paymentsArray = Array.isArray(c.payments)
             ? c.payments

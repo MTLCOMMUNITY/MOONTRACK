@@ -3,9 +3,9 @@ import js from '@eslint/js'
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import securityPlugin from 'eslint-plugin-security'
 import { defineConfig } from 'eslint/config'
 import tseslint from 'typescript-eslint'
-import securityPlugin from 'eslint-plugin-security'
 
 export default defineConfig(
   { ignores: ['dist', 'src/components/ui', 'supabase'] },
@@ -66,4 +66,3 @@ export default defineConfig(
     },
   }
 )
-
