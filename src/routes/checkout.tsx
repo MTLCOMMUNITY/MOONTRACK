@@ -195,9 +195,14 @@ function CheckoutPage() {
         </form>
 
         {refCode && (
-          <p className='text-center text-xs text-muted-foreground'>
-            Secured by Flutterwave
-          </p>
+          <div className='space-y-2 text-center'>
+            <p className='text-xs text-muted-foreground'>
+              Secured by Flutterwave
+            </p>
+            <p className='text-[10px] text-muted-foreground/80 leading-relaxed max-w-xs mx-auto'>
+              💡 <strong>Note on Bank Transfers:</strong> If your bank delays processing the transfer, you can safely close this page. The system will automatically confirm your registration in the background as soon as your bank settles the payment.
+            </p>
+          </div>
         )}
       </div>
     </div>
