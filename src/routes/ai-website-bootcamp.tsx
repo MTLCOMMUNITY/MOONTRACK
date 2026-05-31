@@ -86,7 +86,7 @@ function BootcampLandingPage() {
   ]
 
   return (
-    <div className='min-h-screen bg-white font-sans text-gray-900 selection:bg-blue-100 selection:text-blue-900'>
+    <div className='min-h-screen bg-white font-sans text-gray-900 selection:bg-brand-gold/20 selection:text-brand-mustard'>
       {/* Navbar */}
       <nav className='sticky top-0 z-50 bg-white/90 backdrop-blur shadow-sm'>
         <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
@@ -98,10 +98,10 @@ function BootcampLandingPage() {
               </div>
             </a>
             <div className='hidden items-center space-x-8 md:flex'>
-              <a className='font-medium text-gray-700 transition-colors hover:text-blue-600' href='/explore-programs'>
+              <a className='font-medium text-gray-700 transition-colors hover:text-brand-gold' href='/explore-programs'>
                 Explore Programs
               </a>
-              <a className='transform rounded-full bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-2 font-medium text-white transition-all hover:scale-105 hover:shadow-lg' href='https://www.moontechlife.com/100-days-tech-challenge'>
+              <a className='transform rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-6 py-2 font-medium text-white transition-all hover:scale-105 hover:shadow-lg' href='https://www.moontechlife.com/100-days-tech-challenge'>
                 100 Days Tech Challenge
               </a>
             </div>
@@ -115,7 +115,7 @@ function BootcampLandingPage() {
 
 
           <h1 className='mb-6 text-4xl leading-[1.1] font-black tracking-tight text-gray-900 md:text-5xl lg:text-6xl'>
-            How To Build Websites With AI, Secure Them, And Charge Clients Between <span className='text-blue-700'>₦100,000</span> and <span className='text-blue-700'>₦500,000</span> Per Project.
+            How To Build Websites With AI, Secure Them, And Charge Clients Between <span className='text-brand-gold-dark font-black'>₦100,000</span> and <span className='text-brand-gold-dark font-black'>₦500,000</span> Per Project.
           </h1>
           
           <p className='mx-auto mb-10 max-w-3xl text-xl font-semibold leading-relaxed text-gray-700 md:text-2xl'>
@@ -143,7 +143,7 @@ function BootcampLandingPage() {
             </div>
 
             <Link
-              className='group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-5 text-xl font-black text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(37,99,235,0.4)]'
+              className='group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-brand-gold to-brand-gold-glow px-8 py-5 text-xl font-black text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(226,192,68,0.4)]'
               to='/checkout'
             >
               <span className='relative z-10'>Secure Your Spot Now</span>
@@ -159,14 +159,14 @@ function BootcampLandingPage() {
                 <p className='mb-8 leading-relaxed font-medium'>
                     <span className='font-bold text-black'>Most people who learn web development in Nigeria take a long time before they make their first naira from it.</span> Because it requires learning and relearning to get good enough to build projects that can actually attract clients.
                 </p>
-                <p className='mb-8 text-3xl font-black text-blue-600'>AI changed that.</p>
+                <p className='mb-8 text-3xl font-black text-brand-gold-dark'>AI changed that.</p>
                 <p className='mb-8 leading-relaxed font-medium'>
                     Now you can build a professional website in hours with the right prompts. You do not even need to write a single line of code.
                 </p>
                 <p className='mb-8 leading-relaxed font-medium'>
                     <span className='bg-yellow-200 px-2 py-1 font-bold text-black'>But here is what most people are missing.</span> Because AI makes building easy, anyone can do it now. Which means websites are being built faster than they are being secured. And a website that can be easily hacked is a liability to your client and to your reputation.
                 </p>
-                <p className='text-2xl font-black text-gray-900 border-l-4 border-blue-600 pl-6 py-2'>
+                <p className='text-2xl font-black text-gray-900 border-l-4 border-brand-gold pl-6 py-2'>
                     That is why this program teaches you both. Build it fast with AI. Secure it like a professional. Then charge what you are actually worth.
                 </p>
             </div>
@@ -182,17 +182,17 @@ function BootcampLandingPage() {
             
             <div className='grid gap-8 lg:grid-cols-3'>
                 <div className='bg-white p-8 rounded-3xl shadow-sm border border-gray-100'>
-                    <div className='w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>1</div>
+                    <div className='w-14 h-14 bg-brand-gold/10 text-brand-mustard rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>1</div>
                     <p className='text-lg font-bold text-gray-900'>Build in Hours, Not Months</p>
                     <p className='mt-4 text-gray-600'>How to build a professional website using AI in hours, not weeks or months. Forget outdated tutorials that leave you stranded.</p>
                 </div>
                 <div className='bg-white p-8 rounded-3xl shadow-sm border border-gray-100'>
-                    <div className='w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>2</div>
+                    <div className='w-14 h-14 bg-brand-gold/10 text-brand-mustard rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>2</div>
                     <p className='text-lg font-bold text-gray-900'>Unbreakable Security</p>
                     <p className='mt-4 text-gray-600'>How to secure that website so it cannot be hacked. This is the only program in Nigeria that teaches you how to build with AI and secure them in the same training.</p>
                 </div>
                 <div className='bg-white p-8 rounded-3xl shadow-sm border border-gray-100'>
-                    <div className='w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>3</div>
+                    <div className='w-14 h-14 bg-brand-gold/10 text-brand-mustard rounded-2xl flex items-center justify-center mb-6 text-2xl font-black'>3</div>
                     <p className='text-lg font-bold text-gray-900'>Get Paid Like a Pro</p>
                     <p className='mt-4 text-gray-600'>How to find your first client, pitch them and get paid. Local clients. International clients. We show you exactly where to find them and what to say.</p>
                 </div>
@@ -268,7 +268,7 @@ function BootcampLandingPage() {
       </section>
 
       {/* What You Get Section (NEW) */}
-      <section className='py-24 bg-blue-600 text-white'>
+      <section className='py-24 bg-brand-charcoal text-white'>
         <div className='mx-auto max-w-4xl px-4 sm:px-6 lg:px-8'>
              <h2 className='mb-12 text-center text-3xl md:text-5xl font-black tracking-tight uppercase'>
                 When You Join <span className='text-yellow-300'>You Get</span>
@@ -334,7 +334,7 @@ function BootcampLandingPage() {
                          <img src='/images/facilitator/facilitator 1.jpg' alt='Oluwasola Adebayo' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Oluwasola Adebayo</h3>
-                    <p className='text-blue-600 font-bold mb-4'>Cybersecurity Professional</p>
+                    <p className='text-brand-mustard font-bold mb-4'>Cybersecurity Professional</p>
                     <p className='text-gray-600 text-sm leading-relaxed'>
                         With 5 years of experience identifying and rectifying vulnerabilities in complex digital systems, Oluwasola will equip you with the essential skills to secure every website you build. His expertise ensures your clients' sites are impenetrable, safeguarding your reputation and their assets.
                     </p>
@@ -345,7 +345,7 @@ function BootcampLandingPage() {
                          <img src='/images/facilitator/facilitator 2.png' alt='Casper Okpara' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Casper Okpara</h3>
-                    <p className='text-blue-600 font-bold mb-4'>Tech Entrepreneur & AI Advocate</p>
+                    <p className='text-brand-mustard font-bold mb-4'>Tech Entrepreneur & AI Advocate</p>
                     <p className='text-gray-600 text-sm leading-relaxed'>
                         Casper specializes in building cutting-edge AI-powered business solutions and has successfully trained hundreds in web development. He will reveal his proven methods for leveraging AI to create rapid, professional websites that attract and retain high-paying clients.
                     </p>
@@ -356,7 +356,7 @@ function BootcampLandingPage() {
                          <img src='/images/facilitator/facilitator 3.jpg' alt='Igbayilola Kazeem' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Igbayilola Kazeem</h3>
-                    <p className='text-blue-600 font-bold mb-4'>Product Engineer and AI Web Design Expert</p>
+                    <p className='text-brand-mustard font-bold mb-4'>Product Engineer and AI Web Design Expert</p>
                     <p className='text-gray-600 text-sm leading-relaxed'>
                         Igbayilola has built websites and digital products used by real people across multiple industries. She works at the intersection of design and technology, using AI tools to bring ideas to life faster than traditional methods allow. In this program she teaches you how to build websites that do not just work but actually look and feel professional enough to attract paying clients.
                     </p>
@@ -426,27 +426,27 @@ function BootcampLandingPage() {
             </p>
             <ul className='space-y-6 text-lg text-gray-700 font-medium'>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You are going through a career transition and want a skill that actually pays.</span>
                 </li>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You have been thinking about going into tech but do not know where to start.</span>
                 </li>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You already tried learning something but could not figure out how to make money from it.</span>
                 </li>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You are tired of learning things that lead nowhere.</span>
                 </li>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You want to charge clients in naira and dollars for a skill that is actually in demand right now.</span>
                 </li>
                 <li className='flex items-start gap-4'>
-                    <span className='text-2xl text-blue-600 mt-1'>•</span>
+                    <span className='text-2xl text-brand-gold mt-1'>•</span>
                     <span>You want to finish this program with a real project in your portfolio and a clear path to your first client.</span>
                 </li>
             </ul>
@@ -466,12 +466,12 @@ function BootcampLandingPage() {
                 <div key={i} className='border-b border-gray-200 py-4'>
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className='flex w-full items-center justify-between text-left transition-colors hover:text-blue-600'
+                    className='flex w-full items-center justify-between text-left transition-colors hover:text-brand-gold'
                   >
                     <span className='text-lg font-bold text-gray-900'>
                       {faq.q}
                     </span>
-                    <span className='text-blue-600 transform transition-transform text-2xl'>
+                    <span className='text-brand-gold transform transition-transform text-2xl'>
                         {openFaq === i ? '−' : '+'}
                     </span>
                   </button>
