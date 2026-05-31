@@ -19,9 +19,15 @@ Deno.serve(async (req: Request) => {
   console.log('verif-hash header present:', signature ? 'YES' : 'NO')
   console.log('FLW_WEBHOOK_SECRET set in Supabase:', secretHash ? 'YES' : 'NO')
 
+  const securityHeaders = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Content-Security-Policy': "default-src 'none'",
+  }
+
   if (!signature || signature !== secretHash) {
     console.error('Signature mismatch or missing. Unauthorized.')
-    return new Response('Unauthorized', { status: 401 })
+    return new Response('Unauthorized', { status: 401, headers: securityHeaders })
   }
 
   // Rate Limiting (60 requests per minute per IP)
@@ -45,7 +51,7 @@ Deno.serve(async (req: Request) => {
   rateLimit.set(clientIp, userRecord)
 
   if (userRecord.count > 60) {
-    return new Response('Too many requests', { status: 429 })
+    return new Response('Too many requests', { status: 429, headers: securityHeaders })
   }
 
   const payload = await req.json()
@@ -53,7 +59,7 @@ Deno.serve(async (req: Request) => {
   // Only process successful payments
   if (payload.event !== 'charge.completed' || payload.data.status !== 'successful') {
     console.log(`Ignoring event: ${payload.event}, status: ${payload.data?.status}`)
-    return new Response('Ignored', { status: 200 })
+    return new Response('Ignored', { status: 200, headers: securityHeaders })
   }
 
   const transaction_id = payload.data.id
@@ -62,13 +68,13 @@ Deno.serve(async (req: Request) => {
 
   if (!transaction_id || (typeof transaction_id !== 'string' && typeof transaction_id !== 'number')) {
     console.error('Missing or invalid transaction_id in webhook payload')
-    return new Response('Invalid transaction ID', { status: 400 })
+    return new Response('Invalid transaction ID', { status: 400, headers: securityHeaders })
   }
 
   const cleanTxId = String(transaction_id).trim()
   if (!/^\d+$/.test(cleanTxId)) {
     console.error('Invalid transaction_id format in webhook payload:', cleanTxId)
-    return new Response('Invalid transaction ID format', { status: 400 })
+    return new Response('Invalid transaction ID format', { status: 400, headers: securityHeaders })
   }
 
   const FLW_SECRET_KEY = Deno.env.get('FLW_SECRET_KEY')
@@ -87,7 +93,7 @@ Deno.serve(async (req: Request) => {
       verifyData.data?.status !== 'successful'
     ) {
       console.error('Payment verification failed with Flutterwave API')
-      return new Response('Payment not verified', { status: 400 })
+      return new Response('Payment not verified', { status: 400, headers: securityHeaders })
     }
 
     const txData = verifyData.data
@@ -97,12 +103,12 @@ Deno.serve(async (req: Request) => {
 
     if (!verifiedTxRef) {
       console.error('Missing tx_ref in verified Flutterwave response')
-      return new Response('Invalid payment reference', { status: 400 })
+      return new Response('Invalid payment reference', { status: 400, headers: securityHeaders })
     }
 
     if (tx_ref && tx_ref !== verifiedTxRef) {
       console.error('Webhook tx_ref mismatch:', logSafeRef(tx_ref), '| verified:', logSafeRef(verifiedTxRef))
-      return new Response('Payment reference mismatch', { status: 400 })
+      return new Response('Payment reference mismatch', { status: 400, headers: securityHeaders })
     }
 
   const supabase = createClient(
@@ -127,12 +133,12 @@ Deno.serve(async (req: Request) => {
 
     if (amount < expectedFee) {
       console.error(`Fraud attempt or partial payment! Paid ${amount} but expected at least ${expectedFee}`)
-      return new Response('Invalid payment amount', { status: 400 })
+      return new Response('Invalid payment amount', { status: 400, headers: securityHeaders })
     }
 
     if (currency !== 'NGN') {
       console.error('Invalid payment currency:', currency)
-      return new Response('Invalid payment currency', { status: 400 })
+      return new Response('Invalid payment currency', { status: 400, headers: securityHeaders })
     }
   } catch (err) {
     console.error('Error validating amount against settings:', err)
@@ -147,7 +153,7 @@ Deno.serve(async (req: Request) => {
 
   if (existingPayment) {
     console.log('Payment already processed for tx_ref:', logSafeRef(verifiedTxRef))
-    return new Response('Payment already processed', { status: 200 })
+    return new Response('Payment already processed', { status: 200, headers: securityHeaders })
   }
   let influencer_id: string | null = null
   let commission = 0
@@ -225,9 +231,9 @@ Deno.serve(async (req: Request) => {
   }
 
   console.log('--- WEBHOOK PROCESSED SUCCESSFULLY ---')
-  return new Response('Webhook processed successfully', { status: 200 })
+  return new Response('Webhook processed successfully', { status: 200, headers: securityHeaders })
 } catch (e: any) {
   console.error('UNEXPECTED EXCEPTION IN WEBHOOK:', e)
-  return new Response('Internal Server Error', { status: 500 })
+  return new Response('Internal Server Error', { status: 500, headers: securityHeaders })
 }
 })
