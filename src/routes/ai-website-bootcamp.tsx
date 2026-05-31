@@ -330,7 +330,7 @@ function BootcampLandingPage() {
             <div className='grid gap-8 md:grid-cols-3'>
                 {/* Instructor 1 */}
                 <div className='text-center'>
-                    <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
+                    <div className='aspect-[4/5] max-w-[240px] mx-auto bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
                          <img src='/images/facilitator/facilitator 1.jpg' alt='Oluwasola Adebayo' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Oluwasola Adebayo</h3>
@@ -341,7 +341,7 @@ function BootcampLandingPage() {
                 </div>
                 {/* Instructor 2 */}
                 <div className='text-center'>
-                    <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
+                    <div className='aspect-[4/5] max-w-[240px] mx-auto bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
                          <img src='/images/facilitator/facilitator 2.png' alt='Casper Okpara' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Casper Okpara</h3>
@@ -352,7 +352,7 @@ function BootcampLandingPage() {
                 </div>
                 {/* Instructor 3 */}
                 <div className='text-center'>
-                    <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
+                    <div className='aspect-[4/5] max-w-[240px] mx-auto bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
                          <img src='/images/facilitator/facilitator 3.jpg' alt='Igbayilola Kazeem' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Igbayilola Kazeem</h3>
