@@ -436,7 +436,7 @@ export function AdminInfluencers() {
           setDetails(null)
         }
       }}>
-        <DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto p-6'>
+        <DialogContent className='max-w-5xl max-h-[90vh] overflow-y-auto p-6'>
           <DialogHeader>
             <DialogTitle className="text-xl font-bold tracking-tight">Influencer Profile & Statistics</DialogTitle>
           </DialogHeader>
