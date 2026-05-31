@@ -436,7 +436,7 @@ export function AdminInfluencers() {
           setDetails(null)
         }
       }}>
-        <DialogContent className='max-w-5xl max-h-[90vh] overflow-y-auto p-6'>
+        <DialogContent className='sm:max-w-6xl max-w-full max-h-[95vh] overflow-y-auto p-6'>
           <DialogHeader>
             <DialogTitle className="text-xl font-bold tracking-tight">Influencer Profile & Statistics</DialogTitle>
           </DialogHeader>
@@ -572,7 +572,7 @@ export function AdminInfluencers() {
                         No registrations recorded for this influencer yet.
                       </div>
                     ) : (
-                      <div className="overflow-x-auto max-h-[300px]">
+                      <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
@@ -622,7 +622,7 @@ export function AdminInfluencers() {
                         No payouts recorded yet.
                       </div>
                     ) : (
-                      <div className="overflow-x-auto max-h-[300px]">
+                      <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow>
