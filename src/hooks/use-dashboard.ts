@@ -92,18 +92,27 @@ export function useDashboard() {
 
         if (convError) setError(convError.message)
 
-        const recent: RecentConversion[] = (convData ?? []).map((c: any) => ({
-          id: c.id,
-          student_name: c.student_name,
-          registered_at: c.registered_at,
-          payment_status: c.payment_status,
-          commission_earned: c.payments?.[0]?.commission_earned ?? null,
-        }))
+        const rawConvData = convData as unknown as (Omit<RecentConversion, 'commission_earned'> & { payments: { commission_earned: number }[] | { commission_earned: number } | null })[] | null
+        const recent: RecentConversion[] = (rawConvData ?? []).map((c) => {
+          const paymentsArray = Array.isArray(c.payments)
+            ? c.payments
+            : c.payments
+              ? [c.payments]
+              : []
+          return {
+            id: c.id,
+            student_name: c.student_name,
+            registered_at: c.registered_at,
+            payment_status: c.payment_status,
+            commission_earned: paymentsArray[0]?.commission_earned ?? null,
+          }
+        })
 
         setStats({ totalClicks, totalConversions: convCount ?? 0, commissionEarned, pendingBalance })
         setRecentConversions(recent)
-      } catch (err: any) {
-        setError(err.message ?? 'Failed to load dashboard')
+      } catch (err) {
+        const error = err as Error
+        setError(error.message ?? 'Failed to load dashboard')
       } finally {
         setLoading(false)
       }

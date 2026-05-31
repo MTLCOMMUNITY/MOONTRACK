@@ -34,6 +34,7 @@ export function UpdatePassword() {
       return
     }
 
+    // eslint-disable-next-line security/detect-possible-timing-attacks
     if (password !== confirmPassword) {
       toast.error('Passwords do not match')
       return
@@ -49,8 +50,9 @@ export function UpdatePassword() {
 
       toast.success('Password updated successfully! Welcome to MoonTrack.')
       navigate({ to: '/' })
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update password')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message || 'Failed to update password')
     } finally {
       setLoading(false)
     }

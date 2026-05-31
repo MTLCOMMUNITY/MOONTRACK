@@ -60,7 +60,22 @@ export function AdminPayments() {
       supabase.from('payments').select('id, amount, commission_earned, payment_date, status, transaction_ref, influencers(full_name)').order('payment_date', { ascending: false }),
       supabase.from('influencers').select('id, full_name'),
     ])
-    setPayments((p ?? []).map((x: any) => ({ ...x, influencer_name: x.influencers?.full_name ?? '—' })))
+    const rawPayments = p as unknown as (Omit<Payment, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
+    setPayments((rawPayments ?? []).map((x) => {
+      const inf = x.influencers
+      const name = Array.isArray(inf)
+        ? inf[0]?.full_name
+        : inf?.full_name
+      return {
+        id: x.id,
+        amount: x.amount,
+        commission_earned: x.commission_earned,
+        payment_date: x.payment_date,
+        status: x.status,
+        transaction_ref: x.transaction_ref,
+        influencer_name: name ?? '—'
+      }
+    }))
     setInfluencers((inf as Influencer[]) ?? [])
     setLoading(false)
   }

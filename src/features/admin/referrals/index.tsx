@@ -100,8 +100,9 @@ export function AdminReferrals() {
         setInfluencers(infData as InfluencerOption[])
       }
 
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to load referral links')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to load referral links')
     } finally {
       setLoading(false)
     }
@@ -145,8 +146,9 @@ export function AdminReferrals() {
       setOpen(false)
       setRefCode('')
       load()
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to create link')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to create link')
     } finally {
       setSubmitting(false)
     }
@@ -163,8 +165,9 @@ export function AdminReferrals() {
 
       toast.success(`Link has been ${!currentStatus ? 'activated' : 'deactivated'}`)
       load()
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to update link status')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to update link status')
     }
   }
 

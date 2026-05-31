@@ -93,7 +93,7 @@ export function UserAuthForm({
       // Success — navigate to dashboard (or redirectTo if provided)
       const targetPath = redirectTo || '/dashboard'
       navigate({ to: targetPath, replace: true })
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)

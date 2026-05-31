@@ -48,10 +48,22 @@ export function AdminConversions() {
       .select('id, student_name, student_email, ref_code, registered_at, payment_status, influencers(full_name)')
       .order('registered_at', { ascending: false })
 
-    const rows = (data ?? []).map((c: any) => ({
-      ...c,
-      influencer_name: c.influencers?.full_name ?? '—',
-    }))
+    const rawConversions = data as unknown as (Omit<Conversion, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
+    const rows = (rawConversions ?? []).map((c) => {
+      const inf = c.influencers
+      const name = Array.isArray(inf)
+        ? inf[0]?.full_name
+        : inf?.full_name
+      return {
+        id: c.id,
+        student_name: c.student_name,
+        student_email: c.student_email,
+        ref_code: c.ref_code,
+        registered_at: c.registered_at,
+        payment_status: c.payment_status,
+        influencer_name: name ?? '—',
+      }
+    })
     setConversions(rows)
     setLoading(false)
   }

@@ -75,12 +75,13 @@ export function ForgotPassword() {
       }
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.warn('Password reset error:', error.message)
       }
 
       setIsSuccess(true)
       toast.success('If the email is registered, a password reset link has been sent!')
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)

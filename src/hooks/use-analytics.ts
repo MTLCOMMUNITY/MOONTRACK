@@ -106,6 +106,7 @@ export function useAnalytics() {
           if (i === dayEntries.length - 1) {
             d.clicks = Math.max(0, remainingClicks) // Give remainder to last day
           } else {
+            // eslint-disable-next-line security/detect-object-injection
             const dayClicks = Math.round(totalClicks * weights[i])
             d.clicks = dayClicks
             remainingClicks -= dayClicks

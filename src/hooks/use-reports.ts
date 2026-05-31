@@ -43,18 +43,27 @@ export function useReports() {
 
         if (convError) throw convError
 
-        const reports: ReportRow[] = (convData ?? []).map((c: any) => ({
-          id: c.id,
-          student_name: c.student_name,
-          registered_at: c.registered_at,
-          ref_code: c.ref_code,
-          payment_status: c.payment_status,
-          commission_earned: c.payments?.[0]?.commission_earned ?? null,
-        }))
+        const rawConvData = convData as unknown as (Omit<ReportRow, 'commission_earned'> & { payments: { commission_earned: number }[] | { commission_earned: number } | null })[] | null
+        const reports: ReportRow[] = (rawConvData ?? []).map((c) => {
+          const paymentsArray = Array.isArray(c.payments)
+            ? c.payments
+            : c.payments
+              ? [c.payments]
+              : []
+          return {
+            id: c.id,
+            student_name: c.student_name,
+            registered_at: c.registered_at,
+            ref_code: c.ref_code,
+            payment_status: c.payment_status,
+            commission_earned: paymentsArray[0]?.commission_earned ?? null,
+          }
+        })
 
         setData(reports)
-      } catch (err: any) {
-        setError(err.message ?? 'Failed to load reports')
+      } catch (err) {
+        const error = err as Error
+        setError(error.message ?? 'Failed to load reports')
       } finally {
         setLoading(false)
       }

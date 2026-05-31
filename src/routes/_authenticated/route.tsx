@@ -18,6 +18,7 @@ export const Route = createFileRoute('/_authenticated')({
 
       // For any other error (network, Supabase down, etc.)
       // redirect to sign-in rather than showing a 500
+      // eslint-disable-next-line no-console
       console.error('[MoonTrack] Session check failed:', err)
       throw redirect({ to: '/sign-in' })
     }

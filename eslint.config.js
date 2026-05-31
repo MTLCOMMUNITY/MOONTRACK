@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint'
 import securityPlugin from 'eslint-plugin-security'
 
 export default defineConfig(
-  { ignores: ['dist', 'src/components/ui'] },
+  { ignores: ['dist', 'src/components/ui', 'supabase'] },
   securityPlugin.configs.recommended,
   {
     extends: [
@@ -31,6 +31,7 @@ export default defineConfig(
         'warn',
         { allowConstantExport: true },
       ],
+      'react-hooks/set-state-in-effect': 'off',
       'no-console': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -57,5 +58,12 @@ export default defineConfig(
       // Prevent duplicate imports from the same module
       'no-duplicate-imports': 'error',
     },
+  },
+  {
+    files: ['src/routes/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   }
 )
+

@@ -68,8 +68,9 @@ export function AdminInfluencers() {
       if (!res.ok) throw new Error(data.error || 'Failed to load influencers')
       
       setInfluencers((data as Influencer[]) ?? [])
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to load influencers')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to load influencers')
     } finally {
       setLoading(false)
     }
@@ -107,8 +108,9 @@ export function AdminInfluencers() {
       setOpen(false)
       setInviteEmail(''); setFullName(''); setRefCode(''); setCommissionRate('10')
       load()
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to invite')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to invite')
     } finally {
       setSubmitting(false)
     }
@@ -134,8 +136,9 @@ export function AdminInfluencers() {
 
       toast.success(`Influencer ${!currentStatus ? 'reactivated' : 'suspended'} successfully`)
       load()
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to update status')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to update status')
     }
   }
 
@@ -159,8 +162,9 @@ export function AdminInfluencers() {
       toast.success(`Influencer ${name} completely deleted.`)
       setDeleteTarget(null)
       load()
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to delete influencer')
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to delete influencer')
     }
   }
 

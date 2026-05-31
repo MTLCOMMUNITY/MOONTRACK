@@ -63,7 +63,23 @@ export function AdminPayouts() {
       supabase.from('payouts').select('id, amount, payout_date, method, reference, status, note, influencers(full_name)').order('payout_date', { ascending: false }),
       supabase.from('influencers').select('id, full_name'),
     ])
-    setPayouts((p ?? []).map((x: any) => ({ ...x, influencer_name: x.influencers?.full_name ?? '—' })))
+    const rawPayouts = p as unknown as (Omit<Payout, 'influencer_name'> & { influencers: { full_name: string } | { full_name: string }[] | null })[] | null
+    setPayouts((rawPayouts ?? []).map((x) => {
+      const inf = x.influencers
+      const name = Array.isArray(inf) 
+        ? inf[0]?.full_name 
+        : inf?.full_name
+      return {
+        id: x.id,
+        amount: x.amount,
+        payout_date: x.payout_date,
+        method: x.method,
+        reference: x.reference,
+        status: x.status,
+        note: x.note,
+        influencer_name: name ?? '—'
+      }
+    }))
     setInfluencers((inf as Influencer[]) ?? [])
     setLoading(false)
   }

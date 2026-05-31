@@ -46,7 +46,7 @@ export function Dashboard() {
     if (!currentUser.loading && currentUser.isAdmin) {
       navigate({ to: '/optcontrol' })
     }
-  }, [currentUser.loading, currentUser.isAdmin])
+  }, [currentUser.loading, currentUser.isAdmin, navigate])
 
   if (currentUser.loading) {
     return (

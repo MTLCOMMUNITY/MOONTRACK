@@ -28,6 +28,7 @@ export function Overview() {
       const monthly = MONTHS.map((name) => ({ name, total: 0 }))
       payments.forEach((p) => {
         const month = new Date(p.payment_date).getMonth() // 0-11
+        // eslint-disable-next-line security/detect-object-injection
         monthly[month].total += p.commission_earned ?? 0
       })
 

@@ -14,7 +14,6 @@ export const Route = createFileRoute('/_authenticated/errors/$error')({
   component: RouteComponent,
 })
 
-// eslint-disable-next-line react-refresh/only-export-components
 function RouteComponent() {
   const { error } = Route.useParams()
 
@@ -25,6 +24,7 @@ function RouteComponent() {
     'internal-server-error': GeneralError,
     'maintenance-error': MaintenanceError,
   }
+  // eslint-disable-next-line security/detect-object-injection
   const ErrorComponent = errorMap[error] || NotFoundError
 
   return (

@@ -50,6 +50,7 @@ function StatusBadge({ status }: { status: Payout['status'] }) {
         'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
     },
   }
+  // eslint-disable-next-line security/detect-object-injection
   const v = map[status] ?? map.pending
   return (
     <Badge variant='outline' className={v.className}>
