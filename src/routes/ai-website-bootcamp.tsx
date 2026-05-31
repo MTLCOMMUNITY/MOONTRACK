@@ -391,19 +391,21 @@ function BootcampLandingPage() {
 
             {/* Video Testimonials */}
             <div className='grid gap-8 md:grid-cols-2 mt-10'>
-                <div className='aspect-video w-full rounded-3xl bg-gray-800/50 border border-white/10 flex items-center justify-center relative group cursor-pointer overflow-hidden'>
-                    <div className='absolute inset-0 bg-gradient-to-tr from-blue-900/40 to-transparent mix-blend-overlay'></div>
-                    <div className='w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-transform group-hover:scale-110'>
-                       <div className='w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1'></div>
-                    </div>
-                    <p className='absolute bottom-4 font-bold tracking-widest text-xs uppercase text-white/80'>Video Testimonial 1</p>
+                <div className='aspect-video w-full rounded-3xl bg-black border border-white/10 overflow-hidden relative shadow-2xl'>
+                    <video 
+                      src='/Video/first student video testimonial.mp4' 
+                      controls 
+                      preload='metadata'
+                      className='w-full h-full object-contain'
+                    />
                 </div>
-                <div className='aspect-video w-full rounded-3xl bg-gray-800/50 border border-white/10 flex items-center justify-center relative group cursor-pointer overflow-hidden'>
-                    <div className='absolute inset-0 bg-gradient-to-tr from-blue-900/40 to-transparent mix-blend-overlay'></div>
-                    <div className='w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-transform group-hover:scale-110'>
-                       <div className='w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1'></div>
-                    </div>
-                    <p className='absolute bottom-4 font-bold tracking-widest text-xs uppercase text-white/80'>Video Testimonial 2</p>
+                <div className='aspect-video w-full rounded-3xl bg-black border border-white/10 overflow-hidden relative shadow-2xl'>
+                    <video 
+                      src='/Video/Second student video testimonial.mp4' 
+                      controls 
+                      preload='metadata'
+                      className='w-full h-full object-contain'
+                    />
                 </div>
             </div>
          </div>
