@@ -58,6 +58,28 @@ Deno.serve(async (req: Request) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
+  const amount = txData.amount
+
+  // Check if amount matches the expected course fee
+  try {
+    const { data: settingsData } = await supabase
+      .from('app_settings')
+      .select('key, value')
+    
+    let expectedFee = 50000
+    if (settingsData) {
+      const dbFee = settingsData.find((s: any) => s.key === 'course_fee')?.value
+      if (dbFee) expectedFee = parseInt(dbFee, 10)
+    }
+
+    if (amount < expectedFee) {
+      console.error(`Fraud attempt or partial payment! Paid ${amount} but expected at least ${expectedFee}`)
+      return new Response('Invalid payment amount', { status: 400 })
+    }
+  } catch (err) {
+    console.error('Error validating amount against settings:', err)
+  }
+
   // Check if payment already exists to prevent double-crediting
   const { data: existingPayment } = await supabase
     .from('payments')
@@ -69,8 +91,6 @@ Deno.serve(async (req: Request) => {
     console.log('Payment already processed for tx_ref:', tx_ref)
     return new Response('Payment already processed', { status: 200 })
   }
-
-  const amount = txData.amount
   let influencer_id: string | null = null
   let commission = 0
 

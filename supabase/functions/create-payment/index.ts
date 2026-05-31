@@ -38,9 +38,9 @@ Deno.serve(async (req: Request) => {
     })
   }
 
-  const { ref_code, name, email, phone, amount, course_name } = await req.json()
+  const { ref_code, name, email, phone } = await req.json()
 
-  if (!ref_code || !name || !email || !phone || !amount) {
+  if (!ref_code || !name || !email || !phone) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
       status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
@@ -49,18 +49,43 @@ Deno.serve(async (req: Request) => {
   const FLW_SECRET_KEY = Deno.env.get('FLW_SECRET_KEY')
   const APP_URL = Deno.env.get('APP_URL') ?? 'https://moontrack.moontechlife.com'
 
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  )
+
+  let expectedFee = 50000;
+  let finalCourseName = 'MoonTech Life Program';
+
+  try {
+    const { data: settingsData } = await supabase
+      .from('app_settings')
+      .select('key, value')
+    
+    if (settingsData) {
+      const dbFee = settingsData.find((s: any) => s.key === 'course_fee')?.value
+      if (dbFee) expectedFee = parseInt(dbFee, 10)
+      
+      const dbName = settingsData.find((s: any) => s.key === 'course_name')?.value
+      if (dbName) finalCourseName = dbName
+    }
+  } catch (err) {
+    console.error('Error fetching app settings:', err)
+  }
+
+
   // Unique tx ref so we can identify this payment on callback
   const tx_ref = `MTL-${ref_code}-${Date.now()}`
 
   const payload = {
     tx_ref,
-    amount: parseInt(amount),
+    amount: expectedFee,
     currency: 'NGN',
     redirect_url: `${APP_URL}/ref/callback`,
     customer: { email, name, phonenumber: phone },
     customizations: {
       title: 'MoonTech Life',
-      description: course_name ?? 'MoonTech Life Program',
+      description: finalCourseName,
       logo: `${APP_URL}/moon-logo.png`,
     },
     meta: { 

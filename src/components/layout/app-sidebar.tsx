@@ -1,4 +1,4 @@
-import { IconMoon } from '@tabler/icons-react'
+
 import { useLayout } from '@/context/layout-provider'
 import {
   Sidebar,

@@ -1,4 +1,4 @@
-import { IconMoon } from '@tabler/icons-react'
+
 
 type AuthLayoutProps = {
   children: React.ReactNode
