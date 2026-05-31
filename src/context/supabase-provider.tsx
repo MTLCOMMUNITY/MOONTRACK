@@ -29,8 +29,8 @@ const SupabaseContext = createContext<SupabaseContextType | undefined>(
   undefined
 )
 
-// 10 minutes in ms
-const IDLE_TIMEOUT_MS = 10 * 60 * 1000
+// 5 minutes in ms
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000
 const WARNING_MS = 1 * 60 * 1000 // 1 min before logout
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
