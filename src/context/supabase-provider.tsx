@@ -69,8 +69,8 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!session) return
 
-    let timeoutId: NodeJS.Timeout
-    let warningId: NodeJS.Timeout
+    let timeoutId: ReturnType<typeof setTimeout>
+    let warningId: ReturnType<typeof setTimeout>
 
     const resetTimer = () => {
       clearTimeout(timeoutId)
