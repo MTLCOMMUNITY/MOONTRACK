@@ -38,7 +38,7 @@ function ReferralTracker() {
         saveRefCode(refCode)
         // Redirect to the new internal sales page.
         // The refCode is already saved in localStorage for this domain.
-        window.location.href = `/ai-website-bootcamp?ref=${refCode}`
+        window.location.href = '/ai-website-bootcamp'
       } else {
         setError(true)
       }

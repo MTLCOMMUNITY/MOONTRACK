@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { IconMoon, IconLoader2, IconAlertCircle } from '@tabler/icons-react'
+import { IconLoader2, IconAlertCircle } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/checkout')({
   component: CheckoutPage,
@@ -96,9 +96,7 @@ function CheckoutPage() {
         {/* Header */}
         <div className='space-y-1 text-center'>
           <div className='mb-4 flex justify-center'>
-            <div className='flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground'>
-              <IconMoon className='size-6' />
-            </div>
+            <img src='/moon-logo.png' alt='MoonTech Life Logo' className='size-12 object-contain' />
           </div>
           <h1 className='text-2xl font-bold tracking-tight'>MoonTech Life</h1>
           {settings ? (

@@ -115,7 +115,7 @@ export function AdminSettings() {
             <CardHeader>
               <CardTitle className='text-base font-semibold'>Payment Integration</CardTitle>
               <CardDescription>
-                Flutterwave API keys — set as environment variables on Vercel.
+                Public frontend vars belong in Vercel. Edge Function secrets belong in Supabase project secrets.
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-3'>
@@ -133,7 +133,7 @@ export function AdminSettings() {
                 </div>
               ))}
               <p className='pt-1 text-xs text-muted-foreground'>
-                Add these in Vercel → Project Settings → Environment Variables
+                Set `VITE_*` vars in Vercel and server-only `FLW_*` vars in Supabase Edge Function secrets.
               </p>
             </CardContent>
           </Card>

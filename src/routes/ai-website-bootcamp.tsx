@@ -37,7 +37,7 @@ function CountdownTimer() {
   }, [])
 
   return (
-    <div className='flex justify-center gap-3 md:justify-start'>
+    <div className='flex justify-center gap-3'>
       {[
         { label: 'Days', value: timeLeft.days },
         { label: 'Hours', value: timeLeft.hours },
@@ -206,13 +206,13 @@ function BootcampLandingPage() {
             <h2 className='mb-16 text-center text-3xl md:text-5xl font-black tracking-tight text-yellow-400 uppercase'>
                 Some Websites Our Community Members Have Built
             </h2>
-            <div className='aspect-video w-full rounded-3xl bg-gray-800/50 border border-white/10 flex items-center justify-center relative overflow-hidden group cursor-pointer'>
-                 {/* Video Placeholder */}
-                 <div className='absolute inset-0 bg-gradient-to-tr from-blue-900/40 to-transparent mix-blend-overlay'></div>
-                 <div className='w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-transform group-hover:scale-110'>
-                    <div className='w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-2'></div>
-                 </div>
-                 <p className='absolute bottom-6 font-bold tracking-widest text-sm uppercase'>Watch Live Demo</p>
+            <div className='aspect-video w-full rounded-3xl bg-black border border-white/10 overflow-hidden relative shadow-2xl'>
+              <video 
+                src='/Video/IMG_0364.mp4' 
+                controls 
+                preload='metadata'
+                className='w-full h-full object-contain'
+              />
             </div>
         </div>
       </section>
@@ -274,7 +274,7 @@ function BootcampLandingPage() {
                 When You Join <span className='text-yellow-300'>You Get</span>
             </h2>
             
-            <div className='bg-white/10 p-8 md:p-12 rounded-[2.5rem] backdrop-blur-sm border border-white/20'>
+            <div className='bg-white/10 p-6 sm:p-8 md:p-12 rounded-3xl sm:rounded-[2.5rem] backdrop-blur-sm border border-white/20'>
                 <ul className='space-y-6 text-lg font-medium'>
                     <li className='flex items-start gap-4'>
                         <span className='text-2xl'>✅</span>
@@ -327,7 +327,7 @@ function BootcampLandingPage() {
                 </p>
             </div>
             
-            <div className='grid gap-8 lg:grid-cols-3'>
+            <div className='grid gap-8 md:grid-cols-3'>
                 {/* Instructor 1 */}
                 <div className='text-center'>
                     <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
@@ -382,7 +382,7 @@ function BootcampLandingPage() {
             
             {/* Horizontal Carousel (CSS scrolling) */}
             <div className='relative w-full pb-10'>
-                <div className='flex overflow-x-auto gap-6 snap-x snap-mandatory pb-8 hide-scrollbar' style={{ scrollbarWidth: 'none' }}>
+                <div className='flex overflow-x-auto gap-6 snap-x snap-mandatory pb-8 no-scrollbar' style={{ scrollbarWidth: 'none' }}>
                     {/* Placeholder screenshots */}
                     {[1, 2, 3, 4, 5].map((i) => (
                         <div key={i} className='min-w-[300px] md:min-w-[350px] aspect-[3/4] bg-white/5 rounded-3xl border border-white/10 snap-center flex items-center justify-center text-gray-500'>
@@ -496,13 +496,13 @@ function BootcampLandingPage() {
             </p>
 
             <div className='mb-12 flex flex-col items-stretch justify-center gap-6 sm:flex-row'>
-                <div className='flex-1 rounded-[2.5rem] bg-yellow-200 p-8 text-left border border-yellow-300 shadow-sm'>
+                <div className='flex-1 rounded-3xl sm:rounded-[2.5rem] bg-yellow-200 p-6 sm:p-8 text-left border border-yellow-300 shadow-sm'>
                 <p className='mb-4 text-2xl font-bold text-gray-900'>
                     Early Bird
                 </p>
                 <p className='text-5xl font-black text-gray-900'>₦25,000</p>
                 </div>
-                <div className='flex-1 rounded-[2.5rem] bg-gray-200 p-8 text-left border border-gray-300 opacity-60'>
+                <div className='flex-1 rounded-3xl sm:rounded-[2.5rem] bg-gray-200 p-6 sm:p-8 text-left border border-gray-300 opacity-60'>
                 <p className='mb-4 text-2xl font-bold text-gray-600'>
                     Regular Price
                 </p>

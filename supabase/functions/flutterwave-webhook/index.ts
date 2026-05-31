@@ -3,14 +3,20 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 declare const Deno: any;
 
+const rateLimit = new Map<string, { count: number; timestamp: number }>()
+
+function logSafeRef(value: unknown) {
+  return typeof value === 'string' ? value.replace(/[\r\n]/g, '').slice(0, 128) : value
+}
+
 Deno.serve(async (req: Request) => {
-  console.log('--- NEW WEBHOOK RECEIVED ---')
+  console.log('--- FLUTTERWAVE WEBHOOK RECEIVED ---')
   
   // Flutterwave signature verification
   const secretHash = Deno.env.get('FLW_WEBHOOK_SECRET')
   const signature = req.headers.get('verif-hash')
 
-  console.log('verif-hash header:', signature)
+  console.log('verif-hash header present:', signature ? 'YES' : 'NO')
   console.log('FLW_WEBHOOK_SECRET set in Supabase:', secretHash ? 'YES' : 'NO')
 
   if (!signature || signature !== secretHash) {
@@ -18,8 +24,31 @@ Deno.serve(async (req: Request) => {
     return new Response('Unauthorized', { status: 401 })
   }
 
+  // Rate Limiting (60 requests per minute per IP)
+  const clientIp = req.headers.get('x-forwarded-for') || 'unknown'
+  const now = Date.now()
+
+  // Clean up expired entries to avoid memory leak
+  for (const [ip, record] of rateLimit.entries()) {
+    if (now - record.timestamp > 60000) {
+      rateLimit.delete(ip)
+    }
+  }
+
+  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
+  if (now - userRecord.timestamp > 60000) {
+    userRecord.count = 1
+    userRecord.timestamp = now
+  } else {
+    userRecord.count++
+  }
+  rateLimit.set(clientIp, userRecord)
+
+  if (userRecord.count > 60) {
+    return new Response('Too many requests', { status: 429 })
+  }
+
   const payload = await req.json()
-  console.log('Webhook Payload:', JSON.stringify(payload, null, 2))
 
   // Only process successful payments
   if (payload.event !== 'charge.completed' || payload.data.status !== 'successful') {
@@ -29,17 +58,29 @@ Deno.serve(async (req: Request) => {
 
   const transaction_id = payload.data.id
   const tx_ref = payload.data.tx_ref
+  console.log('Webhook event:', payload.event, '| tx_ref:', tx_ref, '| transaction_id:', transaction_id)
+
+  if (!transaction_id || (typeof transaction_id !== 'string' && typeof transaction_id !== 'number')) {
+    console.error('Missing or invalid transaction_id in webhook payload')
+    return new Response('Invalid transaction ID', { status: 400 })
+  }
+
+  const cleanTxId = String(transaction_id).trim()
+  if (!/^\d+$/.test(cleanTxId)) {
+    console.error('Invalid transaction_id format in webhook payload:', cleanTxId)
+    return new Response('Invalid transaction ID format', { status: 400 })
+  }
 
   const FLW_SECRET_KEY = Deno.env.get('FLW_SECRET_KEY')
 
   // Verify with Flutterwave to prevent spoofing
   try {
     const verifyRes = await fetch(
-      `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`,
+      `https://api.flutterwave.com/v3/transactions/${cleanTxId}/verify`,
       { headers: { Authorization: `Bearer ${FLW_SECRET_KEY}` } }
     )
     const verifyData = await verifyRes.json()
-    console.log('Verify API Response:', JSON.stringify(verifyData, null, 2))
+    console.log('Verify API status:', verifyData.status, '| tx status:', verifyData.data?.status)
 
     if (
       verifyData.status !== 'success' ||
@@ -50,8 +91,19 @@ Deno.serve(async (req: Request) => {
     }
 
     const txData = verifyData.data
+    const verifiedTxRef = typeof txData.tx_ref === 'string' ? txData.tx_ref.trim() : ''
     const ref_code = txData.meta?.ref_code
     const customer = txData.customer
+
+    if (!verifiedTxRef) {
+      console.error('Missing tx_ref in verified Flutterwave response')
+      return new Response('Invalid payment reference', { status: 400 })
+    }
+
+    if (tx_ref && tx_ref !== verifiedTxRef) {
+      console.error('Webhook tx_ref mismatch:', logSafeRef(tx_ref), '| verified:', logSafeRef(verifiedTxRef))
+      return new Response('Payment reference mismatch', { status: 400 })
+    }
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -59,6 +111,7 @@ Deno.serve(async (req: Request) => {
   )
 
   const amount = txData.amount
+  const currency = txData.currency
 
   // Check if amount matches the expected course fee
   try {
@@ -76,6 +129,11 @@ Deno.serve(async (req: Request) => {
       console.error(`Fraud attempt or partial payment! Paid ${amount} but expected at least ${expectedFee}`)
       return new Response('Invalid payment amount', { status: 400 })
     }
+
+    if (currency !== 'NGN') {
+      console.error('Invalid payment currency:', currency)
+      return new Response('Invalid payment currency', { status: 400 })
+    }
   } catch (err) {
     console.error('Error validating amount against settings:', err)
   }
@@ -84,11 +142,11 @@ Deno.serve(async (req: Request) => {
   const { data: existingPayment } = await supabase
     .from('payments')
     .select('id')
-    .eq('tx_ref', tx_ref)
+    .eq('tx_ref', verifiedTxRef)
     .maybeSingle()
 
   if (existingPayment) {
-    console.log('Payment already processed for tx_ref:', tx_ref)
+    console.log('Payment already processed for tx_ref:', logSafeRef(verifiedTxRef))
     return new Response('Payment already processed', { status: 200 })
   }
   let influencer_id: string | null = null
@@ -157,13 +215,13 @@ Deno.serve(async (req: Request) => {
     commission_earned: commission,
     status: 'confirmed',
     transaction_ref: txData.flw_ref ?? tx_ref,
-    tx_ref: tx_ref ?? null,
+    tx_ref: verifiedTxRef,
   })
 
   if (payError) {
     console.error('Error inserting payment:', payError)
   } else {
-    console.log('Payment record created successfully for tx_ref:', tx_ref, '| influencer_id:', influencer_id ?? 'none (organic)')
+    console.log('Payment record created successfully for tx_ref:', logSafeRef(verifiedTxRef), '| influencer_id:', influencer_id ?? 'none (organic)')
   }
 
   console.log('--- WEBHOOK PROCESSED SUCCESSFULLY ---')

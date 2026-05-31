@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -38,7 +38,22 @@ export function UserAuthForm({
   ...props
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [lockoutTime, setLockoutTime] = useState<number | null>(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (lockoutTime === null) return
+    if (lockoutTime <= 0) {
+      setLockoutTime(null)
+      setFailedAttempts(0)
+      return
+    }
+    const timer = setTimeout(() => {
+      setLockoutTime(lockoutTime - 1)
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [lockoutTime])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +64,11 @@ export function UserAuthForm({
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (lockoutTime !== null) {
+      toast.error(`Too many failed login attempts. Please wait ${lockoutTime} seconds.`)
+      return
+    }
+
     setIsLoading(true)
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -57,9 +77,18 @@ export function UserAuthForm({
       })
 
       if (error) {
-        toast.error(error.message)
+        const nextFailed = failedAttempts + 1
+        setFailedAttempts(nextFailed)
+        if (nextFailed >= 5) {
+          setLockoutTime(30)
+          toast.error('Too many failed attempts. You have been locked out for 30 seconds.')
+        } else {
+          toast.error('Invalid email or password. Please try again.')
+        }
         return
       }
+
+      setFailedAttempts(0)
 
       // Success — navigate to dashboard (or redirectTo if provided)
       const targetPath = redirectTo || '/dashboard'
@@ -123,9 +152,9 @@ export function UserAuthForm({
           )}
         />
 
-        <Button className='mt-2' disabled={isLoading}>
+        <Button className='mt-2' disabled={isLoading || lockoutTime !== null}>
           {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
-          Sign in
+          {lockoutTime !== null ? `Locked (${lockoutTime}s)` : 'Sign in'}
         </Button>
 
         <p className='text-center text-xs text-muted-foreground'>

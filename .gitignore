@@ -19,6 +19,7 @@ dist-ssr
 # Supabase secrets
 supabase/.env
 supabase/.env.*
+!supabase/.env.example
 supabase/.temp
 
 # Editor directories and files
@@ -40,3 +41,17 @@ supabase/.temp
 **/__screenshots__/
 .vitest-attachments/
 supabase/.temp
+
+# Vercel & Netlify metadata
+.vercel
+.netlify
+
+# Supabase local CLI state
+supabase/.branches
+supabase/.logs
+supabase/.temp
+supabase/migrations/
+
+# General temp directories
+**/.temp/
+**/.logs/

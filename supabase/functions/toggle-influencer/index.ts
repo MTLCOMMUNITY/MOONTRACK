@@ -4,13 +4,47 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 declare const Deno: any;
 
+const rateLimit = new Map<string, { count: number; timestamp: number }>();
+
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get('origin') ?? ''
+  const appUrl = Deno.env.get('APP_URL') ?? 'https://moontrack.moontechlife.com'
+  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', appUrl]
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : appUrl
+
   const CORS = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   }
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS })
+
+  // Rate Limiting (10 requests per minute per IP)
+  const clientIp = req.headers.get('x-forwarded-for') || 'unknown'
+  const now = Date.now()
+
+  // Clean up expired entries to avoid memory leak
+  for (const [ip, record] of rateLimit.entries()) {
+    if (now - record.timestamp > 60000) {
+      rateLimit.delete(ip)
+    }
+  }
+
+  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
+  if (now - userRecord.timestamp > 60000) {
+    userRecord.count = 1
+    userRecord.timestamp = now
+  } else {
+    userRecord.count++
+  }
+  rateLimit.set(clientIp, userRecord)
+
+  if (userRecord.count > 10) {
+    return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
+      status: 429,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
 
   // 1. Verify the requester is an admin
   const authHeader = req.headers.get('Authorization')

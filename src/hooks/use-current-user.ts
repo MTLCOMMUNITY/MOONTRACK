@@ -15,14 +15,19 @@ export function useCurrentUser() {
     avatar: '',
     isAdmin: false,
   })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
+      setLoading(true)
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser()
 
-      if (!authUser) return
+      if (!authUser) {
+        setLoading(false)
+        return
+      }
 
       const email = authUser.email ?? ''
 
@@ -40,6 +45,7 @@ export function useCurrentUser() {
           avatar: '',
           isAdmin: true,
         })
+        setLoading(false)
         return
       }
 
@@ -56,6 +62,7 @@ export function useCurrentUser() {
         email.split('@')[0]
 
       setUser({ name, email, avatar: '', isAdmin: false })
+      setLoading(false)
     }
 
     load()
@@ -67,5 +74,5 @@ export function useCurrentUser() {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  return user
+  return { ...user, loading }
 }

@@ -21,8 +21,15 @@ Deno.serve(async (req: Request) => {
   // Rate Limiting (10 requests per minute per IP)
   const clientIp = req.headers.get('x-forwarded-for') || 'unknown'
   const now = Date.now()
-  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
 
+  // Clean up expired entries to avoid memory leak
+  for (const [ip, record] of rateLimit.entries()) {
+    if (now - record.timestamp > 60000) {
+      rateLimit.delete(ip)
+    }
+  }
+
+  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
   if (now - userRecord.timestamp > 60000) {
     userRecord.count = 1
     userRecord.timestamp = now
@@ -40,8 +47,15 @@ Deno.serve(async (req: Request) => {
 
   const { transaction_id, tx_ref } = await req.json()
 
-  if (!transaction_id) {
-    return new Response(JSON.stringify({ ok: false, error: 'Missing transaction_id' }), {
+  if (!transaction_id || (typeof transaction_id !== 'string' && typeof transaction_id !== 'number')) {
+    return new Response(JSON.stringify({ ok: false, error: 'Missing or invalid transaction_id' }), {
+      status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const cleanTxId = String(transaction_id).trim()
+  if (!/^\d+$/.test(cleanTxId)) {
+    return new Response(JSON.stringify({ ok: false, error: 'Invalid transaction_id format' }), {
       status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
   }
@@ -52,7 +66,7 @@ Deno.serve(async (req: Request) => {
   let verifyData: any
   try {
     const verifyRes = await fetch(
-      `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`,
+      `https://api.flutterwave.com/v3/transactions/${cleanTxId}/verify`,
       { headers: { Authorization: `Bearer ${FLW_SECRET_KEY}` } }
     )
     verifyData = await verifyRes.json()
@@ -75,8 +89,23 @@ Deno.serve(async (req: Request) => {
   }
 
   const txData = verifyData.data
+  const verifiedTxRef = typeof txData.tx_ref === 'string' ? txData.tx_ref.trim() : ''
   const ref_code = txData.meta?.ref_code
   const customer = txData.customer
+  const amount = txData.amount
+  const currency = txData.currency
+
+  if (!verifiedTxRef) {
+    return new Response(JSON.stringify({ ok: false, error: 'Missing tx_ref in verified payment' }), {
+      status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (tx_ref && tx_ref !== verifiedTxRef) {
+    return new Response(JSON.stringify({ ok: false, error: 'Transaction reference mismatch' }), {
+      status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
 
   if (!ref_code) {
     return new Response(JSON.stringify({ ok: false, error: 'Missing ref_code in metadata' }), {
@@ -89,23 +118,48 @@ Deno.serve(async (req: Request) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
+  let expectedFee = 50000
+  let courseName = 'MoonTech Life Program'
+
+  try {
+    const { data: settingsData } = await supabase
+      .from('app_settings')
+      .select('key, value')
+
+    if (settingsData) {
+      const dbFee = settingsData.find((s: any) => s.key === 'course_fee')?.value
+      if (dbFee) expectedFee = parseInt(dbFee, 10)
+
+      const dbName = settingsData.find((s: any) => s.key === 'course_name')?.value
+      if (dbName) courseName = dbName
+    }
+  } catch (settingsErr) {
+    console.error('Error loading app settings during verification:', settingsErr)
+  }
+
+  if (currency !== 'NGN') {
+    return new Response(JSON.stringify({ ok: false, error: 'Invalid payment currency' }), {
+      status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (typeof amount !== 'number' || amount < expectedFee) {
+    return new Response(JSON.stringify({ ok: false, error: 'Invalid payment amount' }), {
+      status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
   // Check if payment already exists to prevent double-crediting
   const { data: existingPayment } = await supabase
     .from('payments')
     .select('id')
-    .eq('tx_ref', tx_ref)
+    .eq('tx_ref', verifiedTxRef)
     .maybeSingle()
 
   if (existingPayment) {
     // Already processed (likely by webhook)
-    const { data: settings } = await supabase
-      .from('app_settings')
-      .select('value')
-      .eq('key', 'course_name')
-      .single()
-
     return new Response(
-      JSON.stringify({ ok: true, course_name: settings?.value }),
+      JSON.stringify({ ok: true, course_name: courseName }),
       { status: 200, headers: { ...CORS, 'Content-Type': 'application/json' } }
     )
   }
@@ -132,7 +186,6 @@ Deno.serve(async (req: Request) => {
 
   const commissionRate = influencer?.commission_rate ?? 10
   const isActive = influencer?.is_active ?? true
-  const amount = txData.amount
   
   // If the influencer is suspended, they get 0 commission for new referrals
   const commission = isActive ? Math.round((commissionRate / 100) * amount) : 0
@@ -158,19 +211,12 @@ Deno.serve(async (req: Request) => {
     amount,
     commission_earned: commission,
     status: 'confirmed',
-    transaction_ref: txData.flw_ref ?? tx_ref,
-    tx_ref: tx_ref ?? null,
+    transaction_ref: txData.flw_ref ?? verifiedTxRef,
+    tx_ref: verifiedTxRef,
   })
 
-  // Get course name for success page
-  const { data: settings } = await supabase
-    .from('app_settings')
-    .select('value')
-    .eq('key', 'course_name')
-    .single()
-
   return new Response(
-    JSON.stringify({ ok: true, course_name: settings?.value }),
+    JSON.stringify({ ok: true, course_name: courseName }),
     { status: 200, headers: { ...CORS, 'Content-Type': 'application/json' } }
   )
 })

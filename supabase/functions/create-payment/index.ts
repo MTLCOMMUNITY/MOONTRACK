@@ -21,8 +21,15 @@ Deno.serve(async (req: Request) => {
   // Rate Limiting (5 requests per minute per IP)
   const clientIp = req.headers.get('x-forwarded-for') || 'unknown'
   const now = Date.now()
-  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
 
+  // Clean up expired entries to avoid memory leak
+  for (const [ip, record] of rateLimit.entries()) {
+    if (now - record.timestamp > 60000) {
+      rateLimit.delete(ip)
+    }
+  }
+
+  const userRecord = rateLimit.get(clientIp) || { count: 0, timestamp: now }
   if (now - userRecord.timestamp > 60000) {
     userRecord.count = 1
     userRecord.timestamp = now
@@ -42,6 +49,33 @@ Deno.serve(async (req: Request) => {
 
   if (!ref_code || !name || !email || !phone) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+      status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  // Input Validation
+  if (typeof ref_code !== 'string' || !/^[a-zA-Z0-9_-]{1,64}$/.test(ref_code)) {
+    return new Response(JSON.stringify({ error: 'Invalid referral code format' }), {
+      status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return new Response(JSON.stringify({ error: 'Invalid email address format' }), {
+      status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const cleanPhone = phone.trim()
+  if (typeof phone !== 'string' || !/^\+?[0-9\s-]{5,20}$/.test(cleanPhone)) {
+    return new Response(JSON.stringify({ error: 'Invalid phone number format' }), {
+      status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const cleanName = name.trim()
+  if (typeof name !== 'string' || cleanName.length < 2 || cleanName.length > 100) {
+    return new Response(JSON.stringify({ error: 'Name must be between 2 and 100 characters' }), {
       status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
   }
@@ -108,7 +142,10 @@ Deno.serve(async (req: Request) => {
   const flwData = await flwRes.json()
 
   if (flwData.status !== 'success') {
-    console.error('Flutterwave error:', JSON.stringify(flwData))
+    console.error('Flutterwave error:', {
+      status: flwData?.status,
+      message: flwData?.message,
+    })
     return new Response(JSON.stringify({ error: 'Payment initiation failed' }), {
       status: 500, headers: { ...CORS, 'Content-Type': 'application/json' },
     })

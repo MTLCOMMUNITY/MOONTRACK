@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,6 +28,8 @@ const formSchema = z.object({
 export function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [lockoutTime, setLockoutTime] = useState<number | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,20 +38,48 @@ export function ForgotPassword() {
     },
   })
 
+
+  useEffect(() => {
+    if (lockoutTime === null) return
+    if (lockoutTime <= 0) {
+      setLockoutTime(null)
+      setFailedAttempts(0)
+      return
+    }
+    const timer = setTimeout(() => {
+      setLockoutTime(lockoutTime - 1)
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [lockoutTime])
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (lockoutTime !== null) {
+      toast.error(`Too many attempts. Please wait ${lockoutTime} seconds.`)
+      return
+    }
+
     setIsLoading(true)
     try {
+      const redirectOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://moontrack.moontechlife.com'
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `${redirectOrigin}/update-password`,
       })
 
-      if (error) {
-        toast.error(error.message)
+      // Increment attempt counter to prevent email spamming/flooding
+      const nextAttempts = failedAttempts + 1
+      setFailedAttempts(nextAttempts)
+      if (nextAttempts >= 5) {
+        setLockoutTime(60)
+        toast.error('Too many password reset requests. Please wait 60 seconds.')
         return
       }
 
+      if (error) {
+        console.warn('Password reset error:', error.message)
+      }
+
       setIsSuccess(true)
-      toast.success('Password reset email sent!')
+      toast.success('If the email is registered, a password reset link has been sent!')
     } catch (err) {
       toast.error('An unexpected error occurred. Please try again.')
     } finally {
@@ -100,9 +130,9 @@ export function ForgotPassword() {
                   )}
                 />
 
-                <Button className='mt-2 w-full' disabled={isLoading}>
+                <Button className='mt-2 w-full' disabled={isLoading || lockoutTime !== null}>
                   {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : <Mail className='mr-2 h-4 w-4' />}
-                  Send reset link
+                  {lockoutTime !== null ? `Locked (${lockoutTime}s)` : 'Send reset link'}
                 </Button>
 
                 <div className='mt-4 text-center text-sm'>

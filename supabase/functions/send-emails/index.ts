@@ -3,11 +3,31 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 declare const Deno: any;
 
+function escapeHtml(value: unknown) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 Deno.serve(async (req: Request) => {
   try {
     // 1. Verify it's a POST request from the Database Webhook
     if (req.method !== 'POST') {
       return new Response('Method Not Allowed', { status: 405 })
+    }
+
+    // Authentication verification for database webhook
+    const authHeader = req.headers.get('Authorization')
+    const webhookSecret = Deno.env.get('DB_WEBHOOK_SECRET')
+    if (webhookSecret && authHeader !== `Bearer ${webhookSecret}`) {
+      console.warn('Unauthorized attempt to invoke send-emails webhook')
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     const payload = await req.json()
@@ -67,12 +87,12 @@ Deno.serve(async (req: Request) => {
         subject: 'Welcome to MoonTech Life! 🚀',
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #2563eb;">Welcome, ${conversion.student_name}!</h1>
+            <h1 style="color: #2563eb;">Welcome, ${escapeHtml(conversion.student_name)}!</h1>
             <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Payment Receipt</h3>
               <ul style="list-style: none; padding: 0; margin: 0;">
                 <li style="margin-bottom: 8px;"><strong>Amount Paid:</strong> ₦${payment.amount}</li>
-                <li style="margin-bottom: 8px;"><strong>Transaction Ref:</strong> <code>${payment.transaction_ref}</code></li>
+                <li style="margin-bottom: 8px;"><strong>Transaction Ref:</strong> <code>${escapeHtml(payment.transaction_ref)}</code></li>
                 <li><strong>Status:</strong> Successful</li>
               </ul>
             </div>
@@ -106,17 +126,17 @@ Deno.serve(async (req: Request) => {
         subject: 'Cha-ching! New Commission Earned 💰',
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #16a34a;">Congrats, ${influencer.full_name}! 💸</h1>
+            <h1 style="color: #16a34a;">Congrats, ${escapeHtml(influencer.full_name)}! 💸</h1>
             <p>Someone just purchased a course using your referral link!</p>
             
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
               <tr style="border-bottom: 1px solid #e5e7eb;">
                 <td style="padding: 10px 0; color: #6b7280;">Student Name</td>
-                <td style="padding: 10px 0; font-weight: bold; text-align: right;">${conversion.student_name}</td>
+                <td style="padding: 10px 0; font-weight: bold; text-align: right;">${escapeHtml(conversion.student_name)}</td>
               </tr>
               <tr style="border-bottom: 1px solid #e5e7eb;">
                 <td style="padding: 10px 0; color: #6b7280;">Referral Code Used</td>
-                <td style="padding: 10px 0; font-weight: bold; text-align: right;">${conversion.ref_code}</td>
+                <td style="padding: 10px 0; font-weight: bold; text-align: right;">${escapeHtml(conversion.ref_code)}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; color: #6b7280;">Commission Earned</td>

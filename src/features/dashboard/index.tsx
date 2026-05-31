@@ -43,10 +43,61 @@ export function Dashboard() {
 
   // Admins have no business on the influencer dashboard — send them to Control Panel
   useEffect(() => {
-    if (currentUser.isAdmin) {
+    if (!currentUser.loading && currentUser.isAdmin) {
       navigate({ to: '/optcontrol' })
     }
-  }, [currentUser.isAdmin])
+  }, [currentUser.loading, currentUser.isAdmin])
+
+  if (currentUser.loading) {
+    return (
+      <>
+        {/* Skeleton Top Heading */}
+        <div className='mb-6 flex items-center justify-between'>
+          <Skeleton className='h-8 w-32' />
+          <Skeleton className='h-8 w-48' />
+        </div>
+
+        {/* Skeleton Stat Cards */}
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className='rounded-xl border border-muted/40 p-6 space-y-4'>
+              <div className='flex items-center justify-between'>
+                <Skeleton className='h-4 w-24' />
+                <Skeleton className='h-4 w-4 rounded-full' />
+              </div>
+              <Skeleton className='h-8 w-20' />
+              <Skeleton className='h-3 w-32' />
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Main Grid */}
+        <div className='grid grid-cols-1 gap-4 lg:grid-cols-7 mt-4'>
+          <div className='col-span-1 lg:col-span-4 rounded-xl border border-muted/40 p-6 space-y-4'>
+            <Skeleton className='h-6 w-32' />
+            <Skeleton className='h-[200px] w-full' />
+          </div>
+          <div className='col-span-1 lg:col-span-3 rounded-xl border border-muted/40 p-6 space-y-4'>
+            <Skeleton className='h-6 w-32' />
+            <div className='space-y-3'>
+              {[1, 2, 3, 4, 5].map((j) => (
+                <div key={j} className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <Skeleton className='h-9 w-9 rounded-full' />
+                    <div className='space-y-1'>
+                      <Skeleton className='h-4 w-24' />
+                      <Skeleton className='h-3 w-16' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-4 w-12' />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
 
   return (
     <>
