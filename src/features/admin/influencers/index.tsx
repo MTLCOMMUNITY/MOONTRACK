@@ -122,9 +122,9 @@ export function AdminInfluencers() {
     setDetails(null)
     try {
       // 1. Fetch total clicks
-      const { count: clicksCount, error: clicksError } = await supabase
-        .from('clicks')
-        .select('id', { count: 'exact', head: true })
+      const { data: linkData, error: clicksError } = await supabase
+        .from('referral_links')
+        .select('click_count')
         .eq('influencer_id', id)
 
       if (clicksError) throw clicksError
@@ -157,7 +157,7 @@ export function AdminInfluencers() {
       if (payoutError) throw payoutError
 
       // Calculations
-      const totalClicks = clicksCount ?? 0
+      const totalClicks = linkData?.reduce((sum, l) => sum + (l.click_count ?? 0), 0) ?? 0
       const totalConversions = conversions?.length ?? 0
       const totalEarnings = (payments ?? []).reduce((sum, p) => sum + (p.commission_earned ?? 0), 0)
       const totalPaidOut = (payouts ?? []).reduce((sum, p) => sum + (p.amount ?? 0), 0)
