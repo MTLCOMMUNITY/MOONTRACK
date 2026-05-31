@@ -380,10 +380,14 @@ function BootcampLandingPage() {
             {/* Horizontal Carousel (CSS scrolling) */}
             <div className='relative w-full pb-10'>
                 <div className='flex overflow-x-auto gap-6 snap-x snap-mandatory pb-8 no-scrollbar' style={{ scrollbarWidth: 'none' }}>
-                    {/* Placeholder screenshots */}
-                    {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className='min-w-[300px] md:min-w-[350px] aspect-[3/4] bg-white/5 rounded-3xl border border-white/10 snap-center flex items-center justify-center text-gray-500'>
-                            [Review Screenshot {i}]
+                    {/* Testimonial screenshots */}
+                    {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                        <div key={num} className='min-w-[300px] md:min-w-[350px] aspect-[3/4] bg-slate-950 rounded-3xl border border-white/10 snap-center overflow-hidden shadow-xl flex items-center justify-center'>
+                            <img 
+                              src={`/images/testimonial/testimonial-${num}.jpeg`} 
+                              alt={`Testimonial review ${num}`} 
+                              className='w-full h-full object-contain'
+                            />
                         </div>
                     ))}
                 </div>
