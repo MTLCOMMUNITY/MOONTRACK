@@ -59,6 +59,7 @@ type InfluencerDetails = {
     student_email: string
     registered_at: string
     payment_status: string
+    amount_paid: number | null
   }>
   payouts: Array<{
     id: string
@@ -131,7 +132,7 @@ export function AdminInfluencers() {
       // 2. Fetch conversions list
       const { data: conversions, error: convError } = await supabase
         .from('conversions')
-        .select('id, student_name, student_email, registered_at, payment_status')
+        .select('id, student_name, student_email, registered_at, payment_status, payments(amount)')
         .eq('influencer_id', id)
         .order('registered_at', { ascending: false })
 
@@ -163,6 +164,15 @@ export function AdminInfluencers() {
       const pendingBalance = Math.max(0, totalEarnings - totalPaidOut)
       const conversionRate = totalClicks > 0 ? parseFloat(((totalConversions / totalClicks) * 100).toFixed(1)) : 0
 
+      const rawConversions = conversions as unknown as Array<{
+        id: string
+        student_name: string | null
+        student_email: string | null
+        registered_at: string
+        payment_status: string
+        payments: Array<{ amount: number }> | { amount: number } | null
+      }> | null
+
       setDetails({
         totalClicks,
         totalConversions,
@@ -170,13 +180,21 @@ export function AdminInfluencers() {
         totalPaidOut,
         pendingBalance,
         conversionRate,
-        conversions: (conversions ?? []).map((c) => ({
-          id: c.id,
-          student_name: c.student_name ?? '—',
-          student_email: c.student_email ?? '—',
-          registered_at: c.registered_at,
-          payment_status: c.payment_status,
-        })),
+        conversions: (rawConversions ?? []).map((c) => {
+          const paymentsArray = Array.isArray(c.payments)
+            ? c.payments
+            : c.payments
+              ? [c.payments]
+              : []
+          return {
+            id: c.id,
+            student_name: c.student_name ?? '—',
+            student_email: c.student_email ?? '—',
+            registered_at: c.registered_at,
+            payment_status: c.payment_status,
+            amount_paid: paymentsArray[0]?.amount ?? null,
+          }
+        }),
         payouts: (payouts ?? []).map((p) => ({
           id: p.id,
           payout_date: p.payout_date,
@@ -578,6 +596,7 @@ export function AdminInfluencers() {
                             <TableRow>
                               <TableHead>Student Name</TableHead>
                               <TableHead>Email</TableHead>
+                              <TableHead>Amount Paid</TableHead>
                               <TableHead>Registered Date</TableHead>
                               <TableHead>Payment Status</TableHead>
                             </TableRow>
@@ -587,6 +606,9 @@ export function AdminInfluencers() {
                               <TableRow key={c.id}>
                                 <TableCell className="font-medium text-sm">{c.student_name}</TableCell>
                                 <TableCell className="text-sm">{c.student_email}</TableCell>
+                                <TableCell className="font-medium text-sm text-green-600 dark:text-green-400">
+                                  {c.amount_paid ? fmt(c.amount_paid) : '—'}
+                                </TableCell>
                                 <TableCell className="text-xs text-muted-foreground">
                                   {new Date(c.registered_at).toLocaleDateString('en-GB', {
                                     day: '2-digit',
