@@ -331,8 +331,7 @@ function BootcampLandingPage() {
                 {/* Instructor 1 */}
                 <div className='text-center'>
                     <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
-                         {/* Placeholder for Instructor Image */}
-                         <div className='absolute inset-0 flex items-center justify-center text-gray-400'>[Instructor Image 1]</div>
+                         <img src='/images/facilitator/facilitator 1.jpg' alt='Oluwasola Adebayo' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Oluwasola Adebayo</h3>
                     <p className='text-blue-600 font-bold mb-4'>Cybersecurity Professional</p>
@@ -343,8 +342,7 @@ function BootcampLandingPage() {
                 {/* Instructor 2 */}
                 <div className='text-center'>
                     <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
-                         {/* Placeholder for Instructor Image */}
-                         <div className='absolute inset-0 flex items-center justify-center text-gray-400'>[Instructor Image 2]</div>
+                         <img src='/images/facilitator/facilitator 2.png' alt='Casper Okpara' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Casper Okpara</h3>
                     <p className='text-blue-600 font-bold mb-4'>Tech Entrepreneur & AI Advocate</p>
@@ -355,8 +353,7 @@ function BootcampLandingPage() {
                 {/* Instructor 3 */}
                 <div className='text-center'>
                     <div className='aspect-[4/5] bg-gray-100 rounded-3xl mb-6 overflow-hidden relative'>
-                         {/* Placeholder for Instructor Image */}
-                         <div className='absolute inset-0 flex items-center justify-center text-gray-400'>[Instructor Image 3]</div>
+                         <img src='/images/facilitator/facilitator 3.jpg' alt='Igbayilola Kazeem' className='w-full h-full object-cover' />
                     </div>
                     <h3 className='text-2xl font-black text-gray-900'>Igbayilola Kazeem</h3>
                     <p className='text-blue-600 font-bold mb-4'>Product Engineer and AI Web Design Expert</p>
