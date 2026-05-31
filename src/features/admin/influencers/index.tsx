@@ -121,18 +121,16 @@ export function AdminInfluencers() {
     setDetailsLoading(true)
     setDetails(null)
     try {
-      // 1. Fetch summary stats from the authoritative view (same source as Admin Overview)
-      //    This gives the correct total_clicks, total_conversions, commission_earned,
-      //    pending_balance and total_paid_out, all pre-calculated consistently.
-      const { data: summary, error: summaryError } = await supabase
-        .from('influencer_dashboard_summary')
-        .select('total_clicks, total_conversions, commission_earned, pending_balance, total_paid_out')
+      // 1. Fetch total clicks — sum click_count across ALL referral links for this influencer
+      //    (includes inactive links to capture historical traffic correctly)
+      const { data: linkData, error: clicksError } = await supabase
+        .from('referral_links')
+        .select('click_count')
         .eq('influencer_id', id)
-        .single()
 
-      if (summaryError) throw summaryError
+      if (clicksError) throw clicksError
 
-      // 2. Fetch conversions list (for the history table)
+      // 2. Fetch conversions list (for history table)
       const { data: conversions, error: convError } = await supabase
         .from('conversions')
         .select('id, student_name, student_email, registered_at, payment_status, payments(amount)')
@@ -141,7 +139,16 @@ export function AdminInfluencers() {
 
       if (convError) throw convError
 
-      // 3. Fetch payouts history (for the history table)
+      // 3. Fetch earnings from payments table (confirmed only)
+      const { data: payments, error: payError } = await supabase
+        .from('payments')
+        .select('commission_earned')
+        .eq('influencer_id', id)
+        .eq('status', 'confirmed')
+
+      if (payError) throw payError
+
+      // 4. Fetch payouts history (for history table)
       const { data: payouts, error: payoutError } = await supabase
         .from('payouts')
         .select('id, payout_date, amount, method, reference, note')
@@ -150,12 +157,12 @@ export function AdminInfluencers() {
 
       if (payoutError) throw payoutError
 
-      // Use the pre-calculated values directly from the view
-      const totalClicks = Number(summary?.total_clicks ?? 0)
-      const totalConversions = Number(summary?.total_conversions ?? 0)
-      const totalEarnings = Number(summary?.commission_earned ?? 0)
-      const totalPaidOut = Number(summary?.total_paid_out ?? 0)
-      const pendingBalance = Number(summary?.pending_balance ?? 0)
+      // Calculate correct totals (no JOIN fan-out inflation)
+      const totalClicks = (linkData ?? []).reduce((sum, l) => sum + (l.click_count ?? 0), 0)
+      const totalConversions = conversions?.length ?? 0
+      const totalEarnings = (payments ?? []).reduce((sum, p) => sum + (p.commission_earned ?? 0), 0)
+      const totalPaidOut = (payouts ?? []).reduce((sum, p) => sum + (p.amount ?? 0), 0)
+      const pendingBalance = Math.max(0, totalEarnings - totalPaidOut)
       const conversionRate = totalClicks > 0 ? parseFloat(((totalConversions / totalClicks) * 100).toFixed(1)) : 0
 
       const rawConversions = conversions as unknown as Array<{
