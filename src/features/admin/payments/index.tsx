@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
-import { IconPlus } from '@tabler/icons-react'
+import { IconPlus, IconChevronDown, IconSearch } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Dialog,
   DialogContent,
@@ -60,6 +65,11 @@ export function AdminPayments() {
   const [influencers, setInfluencers] = useState<Influencer[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [openInfluencers, setOpenInfluencers] = useState<
+    Record<string, boolean>
+  >({})
 
   const [infId, setInfId] = useState('')
   const [amount, setAmount] = useState('')
@@ -209,6 +219,19 @@ export function AdminPayments() {
         </div>
       </Header>
       <Main>
+        <div className='mb-6 flex items-center gap-2'>
+          <div className='relative max-w-sm flex-1'>
+            <IconSearch className='absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground' />
+            <Input
+              type='search'
+              placeholder='Search influencers...'
+              className='pl-8'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         {loading ? (
           <Card>
             <CardContent className='space-y-3 p-6'>
@@ -234,77 +257,111 @@ export function AdminPayments() {
                 },
                 {} as Record<string, Payment[]>
               )
-            ).map(([influencerName, infPayments]) => (
-              <Card key={influencerName}>
-                <CardHeader className='bg-muted/30 py-3'>
-                  <CardTitle className='text-sm font-semibold'>
-                    {influencerName}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='p-0'>
-                  <div className='overflow-x-auto'>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className='w-[120px] text-right'>
-                            Amount
-                          </TableHead>
-                          <TableHead className='w-[120px] text-right'>
-                            Commission
-                          </TableHead>
-                          <TableHead>Ref</TableHead>
-                          <TableHead className='w-[120px]'>Date</TableHead>
-                          <TableHead className='w-[150px]'>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {infPayments.map((p) => (
-                          <TableRow key={p.id}>
-                            <TableCell className='text-right'>
-                              {fmt(p.amount)}
-                            </TableCell>
-                            <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>
-                              {fmt(p.commission_earned)}
-                            </TableCell>
-                            <TableCell className='font-mono text-xs text-muted-foreground'>
-                              {p.transaction_ref ?? '—'}
-                            </TableCell>
-                            <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
-                              {new Date(p.payment_date).toLocaleDateString(
-                                'en-GB'
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                value={p.status}
-                                onValueChange={(v) => updateStatus(p.id, v)}
-                              >
-                                <SelectTrigger className='h-7 w-28 text-xs'>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {['confirmed', 'pending', 'reversed'].map(
-                                    (s) => (
-                                      <SelectItem
-                                        key={s}
-                                        value={s}
-                                        className='text-xs capitalize'
-                                      >
-                                        {s}
-                                      </SelectItem>
-                                    )
-                                  )}
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            )
+              .filter(([name]) =>
+                name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map(([influencerName, infPayments]) => (
+                <Collapsible
+                  key={influencerName}
+                  open={openInfluencers[influencerName] ?? false}
+                  onOpenChange={(isOpen) =>
+                    setOpenInfluencers((prev) => ({
+                      ...prev,
+                      [influencerName]: isOpen,
+                    }))
+                  }
+                >
+                  <Card>
+                    <CollapsibleTrigger asChild>
+                      <CardHeader className='flex cursor-pointer flex-row items-center justify-between bg-muted/30 py-3 transition-colors hover:bg-muted/50'>
+                        <CardTitle className='text-sm font-semibold'>
+                          {influencerName}{' '}
+                          <span className='ml-2 font-normal text-muted-foreground'>
+                            ({infPayments.length} payment
+                            {infPayments.length === 1 ? '' : 's'})
+                          </span>
+                        </CardTitle>
+                        <IconChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${openInfluencers[influencerName] ? 'rotate-180' : ''}`}
+                        />
+                      </CardHeader>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <CardContent className='p-0'>
+                        <div className='overflow-x-auto'>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className='w-[120px] text-right'>
+                                  Amount
+                                </TableHead>
+                                <TableHead className='w-[120px] text-right'>
+                                  Commission
+                                </TableHead>
+                                <TableHead>Ref</TableHead>
+                                <TableHead className='w-[120px]'>
+                                  Date
+                                </TableHead>
+                                <TableHead className='w-[150px]'>
+                                  Status
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {infPayments.map((p) => (
+                                <TableRow key={p.id}>
+                                  <TableCell className='text-right'>
+                                    {fmt(p.amount)}
+                                  </TableCell>
+                                  <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>
+                                    {fmt(p.commission_earned)}
+                                  </TableCell>
+                                  <TableCell className='font-mono text-xs text-muted-foreground'>
+                                    {p.transaction_ref ?? '—'}
+                                  </TableCell>
+                                  <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
+                                    {new Date(
+                                      p.payment_date
+                                    ).toLocaleDateString('en-GB')}
+                                  </TableCell>
+                                  <TableCell>
+                                    <Select
+                                      value={p.status}
+                                      onValueChange={(v) =>
+                                        updateStatus(p.id, v)
+                                      }
+                                    >
+                                      <SelectTrigger className='h-7 w-28 text-xs'>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[
+                                          'confirmed',
+                                          'pending',
+                                          'reversed',
+                                        ].map((s) => (
+                                          <SelectItem
+                                            key={s}
+                                            value={s}
+                                            className='text-xs capitalize'
+                                          >
+                                            {s}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
+              ))}
           </div>
         )}
       </Main>
