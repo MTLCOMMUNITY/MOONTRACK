@@ -209,79 +209,104 @@ export function AdminPayments() {
         </div>
       </Header>
       <Main>
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base font-semibold'>
-              All Payments
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='p-0'>
-            {loading ? (
-              <div className='space-y-3 p-6'>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className='h-10 w-full' />
-                ))}
-              </div>
-            ) : (
-              <div className='overflow-x-auto'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Influencer</TableHead>
-                      <TableHead className='text-right'>Amount</TableHead>
-                      <TableHead className='text-right'>Commission</TableHead>
-                      <TableHead>Ref</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payments.map((p) => (
-                      <TableRow key={p.id}>
-                        <TableCell className='font-medium'>
-                          {p.influencer_name}
-                        </TableCell>
-                        <TableCell className='text-right'>
-                          {fmt(p.amount)}
-                        </TableCell>
-                        <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>
-                          {fmt(p.commission_earned)}
-                        </TableCell>
-                        <TableCell className='font-mono text-xs text-muted-foreground'>
-                          {p.transaction_ref ?? '—'}
-                        </TableCell>
-                        <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
-                          {new Date(p.payment_date).toLocaleDateString('en-GB')}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={p.status}
-                            onValueChange={(v) => updateStatus(p.id, v)}
-                          >
-                            <SelectTrigger className='h-7 w-28 text-xs'>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {['confirmed', 'pending', 'reversed'].map((s) => (
-                                <SelectItem
-                                  key={s}
-                                  value={s}
-                                  className='text-xs capitalize'
-                                >
-                                  {s}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {loading ? (
+          <Card>
+            <CardContent className='space-y-3 p-6'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className='h-10 w-full' />
+              ))}
+            </CardContent>
+          </Card>
+        ) : payments.length === 0 ? (
+          <Card>
+            <CardContent className='p-6 text-center text-muted-foreground'>
+              No payments found.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className='space-y-6'>
+            {Object.entries(
+              payments.reduce(
+                (acc, p) => {
+                  if (!acc[p.influencer_name]) acc[p.influencer_name] = []
+                  acc[p.influencer_name].push(p)
+                  return acc
+                },
+                {} as Record<string, Payment[]>
+              )
+            ).map(([influencerName, infPayments]) => (
+              <Card key={influencerName}>
+                <CardHeader className='bg-muted/30 py-3'>
+                  <CardTitle className='text-sm font-semibold'>
+                    {influencerName}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='p-0'>
+                  <div className='overflow-x-auto'>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className='w-[120px] text-right'>
+                            Amount
+                          </TableHead>
+                          <TableHead className='w-[120px] text-right'>
+                            Commission
+                          </TableHead>
+                          <TableHead>Ref</TableHead>
+                          <TableHead className='w-[120px]'>Date</TableHead>
+                          <TableHead className='w-[150px]'>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {infPayments.map((p) => (
+                          <TableRow key={p.id}>
+                            <TableCell className='text-right'>
+                              {fmt(p.amount)}
+                            </TableCell>
+                            <TableCell className='text-right font-semibold text-green-600 dark:text-green-400'>
+                              {fmt(p.commission_earned)}
+                            </TableCell>
+                            <TableCell className='font-mono text-xs text-muted-foreground'>
+                              {p.transaction_ref ?? '—'}
+                            </TableCell>
+                            <TableCell className='text-xs whitespace-nowrap text-muted-foreground'>
+                              {new Date(p.payment_date).toLocaleDateString(
+                                'en-GB'
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={p.status}
+                                onValueChange={(v) => updateStatus(p.id, v)}
+                              >
+                                <SelectTrigger className='h-7 w-28 text-xs'>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {['confirmed', 'pending', 'reversed'].map(
+                                    (s) => (
+                                      <SelectItem
+                                        key={s}
+                                        value={s}
+                                        className='text-xs capitalize'
+                                      >
+                                        {s}
+                                      </SelectItem>
+                                    )
+                                  )}
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </Main>
     </>
   )
