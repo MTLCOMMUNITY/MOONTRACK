@@ -50,7 +50,7 @@ type Payment = {
   influencer_name: string
 }
 
-type Influencer = { id: string; full_name: string }
+type Influencer = { id: string; full_name: string; email: string }
 
 function fmt(n: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -85,7 +85,7 @@ export function AdminPayments() {
           'id, amount, commission_earned, payment_date, status, transaction_ref, influencers(full_name)'
         )
         .order('payment_date', { ascending: false }),
-      supabase.from('influencers').select('id, full_name'),
+      supabase.from('influencers').select('id, full_name, email'),
     ])
     const rawPayments = p as unknown as
       | (Omit<Payment, 'influencer_name'> & {
@@ -174,7 +174,7 @@ export function AdminPayments() {
                     <SelectContent>
                       {influencers.map((i) => (
                         <SelectItem key={i.id} value={i.id}>
-                          {i.full_name}
+                          {i.full_name} ({i.email})
                         </SelectItem>
                       ))}
                     </SelectContent>
