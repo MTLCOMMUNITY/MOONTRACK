@@ -25,8 +25,8 @@ if (typeof window !== 'undefined') {
       search.includes('type=invite')) &&
     !window.location.pathname.includes('/update-password')
   ) {
-    // Preserve the hash so Supabase can process the auth token on the update-password page
-    window.location.href = '/update-password' + hash
+    // Preserve both search params (for PKCE code) and hash (for implicit flow)
+    window.location.href = '/update-password' + search + hash
   }
 }
 
