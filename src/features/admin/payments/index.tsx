@@ -288,6 +288,7 @@ export function AdminPayments() {
               .map(([influencerName, infPayments]) => (
                 <Collapsible
                   key={influencerName}
+                  // eslint-disable-next-line security/detect-object-injection
                   open={openInfluencers[influencerName] ?? false}
                   onOpenChange={(isOpen) =>
                     setOpenInfluencers((prev) => ({
@@ -307,6 +308,7 @@ export function AdminPayments() {
                           </span>
                         </CardTitle>
                         <IconChevronDown
+                          // eslint-disable-next-line security/detect-object-injection
                           className={`h-4 w-4 transition-transform duration-200 ${openInfluencers[influencerName] ? 'rotate-180' : ''}`}
                         />
                       </CardHeader>

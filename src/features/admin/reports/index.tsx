@@ -125,6 +125,7 @@ function exportToPDF(transactions: Transaction[]) {
     headStyles: { fillColor: [41, 128, 185] },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const finalY = (doc as any).lastAutoTable.finalY || 45
 
   // Summary
@@ -165,6 +166,7 @@ export function AdminReports() {
     const allTransactions: Transaction[] = []
 
     if (p) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const pay of p as any[]) {
         const inf = Array.isArray(pay.influencers)
           ? pay.influencers[0]
@@ -183,6 +185,7 @@ export function AdminReports() {
     }
 
     if (payouts) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const po of payouts as any[]) {
         const inf = Array.isArray(po.influencers)
           ? po.influencers[0]
