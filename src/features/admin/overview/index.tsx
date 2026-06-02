@@ -48,7 +48,7 @@ export function AdminOverview() {
       supabase.from('payments').select('amount').eq('status', 'confirmed'),
     ]).then(([summaryRes, paymentsRes]) => {
       setRows((summaryRes.data as InfluencerStat[]) ?? [])
-      
+
       const payments = paymentsRes.data || []
       const revenue = payments.reduce((acc, p) => acc + (p.amount || 0), 0)
       setTotalRevenue(revenue)
@@ -68,8 +68,16 @@ export function AdminOverview() {
   )
 
   const statCards = [
-    { title: 'Total Clicks', value: totals.clicks.toLocaleString(), icon: IconLink },
-    { title: 'Total Conversions', value: totals.conversions.toLocaleString(), icon: IconUsers },
+    {
+      title: 'Total Clicks',
+      value: totals.clicks.toLocaleString(),
+      icon: IconLink,
+    },
+    {
+      title: 'Total Conversions',
+      value: totals.conversions.toLocaleString(),
+      icon: IconUsers,
+    },
     { title: 'Gross Revenue', value: fmt(totalRevenue), icon: IconCash },
     { title: 'Total Commission', value: fmt(totals.earned), icon: IconWallet },
   ]

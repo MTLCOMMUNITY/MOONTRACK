@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { IconDownload, IconTrendingUp, IconTrendingDown, IconFileTypePdf } from '@tabler/icons-react'
+import {
+  IconDownload,
+  IconTrendingUp,
+  IconTrendingDown,
+  IconFileTypePdf,
+} from '@tabler/icons-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { supabase } from '@/lib/supabase'
@@ -85,12 +90,12 @@ function exportToCSV(transactions: Transaction[]) {
 
 function exportToPDF(transactions: Transaction[]) {
   const doc = new jsPDF()
-  
+
   // Header
   doc.setFontSize(20)
   doc.setTextColor(40, 40, 40)
   doc.text('MoonTrack', 14, 22)
-  
+
   doc.setFontSize(10)
   doc.setTextColor(100, 100, 100)
   doc.text('Official Transactions Statement', 14, 30)
@@ -99,21 +104,31 @@ function exportToPDF(transactions: Transaction[]) {
   // Calculate totals
   let totalRevenue = 0
   let totalPayouts = 0
-  transactions.forEach(t => {
+  transactions.forEach((t) => {
     if (t.type === 'Payment') totalRevenue += t.amount
     else if (t.type === 'Payout') totalPayouts += t.amount
   })
 
   // Table
-  const headers = [['Date', 'Type', 'Influencer Name', 'Amount (NGN)', 'Commission (NGN)', 'Status', 'Ref']]
-  const data = transactions.map(t => [
+  const headers = [
+    [
+      'Date',
+      'Type',
+      'Influencer Name',
+      'Amount (NGN)',
+      'Commission (NGN)',
+      'Status',
+      'Ref',
+    ],
+  ]
+  const data = transactions.map((t) => [
     new Date(t.date).toLocaleDateString('en-GB'),
     t.type,
     t.influencer_name,
     t.amount.toLocaleString('en-US'),
     t.commission ? t.commission.toLocaleString('en-US') : '0',
     t.status,
-    t.reference || '—'
+    t.reference || '—',
   ])
 
   autoTable(doc, {
@@ -132,10 +147,18 @@ function exportToPDF(transactions: Transaction[]) {
   doc.setFontSize(12)
   doc.setTextColor(40, 40, 40)
   doc.text('Summary', 14, finalY + 10)
-  
+
   doc.setFontSize(10)
-  doc.text(`Total Revenue: NGN ${totalRevenue.toLocaleString('en-US')}`, 14, finalY + 18)
-  doc.text(`Total Payouts: NGN ${totalPayouts.toLocaleString('en-US')}`, 14, finalY + 24)
+  doc.text(
+    `Total Revenue: NGN ${totalRevenue.toLocaleString('en-US')}`,
+    14,
+    finalY + 18
+  )
+  doc.text(
+    `Total Payouts: NGN ${totalPayouts.toLocaleString('en-US')}`,
+    14,
+    finalY + 24
+  )
 
   doc.save('moontrack-transactions-statement.pdf')
 }
@@ -216,14 +239,20 @@ export function AdminReports() {
   }, [])
 
   const filteredTransactions = transactions.filter((t) => {
-    if (filterType !== 'all' && t.type.toLowerCase() !== filterType) return false
-    if (searchInf && !t.influencer_name.toLowerCase().includes(searchInf.toLowerCase())) return false
+    if (filterType !== 'all' && t.type.toLowerCase() !== filterType)
+      return false
+    if (
+      searchInf &&
+      !t.influencer_name.toLowerCase().includes(searchInf.toLowerCase())
+    )
+      return false
     if (dateFrom && new Date(t.date) < new Date(dateFrom)) return false
-    
+
     // For dateTo, we want to include the whole day, so we compare against dateTo + 1 day or check if it's less than or equal.
     // A simpler way:
-    if (dateTo && new Date(t.date) > new Date(dateTo + 'T23:59:59')) return false
-    
+    if (dateTo && new Date(t.date) > new Date(dateTo + 'T23:59:59'))
+      return false
+
     return true
   })
 

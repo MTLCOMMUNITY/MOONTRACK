@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
 import { IconTrash } from '@tabler/icons-react'
+import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -192,7 +192,10 @@ export function AdminReferrals() {
     const id = deleteId
     setDeleteId(null)
     try {
-      const { error } = await supabase.from('referral_links').delete().eq('id', id)
+      const { error } = await supabase
+        .from('referral_links')
+        .delete()
+        .eq('id', id)
       if (error) throw error
       toast.success('Referral link deleted')
       setLinks((prev) => prev.filter((link) => link.id !== id))
@@ -358,17 +361,26 @@ export function AdminReferrals() {
           </Table>
         </div>
       </Main>
-      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(o) => !o && setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this referral link.
+              This action cannot be undone. This will permanently delete this
+              referral link.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className='bg-red-600 hover:bg-red-700'
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
