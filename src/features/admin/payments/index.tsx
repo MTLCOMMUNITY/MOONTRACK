@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react'
-import { IconPlus, IconChevronDown, IconSearch } from '@tabler/icons-react'
+import { IconPlus, IconChevronDown, IconSearch, IconTrash } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
   Collapsible,
   CollapsibleContent,
@@ -76,6 +86,7 @@ export function AdminPayments() {
   const [commission, setCommission] = useState('')
   const [txRef, setTxRef] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   async function load() {
     const [{ data: p }, { data: inf }] = await Promise.all([
@@ -146,6 +157,19 @@ export function AdminPayments() {
     await supabase.from('payments').update({ status }).eq('id', id)
     setPayments((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
     toast.success('Status updated')
+  }
+
+  async function confirmDelete() {
+    if (!deleteId) return
+    const id = deleteId
+    setDeleteId(null)
+    const { error } = await supabase.from('payments').delete().eq('id', id)
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('Payment deleted')
+      setPayments((prev) => prev.filter((p) => p.id !== id))
+    }
   }
 
   return (
@@ -306,6 +330,7 @@ export function AdminPayments() {
                                 <TableHead className='w-[150px]'>
                                   Status
                                 </TableHead>
+                                <TableHead className='w-[50px]'></TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -352,6 +377,16 @@ export function AdminPayments() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
+                                  <TableCell>
+                                    <Button
+                                      variant='ghost'
+                                      size='icon'
+                                      className='text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950'
+                                      onClick={() => setDeleteId(p.id)}
+                                    >
+                                      <IconTrash className='size-4' />
+                                    </Button>
+                                  </TableCell>
                                 </TableRow>
                               ))}
                             </TableBody>
@@ -365,6 +400,20 @@ export function AdminPayments() {
           </div>
         )}
       </Main>
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this payment record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

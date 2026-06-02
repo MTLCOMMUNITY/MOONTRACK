@@ -12,6 +12,7 @@ import {
   IconCreditCard,
   IconBuildingBank,
   IconAdjustments,
+  IconReport,
 } from '@tabler/icons-react'
 import { type SidebarData } from '../types'
 
@@ -113,6 +114,11 @@ export const adminNavGroups = [
         title: 'Payouts',
         url: '/optcontrol/payouts',
         icon: IconBuildingBank,
+      },
+      {
+        title: 'Reports',
+        url: '/optcontrol/reports',
+        icon: IconReport,
       },
     ],
   },

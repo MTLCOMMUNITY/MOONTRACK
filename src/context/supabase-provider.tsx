@@ -63,7 +63,12 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
       // When a user clicks an invite link or forgot password link,
       // Supabase fires the PASSWORD_RECOVERY event.
       if (event === 'PASSWORD_RECOVERY') {
-        window.location.href = '/update-password'
+        if (!window.location.pathname.includes('/update-password')) {
+          window.location.href = '/update-password'
+        } else {
+          // Clean up the URL without a full reload so we don't interrupt Supabase's session saving
+          window.history.replaceState({}, document.title, '/update-password')
+        }
       }
     })
 

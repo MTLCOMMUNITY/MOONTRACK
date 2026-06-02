@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { IconLink, IconUsers, IconCash, IconClock } from '@tabler/icons-react'
+import { IconUsers, IconCash, IconWallet, IconCheck } from '@tabler/icons-react'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { useDashboard } from '@/hooks/use-dashboard'
 import {
@@ -128,24 +128,24 @@ export function Dashboard() {
           <TabsContent value='overview' className='space-y-4'>
             {/* 4 Stat cards */}
             <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-              {/* Total Clicks */}
+              {/* Total Paid Out */}
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Total Clicks
+                    Total Paid Out
                   </CardTitle>
-                  <IconLink className='h-4 w-4 text-muted-foreground' />
+                  <IconCheck className='h-4 w-4 text-muted-foreground' />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <Skeleton className='h-8 w-24' />
                   ) : (
                     <div className='text-2xl font-bold'>
-                      {stats.totalClicks.toLocaleString()}
+                      {fmt(stats.totalPaidOut)}
                     </div>
                   )}
                   <p className='text-xs text-muted-foreground'>
-                    Across all referral links
+                    Successfully paid
                   </p>
                 </CardContent>
               </Card>
@@ -194,24 +194,24 @@ export function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Pending Balance */}
+              {/* Unpaid Balance */}
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Pending Balance
+                    Unpaid Balance
                   </CardTitle>
-                  <IconClock className='h-4 w-4 text-muted-foreground' />
+                  <IconWallet className='h-4 w-4 text-muted-foreground' />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <Skeleton className='h-8 w-28' />
                   ) : (
-                    <div className='text-2xl font-bold'>
-                      {fmt(stats.pendingBalance)}
+                    <div className='text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                      {fmt(stats.unpaidBalance)}
                     </div>
                   )}
                   <p className='text-xs text-muted-foreground'>
-                    Awaiting confirmation
+                    Available for payout
                   </p>
                 </CardContent>
               </Card>

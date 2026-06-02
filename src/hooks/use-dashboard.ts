@@ -6,6 +6,8 @@ export type DashboardStats = {
   totalConversions: number
   commissionEarned: number
   pendingBalance: number
+  totalPaidOut: number
+  unpaidBalance: number
 }
 
 export type RecentConversion = {
@@ -22,6 +24,8 @@ export function useDashboard() {
     totalConversions: 0,
     commissionEarned: 0,
     pendingBalance: 0,
+    totalPaidOut: 0,
+    unpaidBalance: 0,
   })
   const [recentConversions, setRecentConversions] = useState<
     RecentConversion[]
@@ -81,6 +85,19 @@ export function useDashboard() {
             ?.filter((p) => p.status === 'pending')
             .reduce((sum, p) => sum + (p.commission_earned ?? 0), 0) ?? 0
 
+        // Total Paid Out
+        const { data: payoutData } = await supabase
+          .from('payouts')
+          .select('amount, status')
+          .eq('influencer_id', influencerId)
+
+        const totalPaidOut =
+          payoutData
+            ?.filter((p) => p.status === 'paid')
+            .reduce((sum, p) => sum + (p.amount ?? 0), 0) ?? 0
+
+        const unpaidBalance = commissionEarned - totalPaidOut
+
         // Recent 5 conversions with their payment commission
         const { data: convData, error: convError } = await supabase
           .from('conversions')
@@ -122,6 +139,8 @@ export function useDashboard() {
           totalConversions: convCount ?? 0,
           commissionEarned,
           pendingBalance,
+          totalPaidOut,
+          unpaidBalance,
         })
         setRecentConversions(recent)
       } catch (err) {

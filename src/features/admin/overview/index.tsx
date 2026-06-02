@@ -39,16 +39,22 @@ function fmt(n: number) {
 
 export function AdminOverview() {
   const [rows, setRows] = useState<InfluencerStat[]>([])
+  const [totalRevenue, setTotalRevenue] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase
-      .from('influencer_dashboard_summary')
-      .select('*')
-      .then(({ data }) => {
-        setRows((data as InfluencerStat[]) ?? [])
-        setLoading(false)
-      })
+    Promise.all([
+      supabase.from('influencer_dashboard_summary').select('*'),
+      supabase.from('payments').select('amount').eq('status', 'confirmed'),
+    ]).then(([summaryRes, paymentsRes]) => {
+      setRows((summaryRes.data as InfluencerStat[]) ?? [])
+      
+      const payments = paymentsRes.data || []
+      const revenue = payments.reduce((acc, p) => acc + (p.amount || 0), 0)
+      setTotalRevenue(revenue)
+
+      setLoading(false)
+    })
   }, [])
 
   const totals = rows.reduce(
@@ -62,14 +68,10 @@ export function AdminOverview() {
   )
 
   const statCards = [
-    { title: 'Total Influencers', value: rows.length, icon: IconUsers },
-    {
-      title: 'Total Clicks',
-      value: totals.clicks.toLocaleString(),
-      icon: IconLink,
-    },
-    { title: 'Total Earned', value: fmt(totals.earned), icon: IconCash },
-    { title: 'Pending Balance', value: fmt(totals.pending), icon: IconWallet },
+    { title: 'Total Clicks', value: totals.clicks.toLocaleString(), icon: IconLink },
+    { title: 'Total Conversions', value: totals.conversions.toLocaleString(), icon: IconUsers },
+    { title: 'Gross Revenue', value: fmt(totalRevenue), icon: IconCash },
+    { title: 'Total Commission', value: fmt(totals.earned), icon: IconWallet },
   ]
 
   return (

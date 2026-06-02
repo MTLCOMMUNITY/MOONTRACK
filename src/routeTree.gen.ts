@@ -35,6 +35,7 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedOptcontrolSettingsRouteImport } from './routes/_authenticated/optcontrol/settings'
+import { Route as AuthenticatedOptcontrolReportsRouteImport } from './routes/_authenticated/optcontrol/reports'
 import { Route as AuthenticatedOptcontrolPayoutsRouteImport } from './routes/_authenticated/optcontrol/payouts'
 import { Route as AuthenticatedOptcontrolPaymentsRouteImport } from './routes/_authenticated/optcontrol/payments'
 import { Route as AuthenticatedOptcontrolInfluencersRouteImport } from './routes/_authenticated/optcontrol/influencers'
@@ -183,6 +184,12 @@ const AuthenticatedOptcontrolSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedOptcontrolRouteRoute,
   } as any)
+const AuthenticatedOptcontrolReportsRoute =
+  AuthenticatedOptcontrolReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedOptcontrolRouteRoute,
+  } as any)
 const AuthenticatedOptcontrolPayoutsRoute =
   AuthenticatedOptcontrolPayoutsRouteImport.update({
     id: '/payouts',
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
   '/optcontrol/payments': typeof AuthenticatedOptcontrolPaymentsRoute
   '/optcontrol/payouts': typeof AuthenticatedOptcontrolPayoutsRoute
+  '/optcontrol/reports': typeof AuthenticatedOptcontrolReportsRoute
   '/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -273,6 +281,7 @@ export interface FileRoutesByTo {
   '/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
   '/optcontrol/payments': typeof AuthenticatedOptcontrolPaymentsRoute
   '/optcontrol/payouts': typeof AuthenticatedOptcontrolPayoutsRoute
+  '/optcontrol/reports': typeof AuthenticatedOptcontrolReportsRoute
   '/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -308,6 +317,7 @@ export interface FileRoutesById {
   '/_authenticated/optcontrol/influencers': typeof AuthenticatedOptcontrolInfluencersRoute
   '/_authenticated/optcontrol/payments': typeof AuthenticatedOptcontrolPaymentsRoute
   '/_authenticated/optcontrol/payouts': typeof AuthenticatedOptcontrolPayoutsRoute
+  '/_authenticated/optcontrol/reports': typeof AuthenticatedOptcontrolReportsRoute
   '/_authenticated/optcontrol/settings': typeof AuthenticatedOptcontrolSettingsRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -343,6 +353,7 @@ export interface FileRouteTypes {
     | '/optcontrol/influencers'
     | '/optcontrol/payments'
     | '/optcontrol/payouts'
+    | '/optcontrol/reports'
     | '/optcontrol/settings'
     | '/settings/account'
     | '/settings/appearance'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/optcontrol/influencers'
     | '/optcontrol/payments'
     | '/optcontrol/payouts'
+    | '/optcontrol/reports'
     | '/optcontrol/settings'
     | '/settings/account'
     | '/settings/appearance'
@@ -408,6 +420,7 @@ export interface FileRouteTypes {
     | '/_authenticated/optcontrol/influencers'
     | '/_authenticated/optcontrol/payments'
     | '/_authenticated/optcontrol/payouts'
+    | '/_authenticated/optcontrol/reports'
     | '/_authenticated/optcontrol/settings'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOptcontrolSettingsRouteImport
       parentRoute: typeof AuthenticatedOptcontrolRouteRoute
     }
+    '/_authenticated/optcontrol/reports': {
+      id: '/_authenticated/optcontrol/reports'
+      path: '/reports'
+      fullPath: '/optcontrol/reports'
+      preLoaderRoute: typeof AuthenticatedOptcontrolReportsRouteImport
+      parentRoute: typeof AuthenticatedOptcontrolRouteRoute
+    }
     '/_authenticated/optcontrol/payouts': {
       id: '/_authenticated/optcontrol/payouts'
       path: '/payouts'
@@ -671,6 +691,7 @@ interface AuthenticatedOptcontrolRouteRouteChildren {
   AuthenticatedOptcontrolInfluencersRoute: typeof AuthenticatedOptcontrolInfluencersRoute
   AuthenticatedOptcontrolPaymentsRoute: typeof AuthenticatedOptcontrolPaymentsRoute
   AuthenticatedOptcontrolPayoutsRoute: typeof AuthenticatedOptcontrolPayoutsRoute
+  AuthenticatedOptcontrolReportsRoute: typeof AuthenticatedOptcontrolReportsRoute
   AuthenticatedOptcontrolSettingsRoute: typeof AuthenticatedOptcontrolSettingsRoute
   AuthenticatedOptcontrolIndexRoute: typeof AuthenticatedOptcontrolIndexRoute
 }
@@ -685,6 +706,7 @@ const AuthenticatedOptcontrolRouteRouteChildren: AuthenticatedOptcontrolRouteRou
       AuthenticatedOptcontrolInfluencersRoute,
     AuthenticatedOptcontrolPaymentsRoute: AuthenticatedOptcontrolPaymentsRoute,
     AuthenticatedOptcontrolPayoutsRoute: AuthenticatedOptcontrolPayoutsRoute,
+    AuthenticatedOptcontrolReportsRoute: AuthenticatedOptcontrolReportsRoute,
     AuthenticatedOptcontrolSettingsRoute: AuthenticatedOptcontrolSettingsRoute,
     AuthenticatedOptcontrolIndexRoute: AuthenticatedOptcontrolIndexRoute,
   }

@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
+import { IconTrash } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
   Dialog,
   DialogContent,
@@ -34,7 +45,6 @@ import {
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 
 type ReferralLink = {
@@ -60,6 +70,7 @@ export function AdminReferrals() {
 
   const [open, setOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   // Form state
   const [selectedInfluencer, setSelectedInfluencer] = useState('')
@@ -176,10 +187,24 @@ export function AdminReferrals() {
     }
   }
 
+  async function confirmDelete() {
+    if (!deleteId) return
+    const id = deleteId
+    setDeleteId(null)
+    try {
+      const { error } = await supabase.from('referral_links').delete().eq('id', id)
+      if (error) throw error
+      toast.success('Referral link deleted')
+      setLinks((prev) => prev.filter((link) => link.id !== id))
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message ?? 'Failed to delete referral link')
+    }
+  }
+
   return (
     <>
       <Header>
-        <Search />
         <div className='ml-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ProfileDropdown />
@@ -263,6 +288,7 @@ export function AdminReferrals() {
                 <TableHead>Conversions</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className='text-right'>Toggle</TableHead>
+                <TableHead className='w-[50px]'></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -315,6 +341,16 @@ export function AdminReferrals() {
                         }
                       />
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950'
+                        onClick={() => setDeleteId(link.id)}
+                      >
+                        <IconTrash className='size-4' />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -322,6 +358,20 @@ export function AdminReferrals() {
           </Table>
         </div>
       </Main>
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this referral link.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

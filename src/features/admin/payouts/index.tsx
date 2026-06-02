@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react'
-import { IconPlus } from '@tabler/icons-react'
+import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
   Dialog,
   DialogContent,
@@ -69,6 +79,7 @@ export function AdminPayouts() {
   const [reference, setReference] = useState('')
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   async function load() {
     const [{ data: p }, { data: inf }] = await Promise.all([
@@ -142,6 +153,19 @@ export function AdminPayouts() {
     await supabase.from('payouts').update({ status }).eq('id', id)
     setPayouts((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
     toast.success('Status updated')
+  }
+
+  async function confirmDelete() {
+    if (!deleteId) return
+    const id = deleteId
+    setDeleteId(null)
+    const { error } = await supabase.from('payouts').delete().eq('id', id)
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('Payout deleted')
+      setPayouts((prev) => prev.filter((p) => p.id !== id))
+    }
   }
 
   return (
@@ -257,6 +281,7 @@ export function AdminPayouts() {
                       <TableHead>Date</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Note</TableHead>
+                      <TableHead className='w-[50px]'></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -313,6 +338,16 @@ export function AdminPayouts() {
                           <TableCell className='max-w-[160px] truncate text-xs text-muted-foreground'>
                             {p.note ?? '—'}
                           </TableCell>
+                          <TableCell>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              className='text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950'
+                              onClick={() => setDeleteId(p.id)}
+                            >
+                              <IconTrash className='size-4' />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))
                     )}
@@ -323,6 +358,20 @@ export function AdminPayouts() {
           </CardContent>
         </Card>
       </Main>
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this payout record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
