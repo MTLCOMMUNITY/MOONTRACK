@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 const STORAGE_KEY = 'moontrack_ref_code'
 
@@ -11,15 +11,15 @@ export function useReferral() {
     return null
   })
 
-  const saveRefCode = (code: string) => {
+  const saveRefCode = useCallback((code: string) => {
     localStorage.setItem(STORAGE_KEY, code)
     setRefCode(code)
-  }
+  }, [])
 
-  const clearRefCode = () => {
+  const clearRefCode = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
     setRefCode(null)
-  }
+  }, [])
 
   return { refCode, saveRefCode, clearRefCode }
 }

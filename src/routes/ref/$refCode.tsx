@@ -48,7 +48,7 @@ function ReferralTracker() {
       }
     }
     init()
-  }, [refCode, navigate, saveRefCode])
+  }, [refCode])
 
   if (error) {
     return (
