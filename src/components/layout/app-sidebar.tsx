@@ -18,11 +18,12 @@ export function AppSidebar() {
   const { collapsible, variant } = useLayout()
   const currentUser = useCurrentUser()
 
-  const navGroups = currentUser.loading
-    ? []
-    : currentUser.isAdmin
-      ? adminNavGroups
-      : sidebarData.navGroups
+  const navGroups =
+    currentUser.loading && !currentUser.email
+      ? []
+      : currentUser.isAdmin
+        ? adminNavGroups
+        : sidebarData.navGroups
 
   return (
     <Sidebar collapsible={collapsible} variant={variant}>

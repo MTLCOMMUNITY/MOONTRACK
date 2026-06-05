@@ -3,10 +3,19 @@ import { createFileRoute } from '@tanstack/react-router'
 import {
   Loader2 as IconLoader2,
   AlertCircle as IconAlertCircle,
+  Play as IconPlay,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -151,6 +160,43 @@ function CheckoutPage() {
             <Skeleton className='mx-auto h-8 w-32' />
           )}
         </div>
+
+        {/* Watch How to Pay Video */}
+        {refCode && (
+          <div className='flex justify-center'>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='flex h-9 items-center justify-center gap-2 border-dashed border-red-500/70 px-4 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-500/5 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10'
+                >
+                  <IconPlay className='size-3.5 fill-current' />
+                  Need help? Watch how to pay (1-min video)
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='sm:max-w-xl'>
+                <DialogHeader>
+                  <DialogTitle>How to Pay</DialogTitle>
+                  <DialogDescription>
+                    Watch this short video guide showing you how to make a
+                    payment.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className='aspect-video overflow-hidden rounded-lg border bg-muted'>
+                  <iframe
+                    src='https://www.youtube.com/embed/Fr4XlnpLuwk?si=DmErxPPa3tka8_UP'
+                    title='How to Pay Guide'
+                    className='h-full w-full'
+                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                    referrerPolicy='strict-origin-when-cross-origin'
+                    allowFullScreen
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className='space-y-4'>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { IconUsers, IconCash, IconWallet, IconCheck } from '@tabler/icons-react'
+import { IconUsers, IconCash, IconWallet, IconClick } from '@tabler/icons-react'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { useDashboard } from '@/hooks/use-dashboard'
 import {
@@ -128,25 +128,23 @@ export function Dashboard() {
           <TabsContent value='overview' className='space-y-4'>
             {/* 4 Stat cards */}
             <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-              {/* Total Paid Out */}
+              {/* Total Clicks */}
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Total Paid Out
+                    Total Clicks
                   </CardTitle>
-                  <IconCheck className='h-4 w-4 text-muted-foreground' />
+                  <IconClick className='h-4 w-4 text-muted-foreground' />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <Skeleton className='h-8 w-24' />
                   ) : (
                     <div className='text-2xl font-bold'>
-                      {fmt(stats.totalPaidOut)}
+                      {stats.totalClicks.toLocaleString()}
                     </div>
                   )}
-                  <p className='text-xs text-muted-foreground'>
-                    Successfully paid
-                  </p>
+                  <p className='text-xs text-muted-foreground'>Link clicks</p>
                 </CardContent>
               </Card>
 
