@@ -38,20 +38,18 @@ export function useReferrals() {
       }
 
       // Fetch referral links and conversions concurrently
-      const [
-        { data: linkData, error: linkError },
-        { data: convData }
-      ] = await Promise.all([
-        supabase
-          .from('referral_links')
-          .select('id, ref_code, target_url, click_count, is_active')
-          .eq('influencer_id', influencer.id)
-          .order('click_count', { ascending: false }),
-        supabase
-          .from('conversions')
-          .select('ref_code')
-          .eq('influencer_id', influencer.id)
-      ])
+      const [{ data: linkData, error: linkError }, { data: convData }] =
+        await Promise.all([
+          supabase
+            .from('referral_links')
+            .select('id, ref_code, target_url, click_count, is_active')
+            .eq('influencer_id', influencer.id)
+            .order('click_count', { ascending: false }),
+          supabase
+            .from('conversions')
+            .select('ref_code')
+            .eq('influencer_id', influencer.id),
+        ])
 
       if (linkError) {
         setError(linkError.message)
@@ -60,17 +58,20 @@ export function useReferrals() {
       }
 
       // Group conversions by ref_code
-      const convCounts = (convData ?? []).reduce((acc, row) => {
-        if (row.ref_code) {
-          acc[row.ref_code] = (acc[row.ref_code] || 0) + 1
-        }
-        return acc
-      }, {} as Record<string, number>)
+      const convCounts = (convData ?? []).reduce(
+        (acc, row) => {
+          if (row.ref_code) {
+            acc[row.ref_code] = (acc[row.ref_code] || 0) + 1
+          }
+          return acc
+        },
+        {} as Record<string, number>
+      )
 
       // Attach conversion_count to each link
-      const linksWithCounts = (linkData ?? []).map(link => ({
+      const linksWithCounts = (linkData ?? []).map((link) => ({
         ...link,
-        conversion_count: convCounts[link.ref_code] || 0
+        conversion_count: convCounts[link.ref_code] || 0,
       }))
 
       setLinks(linksWithCounts)

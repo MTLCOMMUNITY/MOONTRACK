@@ -75,12 +75,22 @@ export function usePayouts() {
         .channel('payouts-realtime')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'payouts', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'payouts',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayouts()
         )
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'payouts', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'payouts',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayouts()
         )
         .on(

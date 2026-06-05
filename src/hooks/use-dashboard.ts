@@ -59,7 +59,7 @@ export function useDashboard() {
           { count: convCount },
           { data: payData },
           { data: payoutData },
-          { data: convData, error: convError }
+          { data: convData, error: convError },
         ] = await Promise.all([
           supabase
             .from('referral_links')
@@ -85,7 +85,7 @@ export function useDashboard() {
             )
             .eq('influencer_id', influencerId)
             .order('registered_at', { ascending: false })
-            .limit(5)
+            .limit(5),
         ])
 
         const totalClicks =

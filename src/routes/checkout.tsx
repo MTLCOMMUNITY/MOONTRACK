@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Loader2 as IconLoader2, AlertCircle as IconAlertCircle } from 'lucide-react'
+import {
+  Loader2 as IconLoader2,
+  AlertCircle as IconAlertCircle,
+} from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
 import { Button } from '@/components/ui/button'

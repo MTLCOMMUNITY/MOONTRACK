@@ -91,7 +91,8 @@ function SummaryCard({
 }
 
 export function Payouts() {
-  const { payouts, loading, error, isLive, totalPaid, totalPending } = usePayouts()
+  const { payouts, loading, error, isLive, totalPaid, totalPending } =
+    usePayouts()
 
   return (
     <>

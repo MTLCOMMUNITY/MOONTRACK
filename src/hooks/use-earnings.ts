@@ -70,7 +70,7 @@ export function useEarnings() {
       supabase
         .from('payouts')
         .select('amount, status')
-        .eq('influencer_id', influencer.id)
+        .eq('influencer_id', influencer.id),
     ])
 
     if (paymentsResponse.error) {
@@ -78,14 +78,14 @@ export function useEarnings() {
     } else {
       setPayments((paymentsResponse.data as unknown as Payment[]) ?? [])
     }
-    
+
     if (!payoutsResponse.error && payoutsResponse.data) {
       const paid = payoutsResponse.data
         .filter((p) => p.status === 'paid')
         .reduce((sum, p) => sum + (p.amount ?? 0), 0)
       setTotalPaidOut(paid)
     }
-    
+
     setLoading(false)
   }
 
@@ -113,12 +113,22 @@ export function useEarnings() {
         .channel('earnings-realtime')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'payments', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'payments',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayments()
         )
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'payments', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'payments',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayments()
         )
         .on(
@@ -128,12 +138,22 @@ export function useEarnings() {
         )
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'payouts', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'payouts',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayments()
         )
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'payouts', filter: `influencer_id=eq.${influencer.id}` },
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'payouts',
+            filter: `influencer_id=eq.${influencer.id}`,
+          },
           () => fetchPayments()
         )
         .on(

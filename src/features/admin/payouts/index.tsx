@@ -166,7 +166,9 @@ export function AdminPayouts() {
     if (error) {
       toast.error(error.message)
     } else if (count === 0) {
-      toast.error('Delete blocked — check Supabase RLS policies for the payouts table.')
+      toast.error(
+        'Delete blocked — check Supabase RLS policies for the payouts table.'
+      )
     } else {
       toast.success('Payout deleted')
       setPayouts((prev) => prev.filter((p) => p.id !== id))

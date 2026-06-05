@@ -132,9 +132,21 @@ export function AdminPayments() {
 
     const channel = supabase
       .channel('admin-payments-realtime')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'payments' }, () => load())
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'payments' }, () => load())
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'payments' }, () => load())
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'payments' },
+        () => load()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'payments' },
+        () => load()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'payments' },
+        () => load()
+      )
       .subscribe()
 
     return () => {

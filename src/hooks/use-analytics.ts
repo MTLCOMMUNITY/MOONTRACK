@@ -55,24 +55,21 @@ export function useAnalytics() {
         }
 
         // ── Fetch Data in Parallel ─────────────────────────
-        const [
-          { data: links },
-          { data: conversions },
-          { data: payments }
-        ] = await Promise.all([
-          supabase
-            .from('referral_links')
-            .select('ref_code, click_count, is_active')
-            .eq('influencer_id', influencer.id),
-          supabase
-            .from('conversions')
-            .select('id, ref_code, registered_at')
-            .eq('influencer_id', influencer.id),
-          supabase
-            .from('payments')
-            .select('commission_earned, status')
-            .eq('influencer_id', influencer.id)
-        ])
+        const [{ data: links }, { data: conversions }, { data: payments }] =
+          await Promise.all([
+            supabase
+              .from('referral_links')
+              .select('ref_code, click_count, is_active')
+              .eq('influencer_id', influencer.id),
+            supabase
+              .from('conversions')
+              .select('id, ref_code, registered_at')
+              .eq('influencer_id', influencer.id),
+            supabase
+              .from('payments')
+              .select('commission_earned, status')
+              .eq('influencer_id', influencer.id),
+          ])
 
         const totalClicks =
           links?.reduce((s, l) => s + (l.click_count ?? 0), 0) ?? 0
