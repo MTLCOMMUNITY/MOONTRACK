@@ -151,16 +151,16 @@ export function useEarnings() {
     }
   }, [])
 
-  const summary: EarningsSummary = payments.reduce(
-    (acc, p) => {
-      acc.totalEarned += p.commission_earned ?? 0
-      if (p.status === 'pending') {
-        acc.pendingBalance += p.commission_earned ?? 0
-      }
-      return acc
-    },
-    { totalEarned: 0, totalPaidOut, pendingBalance: 0 }
-  )
+  const totalEarned = payments
+    .filter((p) => p.status === 'confirmed')
+    .reduce((sum, p) => sum + (p.commission_earned ?? 0), 0)
+
+  const summary: EarningsSummary = {
+    totalEarned,
+    totalPaidOut,
+    // Pending balance = total commissions earned minus what admin has already paid out
+    pendingBalance: Math.max(0, totalEarned - totalPaidOut),
+  }
 
   return { payments, summary, loading, error, isLive }
 }

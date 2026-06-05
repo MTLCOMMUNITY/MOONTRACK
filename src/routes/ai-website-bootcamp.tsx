@@ -7,7 +7,7 @@ export const Route = createFileRoute('/ai-website-bootcamp')({
 
 function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
   const [timeLeft, setTimeLeft] = useState({
-    days: 10,
+    days: 5,
     hours: 4,
     minutes: 32,
     seconds: 52,

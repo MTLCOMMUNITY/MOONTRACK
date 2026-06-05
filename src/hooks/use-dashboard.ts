@@ -96,17 +96,15 @@ export function useDashboard() {
             ?.filter((p) => p.status === 'confirmed')
             .reduce((sum, p) => sum + (p.commission_earned ?? 0), 0) ?? 0
 
-        const pendingBalance =
-          payData
-            ?.filter((p) => p.status === 'pending')
-            .reduce((sum, p) => sum + (p.commission_earned ?? 0), 0) ?? 0
-
         const totalPaidOut =
           payoutData
             ?.filter((p) => p.status === 'paid')
             .reduce((sum, p) => sum + (p.amount ?? 0), 0) ?? 0
 
-        const unpaidBalance = commissionEarned - totalPaidOut
+        // Pending balance = earned commissions not yet paid out by admin
+        const pendingBalance = Math.max(0, commissionEarned - totalPaidOut)
+
+        const unpaidBalance = pendingBalance
 
         if (convError) setError(convError.message)
 
