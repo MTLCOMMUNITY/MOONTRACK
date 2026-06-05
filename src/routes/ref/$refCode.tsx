@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useParams } from '@tanstack/react-router'
 import { IconMoon, IconLoader2 } from '@tabler/icons-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
@@ -10,7 +10,6 @@ export const Route = createFileRoute('/ref/$refCode')({
 
 function ReferralTracker() {
   const { refCode } = useParams({ from: '/ref/$refCode' })
-  const navigate = useNavigate({ from: '/ref/$refCode' })
   const { saveRefCode } = useReferral()
   const [error, setError] = useState(false)
   const hasTracked = useRef(false)
