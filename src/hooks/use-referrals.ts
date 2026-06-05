@@ -37,12 +37,21 @@ export function useReferrals() {
         return
       }
 
-      // Fetch referral links
-      const { data: linkData, error: linkError } = await supabase
-        .from('referral_links')
-        .select('id, ref_code, target_url, click_count, is_active')
-        .eq('influencer_id', influencer.id)
-        .order('click_count', { ascending: false })
+      // Fetch referral links and conversions concurrently
+      const [
+        { data: linkData, error: linkError },
+        { data: convData }
+      ] = await Promise.all([
+        supabase
+          .from('referral_links')
+          .select('id, ref_code, target_url, click_count, is_active')
+          .eq('influencer_id', influencer.id)
+          .order('click_count', { ascending: false }),
+        supabase
+          .from('conversions')
+          .select('ref_code')
+          .eq('influencer_id', influencer.id)
+      ])
 
       if (linkError) {
         setError(linkError.message)
@@ -50,18 +59,19 @@ export function useReferrals() {
         return
       }
 
-      // For each link, count conversions by ref_code
-      const linksWithCounts = await Promise.all(
-        (linkData ?? []).map(async (link) => {
-          const { count } = await supabase
-            .from('conversions')
-            .select('id', { count: 'exact', head: true })
-            .eq('influencer_id', influencer.id)
-            .eq('ref_code', link.ref_code)
+      // Group conversions by ref_code
+      const convCounts = (convData ?? []).reduce((acc, row) => {
+        if (row.ref_code) {
+          acc[row.ref_code] = (acc[row.ref_code] || 0) + 1
+        }
+        return acc
+      }, {} as Record<string, number>)
 
-          return { ...link, conversion_count: count ?? 0 }
-        })
-      )
+      // Attach conversion_count to each link
+      const linksWithCounts = (linkData ?? []).map(link => ({
+        ...link,
+        conversion_count: convCounts[link.ref_code] || 0
+      }))
 
       setLinks(linksWithCounts)
       setLoading(false)

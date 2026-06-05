@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
 import { IconMoon, IconLoader2 } from '@tabler/icons-react'
 import { supabase } from '@/lib/supabase'
@@ -13,9 +13,13 @@ function ReferralTracker() {
   const navigate = useNavigate({ from: '/ref/$refCode' })
   const { saveRefCode } = useReferral()
   const [error, setError] = useState(false)
+  const hasTracked = useRef(false)
 
   useEffect(() => {
     async function init() {
+      if (hasTracked.current) return
+      hasTracked.current = true
+
       // Track click
       fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-click`, {
         method: 'POST',

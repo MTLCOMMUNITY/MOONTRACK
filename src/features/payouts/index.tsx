@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LiveBadge } from '@/components/live-badge'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 
@@ -90,13 +91,16 @@ function SummaryCard({
 }
 
 export function Payouts() {
-  const { payouts, loading, error, totalPaid, totalPending } = usePayouts()
+  const { payouts, loading, error, isLive, totalPaid, totalPending } = usePayouts()
 
   return (
     <>
       {/* Header */}
       <Header>
-        <h1 className='text-xl font-semibold tracking-tight'>Payouts</h1>
+        <div className='flex items-center gap-2'>
+          <h1 className='text-xl font-semibold tracking-tight'>Payouts</h1>
+          <LiveBadge isLive={isLive} />
+        </div>
         <div className='ms-auto flex items-center gap-2'>
           <ThemeSwitch />
           <ProfileDropdown />

@@ -54,22 +54,31 @@ export function useAnalytics() {
           return
         }
 
-        // ── Referral links ─────────────────────────────────
-        const { data: links } = await supabase
-          .from('referral_links')
-          .select('ref_code, click_count, is_active')
-          .eq('influencer_id', influencer.id)
+        // ── Fetch Data in Parallel ─────────────────────────
+        const [
+          { data: links },
+          { data: conversions },
+          { data: payments }
+        ] = await Promise.all([
+          supabase
+            .from('referral_links')
+            .select('ref_code, click_count, is_active')
+            .eq('influencer_id', influencer.id),
+          supabase
+            .from('conversions')
+            .select('id, ref_code, registered_at')
+            .eq('influencer_id', influencer.id),
+          supabase
+            .from('payments')
+            .select('commission_earned, status')
+            .eq('influencer_id', influencer.id)
+        ])
 
         const totalClicks =
           links?.reduce((s, l) => s + (l.click_count ?? 0), 0) ?? 0
         const activeLinks = links?.filter((l) => l.is_active).length ?? 0
 
         // ── Conversions ────────────────────────────────────
-        const { data: conversions } = await supabase
-          .from('conversions')
-          .select('id, ref_code, registered_at')
-          .eq('influencer_id', influencer.id)
-
         const totalConversions = conversions?.length ?? 0
         const conversionRate =
           totalClicks > 0
@@ -132,10 +141,6 @@ export function useAnalytics() {
           .map(([name, value]) => ({ name, value }))
 
         // ── Payments ────────────────────────────────────────
-        const { data: payments } = await supabase
-          .from('payments')
-          .select('commission_earned, status')
-          .eq('influencer_id', influencer.id)
 
         const confirmed =
           payments?.filter((p) => p.status === 'confirmed') ?? []
