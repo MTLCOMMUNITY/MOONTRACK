@@ -169,6 +169,7 @@ function BootcampLandingPage() {
             <Link
               className='group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-brand-gold to-brand-gold-glow px-8 py-5 text-xl font-black text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(226,192,68,0.4)]'
               to='/checkout'
+              preload='intent'
             >
               <span className='relative z-10'>Secure Your Spot Now</span>
             </Link>
@@ -715,6 +716,7 @@ function BootcampLandingPage() {
           <Link
             className='inline-flex w-full max-w-md items-center justify-center rounded-2xl bg-[#0A0F1E] px-8 py-5 text-xl font-black text-white transition-all hover:-translate-y-1 hover:shadow-xl'
             to='/checkout'
+            preload='intent'
           >
             YES, I AM READY TO START
           </Link>
