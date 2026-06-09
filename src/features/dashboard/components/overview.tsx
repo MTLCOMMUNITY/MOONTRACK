@@ -29,6 +29,19 @@ export function Overview() {
 
   useEffect(() => {
     async function load() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: influencer } = await supabase
+        .from('influencers')
+        .select('id')
+        .eq('user_id', user.id)
+        .single()
+
+      if (!influencer) return
+
       const year = new Date().getFullYear()
       const start = `${year}-01-01`
       const end = `${year}-12-31`
@@ -36,6 +49,7 @@ export function Overview() {
       const { data: payments } = await supabase
         .from('payments')
         .select('commission_earned, payment_date')
+        .eq('influencer_id', influencer.id)
         .eq('status', 'confirmed')
         .gte('payment_date', start)
         .lte('payment_date', end)
@@ -69,7 +83,12 @@ export function Overview() {
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(v) => `₦${(v / 1000).toFixed(0)}k`}
+          allowDecimals={false}
+          tickFormatter={(v) => {
+            if (v === 0) return '₦0'
+            if (v >= 1000) return `₦${(v / 1000).toFixed(0)}k`
+            return `₦${v}`
+          }}
         />
         <Tooltip
           formatter={(v) =>
