@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
-import { createFileRoute, useSearch, Link } from '@tanstack/react-router'
+import { createFileRoute, useSearch } from '@tanstack/react-router'
 import {
   IconMoon,
   IconCircleCheck,
