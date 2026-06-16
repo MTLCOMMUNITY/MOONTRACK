@@ -117,15 +117,16 @@ function CallbackPage() {
                 . Your spot is secured.
               </p>
             </div>
-            
+
             <div className='my-6 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 p-6'>
               <h2 className='mb-2 text-lg font-bold text-foreground'>
                 Step 2: Join the Community
               </h2>
               <p className='mb-6 text-sm text-muted-foreground'>
-                All class announcements, links, and support will be shared in our private WhatsApp group. Join now so you don't miss anything!
+                All class announcements, links, and support will be shared in
+                our private WhatsApp group. Join now so you don't miss anything!
               </p>
-              
+
               <div className='mb-6 hidden flex-col items-center justify-center gap-3 rounded-xl bg-white p-4 text-center sm:flex'>
                 <img
                   src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fchat.whatsapp.com%2FJlvlDrhbhjvGCq4YO1RQCy%3Fs%3Dcl%26p%3Da%26mlu%3D4'
@@ -174,7 +175,8 @@ function CallbackPage() {
                 While you wait...
               </h2>
               <p className='mb-4 text-sm text-muted-foreground'>
-                You can go ahead and join our private WhatsApp group now so you're ready when the class starts.
+                You can go ahead and join our private WhatsApp group now so
+                you're ready when the class starts.
               </p>
 
               <div className='mb-4 hidden flex-col items-center justify-center gap-2 rounded-xl bg-white p-3 text-center sm:flex'>
@@ -183,7 +185,7 @@ function CallbackPage() {
                   alt='WhatsApp QR Code'
                   className='size-24 object-contain'
                 />
-                <p className='text-[10px] font-semibold uppercase text-gray-500'>
+                <p className='text-[10px] font-semibold text-gray-500 uppercase'>
                   Scan with your phone
                 </p>
               </div>

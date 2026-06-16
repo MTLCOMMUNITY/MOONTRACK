@@ -95,7 +95,9 @@ export function AdminPayouts() {
           'id, amount, payout_date, method, reference, status, note, influencers(full_name)'
         )
         .order('payout_date', { ascending: false }),
-      supabase.from('influencers').select('id, full_name, bank_name, account_number, account_name'),
+      supabase
+        .from('influencers')
+        .select('id, full_name, bank_name, account_number, account_name'),
     ])
     const rawPayouts = p as unknown as
       | (Omit<Payout, 'influencer_name'> & {
@@ -217,15 +219,34 @@ export function AdminPayouts() {
                   <div className='rounded-md bg-muted p-3 text-sm'>
                     <div className='font-semibold'>Bank Details</div>
                     {(() => {
-                      const selected = influencers.find(i => i.id === infId)
+                      const selected = influencers.find((i) => i.id === infId)
                       if (!selected?.bank_name && !selected?.account_number) {
-                        return <div className='text-muted-foreground'>No bank details provided</div>
+                        return (
+                          <div className='text-muted-foreground'>
+                            No bank details provided
+                          </div>
+                        )
                       }
                       return (
                         <div className='mt-1 space-y-1 text-muted-foreground'>
-                          <div>Bank: <span className='font-medium text-foreground'>{selected.bank_name || '—'}</span></div>
-                          <div>Account Number: <span className='font-medium text-foreground'>{selected.account_number || '—'}</span></div>
-                          <div>Account Name: <span className='font-medium text-foreground'>{selected.account_name || '—'}</span></div>
+                          <div>
+                            Bank:{' '}
+                            <span className='font-medium text-foreground'>
+                              {selected.bank_name || '—'}
+                            </span>
+                          </div>
+                          <div>
+                            Account Number:{' '}
+                            <span className='font-medium text-foreground'>
+                              {selected.account_number || '—'}
+                            </span>
+                          </div>
+                          <div>
+                            Account Name:{' '}
+                            <span className='font-medium text-foreground'>
+                              {selected.account_name || '—'}
+                            </span>
+                          </div>
                         </div>
                       )
                     })()}

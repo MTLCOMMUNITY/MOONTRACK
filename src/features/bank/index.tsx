@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
 import { supabase } from '@/lib/supabase'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { Button } from '@/components/ui/button'
@@ -13,7 +12,6 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'

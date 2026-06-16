@@ -12,6 +12,7 @@ import {
   IconCopy,
 } from '@tabler/icons-react'
 import { toast } from 'sonner'
+import { isValidReferralCode, normalizeReferralCode } from '@/lib/referral-code'
 import { supabase } from '@/lib/supabase'
 import {
   AlertDialog,
@@ -57,10 +58,6 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import {
-  isValidReferralCode,
-  normalizeReferralCode,
-} from '@/lib/referral-code'
 
 type Influencer = {
   id: string
@@ -676,7 +673,6 @@ export function AdminInfluencers() {
                     <p className='text-sm text-muted-foreground'>
                       {selectedInfluencer.email}
                     </p>
-
                   </div>
                 </div>
 
@@ -730,18 +726,27 @@ export function AdminInfluencers() {
               {/* Bank Details Box */}
               <div className='flex items-center justify-between rounded-xl border border-[#0A0F1E]/10 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900'>
                 <div>
-                  <h3 className='text-sm font-semibold text-foreground'>Bank Details</h3>
+                  <h3 className='text-sm font-semibold text-foreground'>
+                    Bank Details
+                  </h3>
                   <div className='mt-1 flex items-center space-x-3 text-sm text-muted-foreground'>
-                    {selectedInfluencer.bank_name || selectedInfluencer.account_number ? (
+                    {selectedInfluencer.bank_name ||
+                    selectedInfluencer.account_number ? (
                       <>
-                        <span className='font-medium text-foreground'>{selectedInfluencer.bank_name || 'N/A'}</span>
+                        <span className='font-medium text-foreground'>
+                          {selectedInfluencer.bank_name || 'N/A'}
+                        </span>
                         <span>•</span>
-                        <span className='font-mono font-medium text-foreground'>{selectedInfluencer.account_number || 'N/A'}</span>
+                        <span className='font-mono font-medium text-foreground'>
+                          {selectedInfluencer.account_number || 'N/A'}
+                        </span>
                         <span>•</span>
                         <span>{selectedInfluencer.account_name || 'N/A'}</span>
                       </>
                     ) : (
-                      <span className='text-red-500/80 font-medium'>No bank details provided</span>
+                      <span className='font-medium text-red-500/80'>
+                        No bank details provided
+                      </span>
                     )}
                   </div>
                 </div>

@@ -17,10 +17,10 @@ function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
     const getTargetTime = () => {
       const storedStart = localStorage.getItem('bootcamp_timer_start')
       let startTime = storedStart ? parseInt(storedStart, 10) : Date.now()
-      
+
       const ONE_DAY = 24 * 60 * 60 * 1000
       const TWO_DAYS = 2 * ONE_DAY
-      
+
       // If 24 hours have passed since the start time, reset it
       if (Date.now() - startTime > ONE_DAY) {
         startTime = Date.now()
@@ -28,7 +28,7 @@ function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
       } else if (!storedStart) {
         localStorage.setItem('bootcamp_timer_start', startTime.toString())
       }
-      
+
       return startTime + TWO_DAYS
     }
 
@@ -36,12 +36,12 @@ function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
       const targetTime = getTargetTime()
       const now = Date.now()
       const diff = Math.max(0, targetTime - now)
-      
+
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
       const minutes = Math.floor((diff / 1000 / 60) % 60)
       const seconds = Math.floor((diff / 1000) % 60)
-      
+
       setTimeLeft({ days, hours, minutes, seconds })
     }, 1000)
 

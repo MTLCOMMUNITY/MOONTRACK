@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from 'react'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { IconMoon, IconLoader2 } from '@tabler/icons-react'
+import { normalizeReferralCode } from '@/lib/referral-code'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
-import { normalizeReferralCode } from '@/lib/referral-code'
 
 export const Route = createFileRoute('/ref/$refCode')({
   component: ReferralTracker,

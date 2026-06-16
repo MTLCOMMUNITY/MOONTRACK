@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { IconTrash } from '@tabler/icons-react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { isValidReferralCode, normalizeReferralCode } from '@/lib/referral-code'
 import { supabase } from '@/lib/supabase'
 import {
   AlertDialog,
@@ -46,10 +47,6 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import {
-  isValidReferralCode,
-  normalizeReferralCode,
-} from '@/lib/referral-code'
 
 type ReferralLink = {
   id: string
@@ -163,9 +160,7 @@ export function AdminReferrals() {
     try {
       const [{ data: existingLinks }, { data: existingInfluencerLink }] =
         await Promise.all([
-          supabase
-            .from('referral_links')
-            .select('id, ref_code'),
+          supabase.from('referral_links').select('id, ref_code'),
           supabase
             .from('referral_links')
             .select('id')
@@ -262,7 +257,8 @@ export function AdminReferrals() {
       )
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to delete referral link')
+      if (!res.ok)
+        throw new Error(data.error || 'Failed to delete referral link')
 
       toast.success('Referral link deleted')
       load()
