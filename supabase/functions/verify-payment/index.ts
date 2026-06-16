@@ -1,5 +1,9 @@
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import {
+  extractReferralCodeFromTxRef,
+  resolveReferralAttribution,
+} from '../_shared/referral-attribution.ts'
 
 declare const Deno: any;
 
@@ -90,7 +94,6 @@ Deno.serve(async (req: Request) => {
 
   const txData = verifyData.data
   const verifiedTxRef = typeof txData.tx_ref === 'string' ? txData.tx_ref.trim() : ''
-  const ref_code = txData.meta?.ref_code
   const customer = txData.customer
   const amount = txData.amount
   const currency = txData.currency
@@ -100,6 +103,9 @@ Deno.serve(async (req: Request) => {
       status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
   }
+
+  const ref_code =
+    txData.meta?.ref_code ?? extractReferralCodeFromTxRef(verifiedTxRef)
 
   if (tx_ref && tx_ref !== verifiedTxRef) {
     return new Response(JSON.stringify({ ok: false, error: 'Transaction reference mismatch' }), {
@@ -152,36 +158,37 @@ Deno.serve(async (req: Request) => {
   // Check if payment already exists to prevent double-crediting
   const { data: existingPayment } = await supabase
     .from('payments')
-    .select('id')
+    .select('id, influencer_id, conversion_id')
     .eq('tx_ref', verifiedTxRef)
     .maybeSingle()
 
-  if (existingPayment) {
-    // Already processed (likely by webhook)
+  const resolvedReferral = await resolveReferralAttribution(supabase, ref_code)
+
+  if (!resolvedReferral) {
+    if (existingPayment) {
+      return new Response(
+        JSON.stringify({ ok: true, course_name: courseName }),
+        {
+          status: 200,
+          headers: { ...CORS, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
     return new Response(
-      JSON.stringify({ ok: true, course_name: courseName }),
-      { status: 200, headers: { ...CORS, 'Content-Type': 'application/json' } }
+      JSON.stringify({ ok: false, error: 'Referral link not found' }),
+      {
+        status: 200,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      }
     )
-  }
-
-  // Get influencer by ref_code
-  const { data: link } = await supabase
-    .from('referral_links')
-    .select('influencer_id')
-    .eq('ref_code', ref_code)
-    .single()
-
-  if (!link) {
-    return new Response(JSON.stringify({ ok: false, error: 'Referral link not found' }), {
-      status: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
-    })
   }
 
   // Get influencer commission rate and active status
   const { data: influencer } = await supabase
     .from('influencers')
     .select('commission_rate, is_active')
-    .eq('id', link.influencer_id)
+    .eq('id', resolvedReferral.influencerId)
     .single()
 
   const commissionRate = influencer?.commission_rate ?? 10
@@ -190,12 +197,19 @@ Deno.serve(async (req: Request) => {
   // If the influencer is suspended, they get 0 commission for new referrals
   const commission = isActive ? Math.round((commissionRate / 100) * amount) : 0
 
+  if (existingPayment?.influencer_id && existingPayment?.conversion_id) {
+    return new Response(
+      JSON.stringify({ ok: true, course_name: courseName }),
+      { status: 200, headers: { ...CORS, 'Content-Type': 'application/json' } }
+    )
+  }
+
   // Create conversion record
   const { data: conversion } = await supabase
     .from('conversions')
     .insert({
-      influencer_id: link.influencer_id,
-      ref_code,
+      influencer_id: resolvedReferral.influencerId,
+      ref_code: resolvedReferral.refCode,
       student_name: txData.meta?.student_name || customer.name,
       student_email: txData.meta?.student_email || customer.email,
       phone: txData.meta?.student_phone || customer.phone_number || null,
@@ -204,16 +218,29 @@ Deno.serve(async (req: Request) => {
     .select('id')
     .single()
 
-  // Create payment record
-  await supabase.from('payments').insert({
-    influencer_id: link.influencer_id,
-    conversion_id: conversion?.id ?? null,
-    amount,
-    commission_earned: commission,
-    status: 'confirmed',
-    transaction_ref: txData.flw_ref ?? verifiedTxRef,
-    tx_ref: verifiedTxRef,
-  })
+  if (existingPayment) {
+    await supabase
+      .from('payments')
+      .update({
+        influencer_id: resolvedReferral.influencerId,
+        conversion_id: conversion?.id ?? existingPayment.conversion_id ?? null,
+        amount,
+        commission_earned: commission,
+        status: 'confirmed',
+        transaction_ref: txData.flw_ref ?? verifiedTxRef,
+      })
+      .eq('id', existingPayment.id)
+  } else {
+    await supabase.from('payments').insert({
+      influencer_id: resolvedReferral.influencerId,
+      conversion_id: conversion?.id ?? null,
+      amount,
+      commission_earned: commission,
+      status: 'confirmed',
+      transaction_ref: txData.flw_ref ?? verifiedTxRef,
+      tx_ref: verifiedTxRef,
+    })
+  }
 
   return new Response(
     JSON.stringify({ ok: true, course_name: courseName }),

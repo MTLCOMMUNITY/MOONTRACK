@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { normalizeReferralCode } from '@/lib/referral-code'
 
 const STORAGE_KEY = 'moontrack_ref_code'
 
@@ -6,14 +7,16 @@ export function useReferral() {
   const [refCode, setRefCode] = useState<string | null>(() => {
     // Read from local storage on mount
     if (typeof window !== 'undefined') {
-      return localStorage.getItem(STORAGE_KEY)
+      const stored = localStorage.getItem(STORAGE_KEY)
+      return stored ? normalizeReferralCode(stored) : null
     }
     return null
   })
 
   const saveRefCode = useCallback((code: string) => {
-    localStorage.setItem(STORAGE_KEY, code)
-    setRefCode(code)
+    const normalized = normalizeReferralCode(code)
+    localStorage.setItem(STORAGE_KEY, normalized)
+    setRefCode(normalized)
   }, [])
 
   const clearRefCode = useCallback(() => {

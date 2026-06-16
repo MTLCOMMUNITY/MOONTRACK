@@ -1,10 +1,22 @@
 // @ts-nocheck
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import {
+  isValidReferralCode,
+  normalizeReferralCode,
+} from '../_shared/referral-code.ts'
 
 declare const Deno: any;
 
 const rateLimit = new Map<string, { count: number; timestamp: number }>();
+
+function hasExactRefCodeMatch(
+  rows: Array<{ ref_code?: string | null }>,
+  code: string
+) {
+  const target = code.toLowerCase()
+  return rows.some((row) => row.ref_code?.toLowerCase() === target)
+}
 
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin') ?? ''
@@ -83,11 +95,49 @@ Deno.serve(async (req: Request) => {
 
   // 2. Parse request body
   const { email, full_name, ref_code, commission_rate } = await req.json()
+  const normalizedRefCode =
+    typeof ref_code === 'string' ? normalizeReferralCode(ref_code) : ''
 
-  if (!email || !full_name || !ref_code) {
+  if (!email || !full_name || !normalizedRefCode) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
       status: 400, headers: { ...CORS, 'Content-Type': 'application/json' },
     })
+  }
+
+  if (!isValidReferralCode(normalizedRefCode)) {
+    return new Response(
+      JSON.stringify({
+        error:
+          'Referral code must be 1-64 characters and contain only letters, numbers, hyphens, or underscores.',
+      }),
+      {
+        status: 400,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      }
+    )
+  }
+
+  const [{ data: existingInfluencerCodes }, { data: existingLinkCodes }] =
+    await Promise.all([
+      supabaseAdmin
+        .from('influencers')
+        .select('id, ref_code'),
+      supabaseAdmin
+        .from('referral_links')
+        .select('id, ref_code'),
+    ])
+
+  if (
+    hasExactRefCodeMatch(existingInfluencerCodes ?? [], normalizedRefCode) ||
+    hasExactRefCodeMatch(existingLinkCodes ?? [], normalizedRefCode)
+  ) {
+    return new Response(
+      JSON.stringify({ error: 'Referral code already exists' }),
+      {
+        status: 400,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      }
+    )
   }
 
   // 3. Invite the user
@@ -104,7 +154,7 @@ Deno.serve(async (req: Request) => {
     user_id: inviteData.user.id,
     full_name,
     email,
-    ref_code,
+    ref_code: normalizedRefCode,
     commission_rate: commission_rate || 10,
   })
 
@@ -124,7 +174,7 @@ Deno.serve(async (req: Request) => {
   if (inf) {
     await supabaseAdmin.from('referral_links').insert({
       influencer_id: inf.id,
-      ref_code,
+      ref_code: normalizedRefCode,
       target_url: 'https://moontechlife.com/register',
       is_active: true,
     })

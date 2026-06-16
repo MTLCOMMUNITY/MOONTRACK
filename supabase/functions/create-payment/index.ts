@@ -1,5 +1,6 @@
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { resolveReferralAttribution } from '../_shared/referral-attribution.ts'
 
 declare const Deno: any;
 
@@ -88,6 +89,17 @@ Deno.serve(async (req: Request) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
+  const resolvedReferral = await resolveReferralAttribution(supabase, ref_code)
+  if (!resolvedReferral || !resolvedReferral.isActive) {
+    return new Response(
+      JSON.stringify({ error: 'Referral code is invalid or inactive' }),
+      {
+        status: 400,
+        headers: { ...CORS, 'Content-Type': 'application/json' },
+      }
+    )
+  }
+
   let expectedFee = 50000;
   let finalCourseName = 'MoonTech Life Program';
 
@@ -109,7 +121,7 @@ Deno.serve(async (req: Request) => {
 
 
   // Unique tx ref so we can identify this payment on callback
-  const tx_ref = `MTL-${ref_code}-${Date.now()}`
+  const tx_ref = `MTL-${resolvedReferral.refCode}-${Date.now()}`
 
   const payload = {
     tx_ref,
@@ -123,7 +135,7 @@ Deno.serve(async (req: Request) => {
       logo: `${APP_URL}/moon-logo.png`,
     },
     meta: { 
-      ref_code,
+      ref_code: resolvedReferral.refCode,
       student_email: email,
       student_name: name,
       student_phone: phone

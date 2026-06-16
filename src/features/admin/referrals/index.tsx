@@ -46,6 +46,10 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import {
+  isValidReferralCode,
+  normalizeReferralCode,
+} from '@/lib/referral-code'
 
 type ReferralLink = {
   id: string
@@ -61,6 +65,14 @@ type ReferralLink = {
 type InfluencerOption = {
   id: string
   full_name: string
+}
+
+function hasExactRefCodeMatch(
+  rows: Array<{ ref_code?: string | null }>,
+  code: string
+) {
+  const target = code.toLowerCase()
+  return rows.some((row) => row.ref_code?.toLowerCase() === target)
 }
 
 export function AdminReferrals() {
@@ -110,7 +122,14 @@ export function AdminReferrals() {
         .order('full_name', { ascending: true })
 
       if (infData) {
-        setInfluencers(infData as InfluencerOption[])
+        const assignedInfluencerIds = new Set(
+          (linkData ?? []).map((link) => link.influencer_id)
+        )
+        setInfluencers(
+          (infData as InfluencerOption[]).filter(
+            (inf) => !assignedInfluencerIds.has(inf.id)
+          )
+        )
       }
     } catch (err) {
       const error = err as Error
@@ -126,39 +145,73 @@ export function AdminReferrals() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
-    if (!selectedInfluencer || !refCode || !targetUrl) {
+    const normalizedRefCode = normalizeReferralCode(refCode)
+
+    if (!selectedInfluencer || !normalizedRefCode || !targetUrl) {
       toast.error('Please fill in all fields')
+      return
+    }
+
+    if (!isValidReferralCode(normalizedRefCode)) {
+      toast.error(
+        'Referral code must be 1-64 characters and contain only letters, numbers, hyphens, or underscores.'
+      )
       return
     }
 
     setSubmitting(true)
     try {
-      // Check if ref code already exists
-      const { data: existingLink } = await supabase
-        .from('referral_links')
-        .select('id')
-        .eq('ref_code', refCode)
-        .maybeSingle()
+      const [{ data: existingLinks }, { data: existingInfluencerLink }] =
+        await Promise.all([
+          supabase
+            .from('referral_links')
+            .select('id, ref_code'),
+          supabase
+            .from('referral_links')
+            .select('id')
+            .eq('influencer_id', selectedInfluencer)
+            .maybeSingle(),
+        ])
 
-      if (existingLink) {
+      if (hasExactRefCodeMatch(existingLinks ?? [], normalizedRefCode)) {
         toast.error(
           'This referral code is already in use by another influencer.'
         )
         return
       }
 
-      const { error } = await supabase.from('referral_links').insert({
-        influencer_id: selectedInfluencer,
-        ref_code: refCode,
-        target_url: targetUrl,
-        is_active: true,
-      })
+      if (existingInfluencerLink) {
+        toast.error('This influencer already has a referral link assigned.')
+        return
+      }
 
-      if (error) throw error
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-referral-link`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({
+            influencer_id: selectedInfluencer,
+            ref_code: normalizedRefCode,
+            target_url: targetUrl,
+          }),
+        }
+      )
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to create link')
 
       toast.success('Referral link created successfully')
       setOpen(false)
       setRefCode('')
+      setSelectedInfluencer('')
       load()
     } catch (err) {
       const error = err as Error
@@ -192,13 +245,27 @@ export function AdminReferrals() {
     const id = deleteId
     setDeleteId(null)
     try {
-      const { error } = await supabase
-        .from('referral_links')
-        .delete()
-        .eq('id', id)
-      if (error) throw error
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-referral-link`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ link_id: id }),
+        }
+      )
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to delete referral link')
+
       toast.success('Referral link deleted')
-      setLinks((prev) => prev.filter((link) => link.id !== id))
+      load()
     } catch (err) {
       const error = err as Error
       toast.error(error.message ?? 'Failed to delete referral link')
@@ -264,10 +331,13 @@ export function AdminReferrals() {
                     id='refCode'
                     placeholder='e.g., john-doe-2024'
                     value={refCode}
-                    onChange={(e) => setRefCode(e.target.value)}
+                    onChange={(e) =>
+                      setRefCode(normalizeReferralCode(e.target.value))
+                    }
                   />
                   <p className='text-xs text-muted-foreground'>
-                    This string must be unique across all links.
+                    One influencer can only have one link. Spaces are replaced
+                    with hyphens automatically.
                   </p>
                 </div>
 

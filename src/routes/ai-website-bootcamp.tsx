@@ -7,32 +7,44 @@ export const Route = createFileRoute('/ai-website-bootcamp')({
 
 function CountdownTimer({ isDarkBg = false }: { isDarkBg?: boolean }) {
   const [timeLeft, setTimeLeft] = useState({
-    days: 5,
-    hours: 4,
-    minutes: 32,
-    seconds: 52,
+    days: 1,
+    hours: 23,
+    minutes: 59,
+    seconds: 59,
   })
 
   useEffect(() => {
+    const getTargetTime = () => {
+      const storedStart = localStorage.getItem('bootcamp_timer_start')
+      let startTime = storedStart ? parseInt(storedStart, 10) : Date.now()
+      
+      const ONE_DAY = 24 * 60 * 60 * 1000
+      const TWO_DAYS = 2 * ONE_DAY
+      
+      // If 24 hours have passed since the start time, reset it
+      if (Date.now() - startTime > ONE_DAY) {
+        startTime = Date.now()
+        localStorage.setItem('bootcamp_timer_start', startTime.toString())
+      } else if (!storedStart) {
+        localStorage.setItem('bootcamp_timer_start', startTime.toString())
+      }
+      
+      return startTime + TWO_DAYS
+    }
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        let { days, hours, minutes, seconds } = prev
-        if (seconds > 0) seconds--
-        else {
-          seconds = 59
-          if (minutes > 0) minutes--
-          else {
-            minutes = 59
-            if (hours > 0) hours--
-            else {
-              hours = 23
-              if (days > 0) days--
-            }
-          }
-        }
-        return { days, hours, minutes, seconds }
-      })
+      const targetTime = getTargetTime()
+      const now = Date.now()
+      const diff = Math.max(0, targetTime - now)
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+      const minutes = Math.floor((diff / 1000 / 60) % 60)
+      const seconds = Math.floor((diff / 1000) % 60)
+      
+      setTimeLeft({ days, hours, minutes, seconds })
     }, 1000)
+
     return () => clearInterval(timer)
   }, [])
 

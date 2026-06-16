@@ -1,5 +1,9 @@
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import {
+  isValidReferralCode,
+  normalizeReferralCode,
+} from '../_shared/referral-code.ts'
 
 declare const Deno: any;
 
@@ -65,8 +69,10 @@ Deno.serve(async (req: Request) => {
     )
   }
 
+  const normalizedRefCode = normalizeReferralCode(ref_code)
+
   // Sanitise — only allow alphanumeric, underscore, hyphen
-  if (!/^[a-zA-Z0-9_-]{1,64}$/.test(ref_code)) {
+  if (!isValidReferralCode(normalizedRefCode)) {
     return new Response(
       JSON.stringify({ error: 'Invalid ref_code format' }),
       { status: 400, headers: { ...CORS, 'Content-Type': 'application/json' } }
@@ -79,7 +85,7 @@ Deno.serve(async (req: Request) => {
   )
 
   const { error } = await supabase.rpc('increment_click_count', {
-    p_ref_code: ref_code.trim(),
+    p_ref_code: normalizedRefCode,
   })
 
   if (error) {

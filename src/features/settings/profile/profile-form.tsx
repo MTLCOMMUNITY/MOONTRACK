@@ -15,10 +15,12 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type Profile = {
+  id?: string
   full_name: string
   email: string
   ref_code: string
   commission_rate: number
+  shareable_ref_code?: string | null
 }
 
 export function ProfileForm() {
@@ -36,12 +38,23 @@ export function ProfileForm() {
 
       const { data } = await supabase
         .from('influencers')
-        .select('full_name, email, ref_code, commission_rate')
+        .select('id, full_name, email, ref_code, commission_rate')
         .eq('user_id', user.id)
         .single()
 
       if (data) {
-        setProfile(data as Profile)
+        const { data: activeLink } = await supabase
+          .from('referral_links')
+          .select('ref_code')
+          .eq('influencer_id', data.id)
+          .eq('is_active', true)
+          .limit(1)
+          .maybeSingle()
+
+        setProfile({
+          ...(data as Profile),
+          shareable_ref_code: activeLink?.ref_code ?? null,
+        })
         setFullName(data.full_name)
       } else {
         // Fallback: show auth email even if influencer row doesn't exist yet
@@ -50,6 +63,7 @@ export function ProfileForm() {
           email: user.email ?? '',
           ref_code: '—',
           commission_rate: 0,
+          shareable_ref_code: null,
         })
         setFullName(user.user_metadata?.full_name ?? '')
       }
@@ -160,10 +174,15 @@ export function ProfileForm() {
             <p className='text-xs text-muted-foreground'>Your Referral Link</p>
             {loading ? (
               <Skeleton className='h-6 w-full' />
-            ) : (
+            ) : profile?.shareable_ref_code ? (
               <p className='font-mono text-xs break-all text-muted-foreground'>
                 https://moontrack.moontechlife.com/ref/
-                {profile?.ref_code ?? '—'}
+                {profile.shareable_ref_code}
+              </p>
+            ) : (
+              <p className='text-xs text-muted-foreground'>
+                No active referral link is assigned yet. Use the Referral Links
+                page or contact support.
               </p>
             )}
           </div>

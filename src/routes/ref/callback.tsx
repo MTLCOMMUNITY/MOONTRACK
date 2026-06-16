@@ -114,19 +114,42 @@ function CallbackPage() {
                 <span className='font-semibold text-foreground'>
                   {courseName}
                 </span>
-                . You'll receive a confirmation email shortly.
+                . Your spot is secured.
               </p>
             </div>
-            <div className='rounded-lg border bg-muted/40 px-6 py-4 text-sm text-muted-foreground'>
-              Keep an eye on your inbox. Our team will reach out with your
-              onboarding details.
+            
+            <div className='my-6 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 p-6'>
+              <h2 className='mb-2 text-lg font-bold text-foreground'>
+                Step 2: Join the Community
+              </h2>
+              <p className='mb-6 text-sm text-muted-foreground'>
+                All class announcements, links, and support will be shared in our private WhatsApp group. Join now so you don't miss anything!
+              </p>
+              
+              <div className='mb-6 hidden flex-col items-center justify-center gap-3 rounded-xl bg-white p-4 text-center sm:flex'>
+                <img
+                  src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fchat.whatsapp.com%2FJlvlDrhbhjvGCq4YO1RQCy%3Fs%3Dcl%26p%3Da%26mlu%3D4'
+                  alt='WhatsApp QR Code'
+                  className='size-32 object-contain'
+                />
+                <p className='text-xs font-semibold text-gray-600'>
+                  Scan with your phone's camera
+                </p>
+              </div>
+
+              <a
+                href='https://chat.whatsapp.com/JlvlDrhbhjvGCq4YO1RQCy?s=cl&p=a&mlu=4'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#20bd5a]'
+              >
+                Join Private WhatsApp Group
+              </a>
             </div>
-            <Link
-              to='/ai-website-bootcamp'
-              className='mt-4 block text-center font-semibold text-blue-500 hover:underline'
-            >
-              Click here to go back to the Bootcamp Information
-            </Link>
+
+            <p className='text-xs text-muted-foreground'>
+              A receipt has also been sent to your email.
+            </p>
           </>
         ) : result === 'pending' ? (
           <>
@@ -138,12 +161,41 @@ function CallbackPage() {
                 minutes.
               </p>
             </div>
-            <div className='rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-6 py-4 text-sm text-yellow-700 dark:text-yellow-400'>
+            <div className='my-4 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-6 py-4 text-sm text-yellow-700 dark:text-yellow-400'>
               <p className='font-medium'>What happens next?</p>
               <p className='mt-1'>
                 Once your transfer is confirmed, you'll receive a confirmation
                 email. You don't need to stay on this page.
               </p>
+            </div>
+
+            <div className='mt-6 border-t pt-6'>
+              <h2 className='mb-2 text-base font-bold text-foreground'>
+                While you wait...
+              </h2>
+              <p className='mb-4 text-sm text-muted-foreground'>
+                You can go ahead and join our private WhatsApp group now so you're ready when the class starts.
+              </p>
+
+              <div className='mb-4 hidden flex-col items-center justify-center gap-2 rounded-xl bg-white p-3 text-center sm:flex'>
+                <img
+                  src='https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fchat.whatsapp.com%2FJlvlDrhbhjvGCq4YO1RQCy%3Fs%3Dcl%26p%3Da%26mlu%3D4'
+                  alt='WhatsApp QR Code'
+                  className='size-24 object-contain'
+                />
+                <p className='text-[10px] font-semibold uppercase text-gray-500'>
+                  Scan with your phone
+                </p>
+              </div>
+
+              <a
+                href='https://chat.whatsapp.com/JlvlDrhbhjvGCq4YO1RQCy?s=cl&p=a&mlu=4'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-[#20bd5a]'
+              >
+                Join WhatsApp Group
+              </a>
             </div>
           </>
         ) : (

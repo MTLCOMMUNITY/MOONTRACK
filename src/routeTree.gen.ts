@@ -31,6 +31,7 @@ import { Route as AuthenticatedPayoutsIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedOptcontrolIndexRouteImport } from './routes/_authenticated/optcontrol/index'
 import { Route as AuthenticatedEarningsIndexRouteImport } from './routes/_authenticated/earnings/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedBankIndexRouteImport } from './routes/_authenticated/bank/index'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
@@ -160,6 +161,11 @@ const AuthenticatedDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBankIndexRoute = AuthenticatedBankIndexRouteImport.update({
+  id: '/bank/',
+  path: '/bank/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/bank/': typeof AuthenticatedBankIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/earnings/': typeof AuthenticatedEarningsIndexRoute
   '/optcontrol/': typeof AuthenticatedOptcontrolIndexRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/bank': typeof AuthenticatedBankIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/earnings': typeof AuthenticatedEarningsIndexRoute
   '/optcontrol': typeof AuthenticatedOptcontrolIndexRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/bank/': typeof AuthenticatedBankIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/earnings/': typeof AuthenticatedEarningsIndexRoute
   '/_authenticated/optcontrol/': typeof AuthenticatedOptcontrolIndexRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/notifications'
+    | '/bank/'
     | '/dashboard/'
     | '/earnings/'
     | '/optcontrol/'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/notifications'
+    | '/bank'
     | '/dashboard'
     | '/earnings'
     | '/optcontrol'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/bank/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/earnings/'
     | '/_authenticated/optcontrol/'
@@ -605,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bank/': {
+      id: '/_authenticated/bank/'
+      path: '/bank'
+      fullPath: '/bank/'
+      preLoaderRoute: typeof AuthenticatedBankIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
       path: '/notifications'
@@ -742,6 +761,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedBankIndexRoute: typeof AuthenticatedBankIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedEarningsIndexRoute: typeof AuthenticatedEarningsIndexRoute
   AuthenticatedPayoutsIndexRoute: typeof AuthenticatedPayoutsIndexRoute
@@ -754,6 +774,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedBankIndexRoute: AuthenticatedBankIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedEarningsIndexRoute: AuthenticatedEarningsIndexRoute,
   AuthenticatedPayoutsIndexRoute: AuthenticatedPayoutsIndexRoute,

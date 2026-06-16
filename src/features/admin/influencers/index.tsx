@@ -57,6 +57,10 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import {
+  isValidReferralCode,
+  normalizeReferralCode,
+} from '@/lib/referral-code'
 
 type Influencer = {
   id: string
@@ -67,6 +71,9 @@ type Influencer = {
   is_active: boolean
   invite_accepted: boolean
   created_at: string
+  bank_name?: string | null
+  account_number?: string | null
+  account_name?: string | null
 }
 
 type InfluencerDetails = {
@@ -268,10 +275,20 @@ export function AdminInfluencers() {
   }, [])
 
   async function handleInvite() {
-    if (!inviteEmail || !fullName || !refCode) {
+    const normalizedRefCode = normalizeReferralCode(refCode)
+
+    if (!inviteEmail || !fullName || !normalizedRefCode) {
       toast.error('Please fill in all required fields')
       return
     }
+
+    if (!isValidReferralCode(normalizedRefCode)) {
+      toast.error(
+        'Referral code must be 1-64 characters and contain only letters, numbers, hyphens, or underscores.'
+      )
+      return
+    }
+
     setSubmitting(true)
     try {
       const {
@@ -289,7 +306,7 @@ export function AdminInfluencers() {
           body: JSON.stringify({
             email: inviteEmail,
             full_name: fullName,
-            ref_code: refCode,
+            ref_code: normalizedRefCode,
             commission_rate: parseFloat(commissionRate) || 10,
           }),
         }
@@ -417,7 +434,9 @@ export function AdminInfluencers() {
                   <Input
                     id='inv-ref'
                     value={refCode}
-                    onChange={(e) => setRefCode(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setRefCode(normalizeReferralCode(e.target.value))
+                    }
                     placeholder='ref_MOON01'
                   />
                 </div>
@@ -657,6 +676,7 @@ export function AdminInfluencers() {
                     <p className='text-sm text-muted-foreground'>
                       {selectedInfluencer.email}
                     </p>
+
                   </div>
                 </div>
 
@@ -702,6 +722,26 @@ export function AdminInfluencers() {
                       <Badge className='bg-green-600 hover:bg-green-700'>
                         Active
                       </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bank Details Box */}
+              <div className='flex items-center justify-between rounded-xl border border-[#0A0F1E]/10 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900'>
+                <div>
+                  <h3 className='text-sm font-semibold text-foreground'>Bank Details</h3>
+                  <div className='mt-1 flex items-center space-x-3 text-sm text-muted-foreground'>
+                    {selectedInfluencer.bank_name || selectedInfluencer.account_number ? (
+                      <>
+                        <span className='font-medium text-foreground'>{selectedInfluencer.bank_name || 'N/A'}</span>
+                        <span>•</span>
+                        <span className='font-mono font-medium text-foreground'>{selectedInfluencer.account_number || 'N/A'}</span>
+                        <span>•</span>
+                        <span>{selectedInfluencer.account_name || 'N/A'}</span>
+                      </>
+                    ) : (
+                      <span className='text-red-500/80 font-medium'>No bank details provided</span>
                     )}
                   </div>
                 </div>

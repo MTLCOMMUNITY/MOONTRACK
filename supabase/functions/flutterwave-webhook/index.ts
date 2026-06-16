@@ -1,5 +1,9 @@
 // @ts-ignore
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import {
+  extractReferralCodeFromTxRef,
+  resolveReferralAttribution,
+} from '../_shared/referral-attribution.ts'
 
 declare const Deno: any;
 
@@ -98,13 +102,15 @@ Deno.serve(async (req: Request) => {
 
     const txData = verifyData.data
     const verifiedTxRef = typeof txData.tx_ref === 'string' ? txData.tx_ref.trim() : ''
-    const ref_code = txData.meta?.ref_code
     const customer = txData.customer
 
     if (!verifiedTxRef) {
       console.error('Missing tx_ref in verified Flutterwave response')
       return new Response('Invalid payment reference', { status: 400, headers: securityHeaders })
     }
+
+    const ref_code =
+      txData.meta?.ref_code ?? extractReferralCodeFromTxRef(verifiedTxRef)
 
     if (tx_ref && tx_ref !== verifiedTxRef) {
       console.error('Webhook tx_ref mismatch:', logSafeRef(tx_ref), '| verified:', logSafeRef(verifiedTxRef))
@@ -147,56 +153,43 @@ Deno.serve(async (req: Request) => {
   // Check if payment already exists to prevent double-crediting
   const { data: existingPayment } = await supabase
     .from('payments')
-    .select('id')
+    .select('id, influencer_id, conversion_id')
     .eq('tx_ref', verifiedTxRef)
     .maybeSingle()
 
-  if (existingPayment) {
-    console.log('Payment already processed for tx_ref:', logSafeRef(verifiedTxRef))
-    return new Response('Payment already processed', { status: 200, headers: securityHeaders })
-  }
-  let influencer_id: string | null = null
+  const resolvedReferral = await resolveReferralAttribution(supabase, ref_code)
+  let influencer_id: string | null = resolvedReferral?.influencerId ?? null
   let commission = 0
 
   if (!ref_code) {
-    // Direct/organic sale — no referral code. Record the payment with no influencer
-    // so it still appears in the admin payments dashboard.
     console.warn('No ref_code in metadata — recording as organic/direct sale (tx_ref:', tx_ref, ')')
+  } else if (!resolvedReferral) {
+    console.error('Referral link not found for ref_code:', ref_code)
   } else {
-    // Get influencer by ref_code
-    const { data: link, error: linkError } = await supabase
-      .from('referral_links')
-      .select('influencer_id')
-      .eq('ref_code', ref_code)
+    const { data: influencer } = await supabase
+      .from('influencers')
+      .select('commission_rate, is_active')
+      .eq('id', resolvedReferral.influencerId)
       .single()
 
-    if (linkError || !link) {
-      console.error('Referral link not found for ref_code:', ref_code, '| error:', linkError)
-      // Still record the payment but without influencer attribution
-    } else {
-      influencer_id = link.influencer_id
+    const commissionRate = influencer?.commission_rate ?? 10
+    const isActive = influencer?.is_active ?? true
+    commission = isActive ? Math.round((commissionRate / 100) * amount) : 0
+  }
 
-      // Get influencer commission rate and active status
-      const { data: influencer } = await supabase
-        .from('influencers')
-        .select('commission_rate, is_active')
-        .eq('id', influencer_id)
-        .single()
-
-      const commissionRate = influencer?.commission_rate ?? 10
-      const isActive = influencer?.is_active ?? true
-      commission = isActive ? Math.round((commissionRate / 100) * amount) : 0
-    }
+  if (existingPayment?.influencer_id && existingPayment?.conversion_id) {
+    console.log('Payment already processed for tx_ref:', logSafeRef(verifiedTxRef))
+    return new Response('Payment already processed', { status: 200, headers: securityHeaders })
   }
 
   // Create conversion record (only when we have an influencer to credit)
-  let conversion_id: string | null = null
-  if (influencer_id) {
+  let conversion_id: string | null = existingPayment?.conversion_id ?? null
+  if (influencer_id && !conversion_id) {
     const { data: conversion, error: convError } = await supabase
       .from('conversions')
       .insert({
         influencer_id,
-        ref_code,
+        ref_code: resolvedReferral?.refCode ?? ref_code,
         student_name: txData.meta?.student_name || customer.name,
         student_email: txData.meta?.student_email || customer.email,
         phone: txData.meta?.student_phone || customer.phone_number || null,
@@ -213,16 +206,21 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  // Create payment record (always — even for organic/direct sales)
-  const { error: payError } = await supabase.from('payments').insert({
+  const paymentPayload = {
     influencer_id: influencer_id ?? null,
     conversion_id,
     amount,
     commission_earned: commission,
     status: 'confirmed',
     transaction_ref: txData.flw_ref ?? tx_ref,
-    tx_ref: verifiedTxRef,
-  })
+  }
+
+  const { error: payError } = existingPayment
+    ? await supabase.from('payments').update(paymentPayload).eq('id', existingPayment.id)
+    : await supabase.from('payments').insert({
+        ...paymentPayload,
+        tx_ref: verifiedTxRef,
+      })
 
   if (payError) {
     console.error('Error inserting payment:', payError)

@@ -92,23 +92,7 @@ Deno.serve(async (req: Request) => {
               <h3 style="margin-top: 0;">Payment Receipt</h3>
               <ul style="list-style: none; padding: 0; margin: 0;">
                 <li style="margin-bottom: 8px;"><strong>Amount Paid:</strong> ₦${payment.amount}</li>
-                <li style="margin-bottom: 8px;"><strong>Transaction Ref:</strong> <code>${escapeHtml(payment.transaction_ref)}</code></li>
-                <li><strong>Status:</strong> Successful</li>
-              </ul>
-            </div>
-            
-            <div style="margin: 20px 0;">
-              <h3 style="color: #1e40af; margin-top: 0;">Your Next Steps</h3>
-              <p>Thank you for enrolling! Please note that <strong>we do not offer pre-recorded courses—all of our training is conducted via live interactive sessions.</strong></p>
-              <p>Our onboarding team will reach out to you shortly via email/phone with further details, your schedule, and the links to join your upcoming live sessions.</p>
-            </div>
-
-            <div style="margin: 20px 0; background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px;">
-              <h3 style="color: #166534; margin-top: 0; font-size: 1.1em;">Join our Class WhatsApp Group 💬</h3>
-              <p style="margin: 0 0 15px 0; color: #1f2937; line-height: 1.5;">Follow this link to join my WhatsApp group: <a href="https://chat.whatsapp.com/JlvlDrhbhjvGCq4YO1RQCy" style="color: #166534; font-weight: bold; text-decoration: underline;">https://chat.whatsapp.com/JlvlDrhbhjvGCq4YO1RQCy</a></p>
-              <a href="https://chat.whatsapp.com/JlvlDrhbhjvGCq4YO1RQCy" style="display: inline-block; background-color: #25d366; color: white; padding: 10px 18px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 0.95em;">Join WhatsApp Group</a>
-            </div>
-            
+ccv
             <p>If you have any questions in the meantime, feel free to reply directly to this email.</p>
             <br/>
             <p>Best,<br/>The MoonTech Life Team</p>

@@ -9,8 +9,7 @@ const rateLimit = new Map<string, { count: number; timestamp: number }>();
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin') ?? ''
   const appUrl = Deno.env.get('APP_URL') ?? 'https://moontrack.moontechlife.com'
-  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', appUrl]
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : appUrl
+  const corsOrigin = origin.startsWith('http://localhost:') ? origin : appUrl
 
   const CORS = {
     'Access-Control-Allow-Origin': corsOrigin,
@@ -84,7 +83,7 @@ Deno.serve(async (req: Request) => {
   // 2. Fetch all influencers
   const { data: influencers, error: infErr } = await supabaseAdmin
     .from('influencers')
-    .select('id, user_id, full_name, email, ref_code, commission_rate, is_active, created_at')
+    .select('id, user_id, full_name, email, ref_code, commission_rate, is_active, created_at, bank_name, account_number, account_name')
     .order('created_at', { ascending: false })
 
   if (infErr) {

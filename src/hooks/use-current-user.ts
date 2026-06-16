@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 type CurrentUser = {
+  id: string
   name: string
   email: string
   avatar: string
@@ -10,6 +11,7 @@ type CurrentUser = {
 
 export function useCurrentUser() {
   const [user, setUser] = useState<CurrentUser>({
+    id: '',
     name: '',
     email: '',
     avatar: '',
@@ -33,6 +35,7 @@ export function useCurrentUser() {
 
         if (!authUser) {
           setUser({
+            id: '',
             name: '',
             email: '',
             avatar: '',
@@ -54,6 +57,7 @@ export function useCurrentUser() {
 
         if (adminRow) {
           setUser({
+            id: authUser.id,
             name: adminRow.full_name || 'Admin',
             email,
             avatar: '',
@@ -76,7 +80,7 @@ export function useCurrentUser() {
           authUser.user_metadata?.full_name ||
           email.split('@')[0]
 
-        setUser({ name, email, avatar: '', isAdmin: false })
+        setUser({ id: authUser.id, name, email, avatar: '', isAdmin: false })
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error loading current user:', error)

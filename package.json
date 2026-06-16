@@ -4,10 +4,12 @@
   "version": "2.2.1",
   "type": "module",
   "scripts": {
+    "audit:referrals": "node scripts/audit-referral-attribution.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "repair:referrals": "node scripts/backfill-referral-attribution.mjs",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "knip": "knip",

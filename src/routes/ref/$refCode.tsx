@@ -3,6 +3,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { IconMoon, IconLoader2 } from '@tabler/icons-react'
 import { supabase } from '@/lib/supabase'
 import { useReferral } from '@/hooks/useReferral'
+import { normalizeReferralCode } from '@/lib/referral-code'
 
 export const Route = createFileRoute('/ref/$refCode')({
   component: ReferralTracker,
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/ref/$refCode')({
 
 function ReferralTracker() {
   const { refCode } = useParams({ from: '/ref/$refCode' })
+  const normalizedRefCode = normalizeReferralCode(refCode)
   const { saveRefCode } = useReferral()
   const [error, setError] = useState(false)
   const hasTracked = useRef(false)
@@ -26,19 +28,19 @@ function ReferralTracker() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
-        body: JSON.stringify({ ref_code: refCode }),
+        body: JSON.stringify({ ref_code: normalizedRefCode }),
       }).catch(() => {})
 
       // Validate ref code
       const { data: link } = await supabase
         .from('referral_links')
         .select('id')
-        .eq('ref_code', refCode)
+        .eq('ref_code', normalizedRefCode)
         .eq('is_active', true)
         .single()
 
       if (link) {
-        saveRefCode(refCode)
+        saveRefCode(normalizedRefCode)
         // Redirect to the new internal sales page.
         // The refCode is already saved in localStorage for this domain.
         window.location.href = '/ai-website-bootcamp'
@@ -47,7 +49,7 @@ function ReferralTracker() {
       }
     }
     init()
-  }, [refCode, saveRefCode])
+  }, [normalizedRefCode, saveRefCode])
 
   if (error) {
     return (

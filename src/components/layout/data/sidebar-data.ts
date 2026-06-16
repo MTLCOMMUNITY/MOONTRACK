@@ -53,6 +53,11 @@ export const sidebarData: SidebarData = {
           url: '/payouts',
           icon: IconWallet,
         },
+        {
+          title: 'Bank Details',
+          url: '/bank',
+          icon: IconBuildingBank,
+        },
       ],
     },
     {
